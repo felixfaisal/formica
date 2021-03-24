@@ -23,6 +23,12 @@ def tasklist(request):
     serializer = TaskSerializer(tasks, many=True)
     return Response(serializer.data)
 
+@api_view(["GET"])
+def taskdetail(request, pk):
+    task = Task.objects.get(id=pk)
+    serializer = TaskSerializer(task, many=False)
+    return Response(serializer.data)
+
 
 @api_view(["POST"])
 def listcreate(request):
@@ -32,3 +38,13 @@ def listcreate(request):
         serializer.save()
 
     return(serializer.data)
+
+@api_view(["POST"])
+def listupdate(request, pk):
+    task = Task.objects.get(id=pk)
+    serializer = TaskSerializer(instance=task, data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data)
