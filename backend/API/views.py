@@ -48,3 +48,10 @@ def listupdate(request, pk):
         serializer.save()
 
     return Response(serializer.data)
+
+@api_view(["DELETE", "GET"])
+def listdelete(request, pk): 
+    task = Task.objects.get(id=pk)
+    task.delete()
+
+    return Response("Succesfully Deleted")
