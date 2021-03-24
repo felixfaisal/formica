@@ -4,3 +4,4 @@ from django.http import HttpResponse
 
 def index(request):
     return HttpResponse("Base directory of all APIs where all the APIs will be listed")
+
