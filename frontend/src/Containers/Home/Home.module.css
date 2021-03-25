@@ -2,7 +2,19 @@
   height: 100vh;
   width: 100vw;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+  /* align-items: center;
+  justify-content: center; */
+  background-color: var(--background-color);
+  padding-top: calc(4vw + 20px + 5vh);
+  padding-left: 5vw;
+  padding-right: 5vw;
+  padding-bottom: 3vw;
+}
+
+.container > :nth-child(1) {
+  flex: 1;
+}
+
+.container > :nth-child(2) {
+  flex: 3;
 }

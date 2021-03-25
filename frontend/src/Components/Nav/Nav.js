@@ -11,7 +11,7 @@ const Nav = () => {
 		<nav className={styles.nav}>
 			<span className={styles.brand}>
 				<DiscordLogo className={styles.logo} />
-				<h3>Formica</h3>
+				<h2>Formica</h2>
 			</span>
 			<Button title="Login" />
 		</nav>
