@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 # Create your views here.
 from .serializer import TaskSerializer
@@ -6,6 +6,8 @@ from .models import Task
 from rest_framework.decorators import api_view
 from rest_framework.response import Response 
 
+
+redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=728306573696303135&redirect_uri=localhost%3A8000%2Foauth2%2Flogin%2Fredirect&response_type=code&scope=identify"
 @api_view(["GET"])
 def index(request):
     api_urls = {
@@ -16,6 +18,10 @@ def index(request):
         "Delete":"/list-delete/<str:pk>/"
     }
     return Response(api_urls)
+
+
+def discord_login(request): 
+    return redirect(redirect_url_discord)
 
 @api_view(["GET"])
 def tasklist(request):
