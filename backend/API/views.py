@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response 
 
 
-redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=728306573696303135&redirect_uri=localhost%3A8000%2Foauth2%2Flogin%2Fredirect&response_type=code&scope=identify"
+redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=728306573696303135&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth2%2Flogin%2Fredirect%2F&response_type=code&scope=identify"
 @api_view(["GET"])
 def index(request):
     api_urls = {
@@ -22,6 +22,9 @@ def index(request):
 
 def discord_login(request): 
     return redirect(redirect_url_discord)
+
+def discord_login_redirect(request):
+    return JsonResponse({"msg":"I'm authenticated"})
 
 @api_view(["GET"])
 def tasklist(request):
