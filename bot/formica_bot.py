@@ -6,8 +6,9 @@ from decouple import config
 client = discord.Client()
 
 # define messages
-welcome_msg = "Welcome to Formica, the in-discord form service! It looks like you have a form to fill out. To do so, please react to this message with any emoji. Then, check your inbox!"
-
+welcome_title = "Welcome to Formica, the in-discord form service!"
+welcome_msg = "It looks like you have a form to fill out. To do so, please react to this message with any emoji. Then, check your inbox!"
+form_name = "Event Registration"
 
 @client.event
 async def on_ready():
@@ -25,13 +26,22 @@ async def on_message(message):
     # listen for commands
     if msg.startswith('!formica'):
         #display welcome message
-        await message.channel.send(welcome_msg)
+        #embed constructor
+        welcome_embed = discord.Embed(title = welcome_title, description = welcome_msg, color = 0xff8906)
+        welcome_embed.add_field(name = "Form: ", value = form_name, inline = False)
+
+        await message.channel.send(embed=welcome_embed)
 
 # listen for reactions
 @client.event
 async def on_reaction_add(reaction, user):
-    if reaction.message.content == welcome_msg:
+    # grab the title of the embed msg that was reacted to
+    message_title = reaction.message.embeds[0].title
+
+    # check if the message was the welcome msg
+    if message_title == welcome_title:
         await user.send("hi")
+
 
 # run bot
 BOT_TOKEN = config('TOKEN')
