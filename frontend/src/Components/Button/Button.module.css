@@ -1,8 +1,28 @@
 .button {
-  background-color: #000000;
+  background-color: var(--primary-color);
   border: none;
   outline: none;
-  color: #ffffff;
+  color: var(--title-text-color);
   padding: 1vw;
+  padding-left: 2vw;
+  padding-right: 2vw;
   cursor: pointer;
+  border-radius: var(--border-radius);
+  font-size: var(--h3);
+  font-weight: bold;
+  font-family: 'Volkorn', sans-serif;
+  background-position: center;
+  transition: background 0.8s;
+  width: fit-content;
+}
+
+.button:hover {
+  background: var(--primary-color-dark)
+    radial-gradient(circle, transparent 1%, var(--primary-color-dark) 1%)
+    center/15000%;
+}
+.button:active {
+  background-color: var(--primary-color-light);
+  background-size: 100%;
+  transition: background 0s;
 }

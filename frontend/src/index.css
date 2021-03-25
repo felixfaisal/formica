@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Volkorn&display=swap');
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,4 +13,28 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+* {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+:root {
+  --background-color: #0f0e17;
+  --title-text-color: #fffffe;
+  --paragraph-color: #a7a9be;
+  --stroke-color: black;
+  --primary-color: #ff8906;
+  --primary-color-light: #ff951f;
+  --primary-color-dark: #e57b05;
+  --secondary-color: #f25f4c;
+  --tertiary-color: #e53170;
+
+  --h1: 64px;
+  --h2: 32px;
+  --h3: 20px;
+  --normal-text: 16px;
+  --small-text: 12px;
+  --border-radius: 5px;
 }

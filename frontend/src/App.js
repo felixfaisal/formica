@@ -1,16 +1,20 @@
 import React from "react";
-
 import { Switch, Route } from "react-router-dom";
 
-import Home from "./Containers/Home";
+import Landing from "./Containers/Landing";
+
+import Nav from "./Components/Nav";
 
 const App = () => {
 	return (
-		<Switch>
-			<Route exact path="/">
-				<Home />
-			</Route>
-		</Switch>
+		<>
+			<Nav />
+			<Switch>
+				<Route exact path="/">
+					<Landing />
+				</Route>
+			</Switch>
+		</>
 	);
 };
 
