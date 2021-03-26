@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Switch } from "react-router";
 
 import Dashboard from "../Dashboard";
+import Forms from "../Forms/Forms";
 
 import TabNav from "../../Components/TabNav/TabNav";
 
@@ -17,6 +18,9 @@ const Home = () => {
 				<Switch>
 					<Route exact path="/dashboard">
 						<Dashboard />
+					</Route>
+					<Route exact path="/forms">
+						<Forms />
 					</Route>
 				</Switch>
 			</div>
