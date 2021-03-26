@@ -1,6 +1,8 @@
 import discord
 import os
+import json
 from decouple import config
+
 
 
 client = discord.Client()
@@ -19,13 +21,22 @@ cur_q = "What is your first name?"
 cur_q_description = " "
 cur_response = "response"
 
+def get_questions():
+    with open("dummy_questions.json", "r") as q:
+        questions = json.load(q)
+    #print("Questions: ", questions)
+    return questions
+
 def start_form():
+    questions = get_questions()
+    #print("retrieved qs: ", questions)
     cur_q_embed = discord.Embed(title = cur_q, description = cur_q_description, color = form_color)
     return cur_q_embed
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+    get_questions()
 
 # listen for messages.commands
 @client.event
@@ -54,7 +65,7 @@ async def on_message(message):
         def check(m):
             # check that it's the right user and channel
             # later: check that we're on the right question or else the form restarts
-            return (m.author.id == message.author.id and m.channel == message.channel):
+            return m.author.id == message.author.id and m.channel == message.channel
 
         msg = await client.wait_for('message', check=check)
 
