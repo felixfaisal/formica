@@ -3,17 +3,17 @@
   width: 100%;
   /* background-color: var(--primary-color); */
   border-radius: var(--border-radius);
-  padding: 2vw;
+  /* padding: 2vw; */
   padding-left: 0;
   display: flex;
   flex-direction: column;
 }
 
 .tab {
-  font-size: var(--h2);
+  font-size: var(--h3);
   font-family: 'Volkorn', sans-serif;
   color: var(--title-text-color);
-  margin: 0.5vw 0;
+  margin-bottom: 1vw;
   padding: 0.5vw;
   cursor: pointer;
   font-weight: bold;

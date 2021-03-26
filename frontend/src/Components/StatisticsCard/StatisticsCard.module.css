@@ -1,0 +1,25 @@
+.card_container {
+  background-color: var(--tertiary-color);
+  color: var(--title-text-color);
+  font-family: 'Volkorn', sans-serif;
+  padding: 0.5vw;
+  border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 30%;
+  min-width: 30%;
+  text-align: center;
+  margin-bottom: 2vw;
+}
+
+.card_title {
+  font-size: var(--h3);
+  margin: 10px;
+}
+
+.card_body {
+  font-size: var(--h1);
+  margin: 10px;
+}

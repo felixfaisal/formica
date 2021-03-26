@@ -1,4 +1,7 @@
 import React from "react";
+import { Route, Switch } from "react-router";
+
+import Dashboard from "../Dashboard";
 
 import TabNav from "../../Components/TabNav/TabNav";
 
@@ -10,7 +13,13 @@ const Home = () => {
 			<div>
 				<TabNav />
 			</div>
-			<div></div>
+			<div>
+				<Switch>
+					<Route exact path="/dashboard">
+						<Dashboard />
+					</Route>
+				</Switch>
+			</div>
 		</div>
 	);
 };
