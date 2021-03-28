@@ -8,6 +8,7 @@ from rest_framework.response import Response
 import requests
 import environ 
 from dotenv import load_dotenv
+from django.contrib.auth import authenticate, login
 import os
 load_dotenv()
 
@@ -32,8 +33,10 @@ def discord_login(request):
 def discord_login_redirect(request):
     code = request.GET.get('code')
     print(code)
-    credentials = exchange_code(code)
-    return JsonResponse(credentials)
+    user = exchange_code(code)
+    print("Going to authenticate")
+    authenticate(request, user=user)
+    return JsonResponse(user)
 
 def exchange_code(code):
     data = {

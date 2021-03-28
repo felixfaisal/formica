@@ -27,6 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTHENTICATION_BACKENDS = [
+    'API.auth.DiscordAuthenticationBackend'
+]
+
 
 # Application definition
 
