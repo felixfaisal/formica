@@ -20,15 +20,17 @@ form_init_msg = "To start, type !start"
 cur_q = "What is your first name?"
 cur_q_description = " "
 cur_response = "response"
-
-def get_questions():
-    with open("dummy_questions.json", "r") as q:
-        questions = json.load(q)
-    return questions
+form_started = False
 
 def start_form():
-    questions = get_questions()
-    cur_q_embed = discord.Embed(title = questions[0]['question'], description = questions[0]['description'], color = form_color)
+    form_started = True
+    with open("dummy_questions.json", "r") as q:
+        questions = json.load(q)
+        q_count = len(questions)
+    return questions, q_count
+
+def get_question(questions, cur_index):
+    cur_q_embed = discord.Embed(title = questions[cur_index]['question'], description = questions[cur_index]['description'], color = form_color)
     return cur_q_embed
 
 def set_response(response, author, index):
@@ -39,26 +41,27 @@ def set_response(response, author, index):
     # test
     # print("retrieved responses: ", database_responses)
     # print("type: ", type(database_responses))
-    print(f"response: {response}, author: {author}, author id: {author.id}")
+    # print(f"response: {response}, author: {author}, author id: {author.id}")
 
     # search database for the user
     try:
         target = next(user for user in database_responses if user['username'] == str(author) )
-        print("target: ", target)
+        # print("target: ", target)
 
         # get index
         target_index = database_responses.index(target)
         print("found at index ", target_index)    
 
         #set response
-        database_responses[target_index]['responses'][index] = response
-        print("appended: ", database_responses)
+        database_responses[target_index]['responses'].append(response)
+        print("set: ", database_responses)
     except:
         print("not found")
         # append to database
         database_responses.append({'username': str(author), 'user_id': str(author.id), 'responses': [response]})
         print("appended: ", database_responses)
 
+    
     #write to the database
     with open('dummy_responses.json', 'w') as w:
         json.dump(database_responses, w)
@@ -67,7 +70,7 @@ def set_response(response, author, index):
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
-    get_questions()
+    #get_questions()
 
 # listen for messages/commands
 @client.event
@@ -88,24 +91,39 @@ async def on_message(message):
         await message.channel.send(embed=welcome_embed)
     
     if msg.startswith('!start'):
-        # send form start prompt
-        start_embed = start_form()
-        await message.channel.send(embed=start_embed)
+        if form_started == False:
+            cur_index = 0
+            questions, q_count = start_form()
+        
 
-        # wait for response
-        def check(m):
-            # check that it's the right user and channel
-            # later: check that we're on the right question or else the form restarts
-            return m.author.id == message.author.id and m.channel == message.channel
+        while cur_index < q_count:
+            print(f"cur index: {cur_index}, total qs: {q_count}")
 
-        msg = await client.wait_for('message', check=check)
+            # send the current question
+            q_embed = get_question(questions, cur_index)
+            await message.channel.send(embed=q_embed)
 
-        # save response
-        cur_response = msg.content
-        set_response(msg.content, message.author, 0)
+            # wait for response
+            def check(m):
+                # check that it's the right user and channel
+                # later: check that we're on the right question or else the form restarts
+                return m.author.id == message.author.id and m.channel == message.channel
 
-        # send feedback to user
-        await message.channel.send(f"Response received: {msg.content}")
+            msg = await client.wait_for('message', check=check)
+
+            # save response
+            cur_response = msg.content
+            set_response(msg.content, message.author, cur_index)
+
+            # send feedback to user
+            # await message.channel.send(f"Response received: {msg.content}")
+
+            # update counters
+            cur_index += 1
+        
+        await message.channel.send("Questions completed")
+        
+
 
 
 
