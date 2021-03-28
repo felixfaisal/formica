@@ -24,21 +24,46 @@ cur_response = "response"
 def get_questions():
     with open("dummy_questions.json", "r") as q:
         questions = json.load(q)
-    #print("Questions: ", questions)
     return questions
 
 def start_form():
     questions = get_questions()
-    #print("retrieved qs: ", questions)
-    cur_q_embed = discord.Embed(title = cur_q, description = cur_q_description, color = form_color)
+    cur_q_embed = discord.Embed(title = questions[0]['question'], description = questions[0]['description'], color = form_color)
     return cur_q_embed
+
+def set_response(response, author, index):
+    # get the responses from the database
+    with open("dummy_responses.json", "r") as r:
+        database_responses = json.load(r)
+    
+    # test
+    # print("retrieved responses: ", database_responses)
+    # print("type: ", type(database_responses))
+    # print(f"response: {response}, author: {author}, author id: {author.id}")
+
+    # search database for the user
+    try:
+        target = next(user for user in database_responses if user['username'] == str(author) )
+        print("target: ", target)
+
+        # get index
+        target_index = database_responses.index(target)
+        print("found at index ", target_index)    
+
+        #set response
+    except:
+        print("not found")
+        # append to database
+
+    #write to the database
+
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     get_questions()
 
-# listen for messages.commands
+# listen for messages/commands
 @client.event
 async def on_message(message):
     msg = message.content
@@ -61,7 +86,7 @@ async def on_message(message):
         start_embed = start_form()
         await message.channel.send(embed=start_embed)
 
-         # wait for response
+        # wait for response
         def check(m):
             # check that it's the right user and channel
             # later: check that we're on the right question or else the form restarts
@@ -71,9 +96,10 @@ async def on_message(message):
 
         # save response
         cur_response = msg.content
+        set_response(msg.content, message.author, 0)
 
         # send feedback to user
-        await message.channel.send(f"Response received: {cur_response}")
+        await message.channel.send(f"Response received: {msg.content}")
 
 
 
