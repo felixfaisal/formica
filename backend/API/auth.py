@@ -7,3 +7,7 @@ class DiscordAuthenticationBackend(BaseBackend):
         print("Reached auth")
         if len(find_user) == 0:
             print("User not found")
+            new_user = DiscordUser.objects.create_new_discord_user(user)
+            print(new_user)
+            return new_user
+        return find_user
