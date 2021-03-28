@@ -33,13 +33,13 @@ def start_form():
 
 def set_response(response, author, index):
     # get the responses from the database
-    with open("dummy_responses.json", "r") as r:
+    with open('dummy_responses.json', 'r') as r:
         database_responses = json.load(r)
     
     # test
     # print("retrieved responses: ", database_responses)
     # print("type: ", type(database_responses))
-    # print(f"response: {response}, author: {author}, author id: {author.id}")
+    print(f"response: {response}, author: {author}, author id: {author.id}")
 
     # search database for the user
     try:
@@ -51,11 +51,17 @@ def set_response(response, author, index):
         print("found at index ", target_index)    
 
         #set response
+        database_responses[target_index]['responses'][index] = response
+        print("appended: ", database_responses)
     except:
         print("not found")
         # append to database
+        database_responses.append({'username': str(author), 'user_id': str(author.id), 'responses': [response]})
+        print("appended: ", database_responses)
 
     #write to the database
+    with open('dummy_responses.json', 'w') as w:
+        json.dump(database_responses, w)
 
 
 @client.event
