@@ -3,9 +3,11 @@ import os
 import json
 from decouple import config
 
+intents = discord.Intents().default()
+intents.members = True
+intents.reactions = True
 
-
-client = discord.Client()
+client = discord.Client(intents = intents)
 
 form_color = 0xff8906
 # define messages
@@ -114,6 +116,21 @@ async def on_message(message):
 
         # send welcome message
         await message.channel.send(embed=welcome_embed)
+
+        # wait for a reaction
+        def check_reaction(reaction, user):
+            return True, user == message.author #true, b'c we're accepting any reaction
+
+        try:
+            reaction, user = await client.wait_for('reaction_add', check=check_reaction)
+        except:
+            print("something went wrong")
+        else:
+            print(user)
+            form_init = discord.Embed(title = form_name, description = form_init_msg, color = form_color)
+            form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would!\n You can edit your response by hovering on your message and clicking 'edit'.\n To see a list of available commands, type !help.", inline = False)
+
+            await user.send(embed=form_init)
     
     if msg.startswith('!start'):
         if form_started == False:
@@ -149,38 +166,49 @@ async def on_message(message):
         
         #await message.channel.send("Questions completed")
         confirmation_embed = end_form(questions, author_index)
-        await message.channel.send(embed=confirmation_embed)
-        await message.add_reaction('✅')
-        
+        confirmation_msg = await message.channel.send(embed=confirmation_embed)
+        await confirmation_msg.add_reaction('✅')
 
+        # wait for a reaction
+        def check_reaction(reaction, user):
+            return str(reaction.emoji) == '✅' and user == message.author
 
+        try:
+            reaction, user = await client.wait_for('reaction_add', check=check_reaction)
+        except:
+            print("wrong reaction")
+        else:
+            print(user)
+            submit_responses()
+            await user.send("Responses have been submitted")
 
 
 
 # listen for reactions
-@client.event
-async def on_reaction_add(reaction, user):
-    #ignore, if the msg is from ourselves
-    # if user == client.user:
-    #     return
+# @client.event
+# async def on_reaction_add(reaction, user):
+#     print("user: ", user)
+#     #ignore, if the reaction is from ourselves
+#     if user == client.user:
+#         print("reaction is from ourselves")
+#     else:
+#         # print("message content: ", reaction.message.content)
+#         # print("message content: ", reaction.message.embeds[0].title)
+#         # grab the title of the embed msg that was reacted to
+#         message_title = reaction.message.embeds[0].title
 
-    print("embed content: ", reaction.message.embeds)
-    # grab the title of the embed msg that was reacted to
-    message_title = reaction.message.embeds[0].title
-    #message_title = reaction.message.embed.title
-    print(f"Reaction to {message_title} detected")
+#         # check if the message was the welcome msg
+#         if message_title == welcome_title:
+#         #if reaction.message.content == welcome_msg:
+#             # send the form instruction message to the user
+#             form_init = discord.Embed(title = form_name, description = form_init_msg, color = form_color)
+#             form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would!\n You can edit your response by hovering on your message and clicking 'edit'.\n To see a list of available commands, type !help.", inline = False)
 
-    # check if the message was the welcome msg
-    if message_title == welcome_title:
-        # send the form instruction message to the user
-        form_init = discord.Embed(title = form_name, description = form_init_msg, color = form_color)
-        form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would!\n You can edit your response by hovering on your message and clicking 'edit'.\n To see a list of available commands, type !help.", inline = False)
+#             await user.send(embed=form_init)
 
-        await user.send(embed=form_init)
-
-    if reaction.emoji == '✅' and message_title == 'Confirm your answers':
-        submit_responses()
-        await user.send("Responses have been submitted")
+        # if reaction.emoji == '✅' and reaction.message.content == '!start':
+        #     submit_responses()
+        #     await user.send("Responses have been submitted")
 
 
 
