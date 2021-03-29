@@ -3,6 +3,7 @@ import { Route, Switch } from "react-router";
 
 import Dashboard from "../Dashboard";
 import Forms from "../Forms/Forms";
+import CreateForm from "../CreateForm/CreateForm";
 
 import TabNav from "../../Components/TabNav/TabNav";
 
@@ -21,6 +22,9 @@ const Home = () => {
 					</Route>
 					<Route exact path="/forms">
 						<Forms />
+					</Route>
+					<Route exact path="/create">
+						<CreateForm />
 					</Route>
 				</Switch>
 			</div>
