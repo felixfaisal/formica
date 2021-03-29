@@ -1,0 +1,28 @@
+.container {
+  height: 100%;
+  width: 100%;
+  /* background-color: var(--primary-color); */
+  border-radius: var(--border-radius);
+  /* padding: 2vw; */
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab {
+  font-size: var(--h3);
+  font-family: 'Volkorn', sans-serif;
+  color: var(--title-text-color);
+  margin-bottom: 1vw;
+  padding: 0.5vw;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.5s;
+  text-decoration: none;
+}
+
+.tab:hover,
+.active_tab {
+  background-color: var(--primary-color);
+  border-radius: var(--border-radius);
+}
