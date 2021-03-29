@@ -8,15 +8,19 @@ from rest_framework.response import Response
 import requests
 import environ 
 from dotenv import load_dotenv
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 import os
 load_dotenv()
 
 
 redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=728306573696303135&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth2%2Flogin%2Fredirect%2F&response_type=code&scope=identify"
+
+@login_required(login_url='login/')
 @api_view(["GET"])
 def index(request):
     print(os.getenv("CLIENT_ID"))
+    print(request.user)
     api_urls = {
         "List":"/list/",
         "Detail View":"/list-detail/<str:pk>/",
@@ -30,13 +34,22 @@ def index(request):
 def discord_login(request): 
     return redirect(redirect_url_discord)
 
+def discord_logout(request):
+    user = request.user
+    logout(request)
+    return JsonResponse("Succesfully Logged out", safe=False)
+
 def discord_login_redirect(request):
     code = request.GET.get('code')
     print(code)
     user = exchange_code(code)
     print("Going to authenticate")
-    authenticate(request, user=user)
-    return JsonResponse(user)
+    discord_user = authenticate(request, user=user)
+    discord_user = list(discord_user).pop()
+    print(discord_user)
+    login(request, discord_user)
+    #return JsonResponse(user)
+    return redirect('index')
 
 def exchange_code(code):
     data = {
