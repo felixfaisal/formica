@@ -59,18 +59,30 @@ def set_response(response, author, index):
         target_index = responses.index(target)
         #print("found at index ", target_index)    
 
-        #set response
-        responses[target_index]['responses'].append(response)
-        #print("set: ", responses)
+        #set response & id
+        responses[target_index]['responses'].append(response.content)
+        responses[target_index]['response_ids'].append(response.id)
+        print("set: ", responses)
     except:
         print("not found")
         # append to database
-        responses.append({'username': str(author), 'user_id': str(author.id), 'responses': [response]})
-        #print("appended: ", responses)
+        responses.append({'username': str(author), 'user_id': str(author.id), 'responses': [response.content], 'response_ids': [response.id]})
+        print("appended: ", responses)
 
         target_index = len(responses) - 1
     
     return target_index
+
+def edit_response(new_response):
+    # search responses for corresponding id
+    try:
+        target = next(item for item in responses if item['response_ids'][item] == str(new_response.id))
+    except:
+        print("id not found")
+    else:
+        print("id found")
+        # write over the response 
+    
 
 def end_form(questions, author_index):
     form_started = False
@@ -135,9 +147,7 @@ async def on_message(message):
     if msg.startswith('!start'):
         if form_started == False:
             cur_index = 0
-            questions, q_count = start_form()
-            
-        
+            questions, q_count = start_form()   
 
         while cur_index < q_count:
             #print(f"cur index: {cur_index}, total qs: {q_count}")
@@ -145,6 +155,9 @@ async def on_message(message):
             # send the current question
             q_embed = get_question(questions, cur_index)
             await message.channel.send(embed=q_embed)
+            print("question id: ", message.id)
+            print("question sent at: ", message.created_at)
+            print("question: ", q_embed.title)
 
             # wait for response
             def check(m):
@@ -156,7 +169,8 @@ async def on_message(message):
 
             # save response
             cur_response = msg.content
-            author_index = set_response(msg.content, message.author, cur_index)
+            author_index = set_response(msg, message.author, cur_index)
+            print(f"received response: {cur_response}, id: {msg.id}")
 
             # send feedback to user
             # await message.channel.send(f"Response received: {msg.content}")
@@ -174,7 +188,7 @@ async def on_message(message):
             return str(reaction.emoji) == '✅' and user == message.author
 
         try:
-            reaction, user = await client.wait_for('reaction_add', check=check_reaction)
+            reaction, user = await client.wait_for('reaction_add', check=check_reaction) #add timeout?
         except:
             print("wrong reaction")
         else:
@@ -182,7 +196,13 @@ async def on_message(message):
             submit_responses()
             await user.send("Responses have been submitted")
 
-
+# detect message edits
+@client.event
+async def on_message_edit(before, after):
+    if before.content != after.content:
+        print(f"Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
+        # edit the response
+        edit_response(after)
 
 # listen for reactions
 # @client.event
