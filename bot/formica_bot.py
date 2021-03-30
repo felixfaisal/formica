@@ -99,7 +99,7 @@ def edit_response(new_response):
 def end_form(questions, author_index):
     form_started = False
     global responses
-    confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here and click ✅!', color = form_color)
+    confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
 
     # print("responses: ", responses)
     # print("1st q: ", questions[0]['question'])
@@ -115,7 +115,9 @@ def submit_responses():
     #write to the database
     with open('dummy_responses.json', 'w') as w:
         json.dump(responses, w)
-    
+    #make an embed
+    submitted_embed = discord.Embed(title = 'Form submitted', description = 'You can view and manage your responses here: <insert link>', color = form_color)
+    return submitted_embed
 
 
 @client.event
@@ -206,8 +208,8 @@ async def on_message(message):
             print("wrong reaction")
         else:
             print(user)
-            submit_responses()
-            await user.send("Responses have been submitted")
+            submitted_embed = submit_responses()
+            await user.send(embed=submitted_embed)
 
 # detect message edits
 @client.event
