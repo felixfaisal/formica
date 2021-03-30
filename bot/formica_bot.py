@@ -3,9 +3,11 @@ import os
 import json
 from decouple import config
 
+intents = discord.Intents().default()
+intents.members = True
+intents.reactions = True
 
-
-client = discord.Client()
+client = discord.Client(intents = intents)
 
 form_color = 0xff8906
 # define messages
@@ -16,7 +18,7 @@ form_name = "Event Registration"
 
 form_init_msg = "To start, type !start"
 
-
+author_index = 0
 responses = []
 form_started = False
 
@@ -39,6 +41,7 @@ def get_question(questions, cur_index):
 
 def set_response(response, author, index):
     global responses
+    global author_index
     # get the responses from the database
     # with open('dummy_responses.json', 'r') as r:
     #     responses = json.load(r)
@@ -54,26 +57,49 @@ def set_response(response, author, index):
         # print("target: ", target)
 
         # get index
-        target_index = responses.index(target)
+        author_index = responses.index(target)
         #print("found at index ", target_index)    
 
-        #set response
-        responses[target_index]['responses'].append(response)
-        #print("set: ", responses)
+        #set response & id
+        responses[author_index]['responses'].append(response.content)
+        responses[author_index]['response_ids'].append(response.id)
+        print("set: ", responses)
     except:
         print("not found")
         # append to database
-        responses.append({'username': str(author), 'user_id': str(author.id), 'responses': [response]})
-        #print("appended: ", responses)
+        responses.append({'username': str(author), 'user_id': str(author.id), 'responses': [response.content], 'response_ids': [response.id]})
+        print("appended: ", responses)
 
-        target_index = len(responses) - 1
+        author_index = len(responses) - 1
     
-    return target_index
+    #return user_index
+
+def edit_response(new_response):
+    global author_index
+    # search responses for corresponding id
+
+    try:
+        print("response ids:")
+        for item in responses[author_index]['response_ids']:
+            if item == new_response.id:
+                target = item
+                target_index = responses[author_index]['response_ids'].index(target)
+        #target = next(item for item in responses if item['response_ids'][item] == str(new_response.id))
+        #target = next(item for item in responses[author_index]['response_ids'] if item==str(new_response.id))
+        #just get the specific user
+
+    except:
+        print("id not found")
+    else:
+        print(f"id found at index {target_index}")
+        # write over the response 
+        responses[author_index]['responses'][target_index] = str(new_response.content)
+    
 
 def end_form(questions, author_index):
     form_started = False
     global responses
-    confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then type !finished.', color = form_color)
+    confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
 
     # print("responses: ", responses)
     # print("1st q: ", questions[0]['question'])
@@ -89,7 +115,9 @@ def submit_responses():
     #write to the database
     with open('dummy_responses.json', 'w') as w:
         json.dump(responses, w)
-    
+    #make an embed
+    submitted_embed = discord.Embed(title = 'Form submitted', description = 'You can view and manage your responses here: <insert link>', color = form_color)
+    return submitted_embed
 
 
 @client.event
@@ -114,13 +142,26 @@ async def on_message(message):
 
         # send welcome message
         await message.channel.send(embed=welcome_embed)
+
+        # wait for a reaction
+        def check_reaction(reaction, user):
+            return True, user == message.author #true, b'c we're accepting any reaction
+
+        try:
+            reaction, user = await client.wait_for('reaction_add', check=check_reaction)
+        except:
+            print("something went wrong")
+        else:
+            print(user)
+            form_init = discord.Embed(title = form_name, description = form_init_msg, color = form_color)
+            form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would!\n You can edit your response by hovering on your message and clicking 'edit'.\n To see a list of available commands, type !help.", inline = False)
+
+            await user.send(embed=form_init)
     
     if msg.startswith('!start'):
         if form_started == False:
             cur_index = 0
-            questions, q_count = start_form()
-            
-        
+            questions, q_count = start_form()   
 
         while cur_index < q_count:
             #print(f"cur index: {cur_index}, total qs: {q_count}")
@@ -128,6 +169,9 @@ async def on_message(message):
             # send the current question
             q_embed = get_question(questions, cur_index)
             await message.channel.send(embed=q_embed)
+            print("question id: ", message.id)
+            print("question sent at: ", message.created_at)
+            print("question: ", q_embed.title)
 
             # wait for response
             def check(m):
@@ -139,7 +183,9 @@ async def on_message(message):
 
             # save response
             cur_response = msg.content
-            author_index = set_response(msg.content, message.author, cur_index)
+            #author_index = set_response(msg, message.author, cur_index)
+            set_response(msg, message.author, cur_index)
+            print(f"received response: {cur_response}, id: {msg.id}")
 
             # send feedback to user
             # await message.channel.send(f"Response received: {msg.content}")
@@ -149,38 +195,55 @@ async def on_message(message):
         
         #await message.channel.send("Questions completed")
         confirmation_embed = end_form(questions, author_index)
-        await message.channel.send(embed=confirmation_embed)
-        await message.add_reaction('✅')
-        
+        confirmation_msg = await message.channel.send(embed=confirmation_embed)
+        await confirmation_msg.add_reaction('✅')
 
+        # wait for a reaction
+        def check_reaction(reaction, user):
+            return str(reaction.emoji) == '✅' and user == message.author
 
+        try:
+            reaction, user = await client.wait_for('reaction_add', check=check_reaction) #add timeout?
+        except:
+            print("wrong reaction")
+        else:
+            print(user)
+            submitted_embed = submit_responses()
+            await user.send(embed=submitted_embed)
 
-
+# detect message edits
+@client.event
+async def on_message_edit(before, after):
+    if before.content != after.content:
+        print(f"Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
+        # edit the response
+        edit_response(after)
 
 # listen for reactions
-@client.event
-async def on_reaction_add(reaction, user):
-    #ignore, if the msg is from ourselves
-    # if user == client.user:
-    #     return
+# @client.event
+# async def on_reaction_add(reaction, user):
+#     print("user: ", user)
+#     #ignore, if the reaction is from ourselves
+#     if user == client.user:
+#         print("reaction is from ourselves")
+#     else:
+#         # print("message content: ", reaction.message.content)
+#         # print("message content: ", reaction.message.embeds[0].title)
+#         # grab the title of the embed msg that was reacted to
+#         message_title = reaction.message.embeds[0].title
 
-    print("embed content: ", reaction.message.embeds)
-    # grab the title of the embed msg that was reacted to
-    message_title = reaction.message.embeds[0].title
-    #message_title = reaction.message.embed.title
-    print(f"Reaction to {message_title} detected")
+#         # check if the message was the welcome msg
+#         if message_title == welcome_title:
+#         #if reaction.message.content == welcome_msg:
+#             # send the form instruction message to the user
+#             form_init = discord.Embed(title = form_name, description = form_init_msg, color = form_color)
+#             form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would!\n You can edit your response by hovering on your message and clicking 'edit'.\n To see a list of available commands, type !help.", inline = False)
 
-    # check if the message was the welcome msg
-    if message_title == welcome_title:
-        # send the form instruction message to the user
-        form_init = discord.Embed(title = form_name, description = form_init_msg, color = form_color)
-        form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would!\n You can edit your response by hovering on your message and clicking 'edit'.\n To see a list of available commands, type !help.", inline = False)
+#             await user.send(embed=form_init)
 
-        await user.send(embed=form_init)
-
-    if reaction.emoji == '✅' and message_title == 'Confirm your answers':
-        submit_responses()
-        await user.send("Responses have been submitted")
+        # if reaction.emoji == '✅' and reaction.message.content == '!start':
+        #     submit_responses()
+        #     await user.send("Responses have been submitted")
 
 
 
