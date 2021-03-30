@@ -1,0 +1,8 @@
+# Config files
+config.json
+.env
+
+# dummy data
+dummy_questions.json
+dummy_responses.json
+dummy_responses_example.json
