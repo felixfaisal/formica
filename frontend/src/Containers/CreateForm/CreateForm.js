@@ -16,6 +16,10 @@ const CreateForm = () => {
 		setFields([...fields, { type: "text", title: "", options: [] }]);
 	};
 
+	const removeField = (index) => {
+		setFields([...fields.slice(0, index), ...fields.slice(index + 1)]);
+	};
+
 	const changeField = (index, name, value) => {
 		setFields([...fields.slice(0, index), { ...fields[index], [name]: value }, ...fields.slice(index + 1)]);
 	};
@@ -58,7 +62,7 @@ const CreateForm = () => {
 					<option>Text</option>
 					<option>Multiple Choice</option>
 				</select>
-				<Close className={styles.close} />
+				<Close className={styles.close} onClick={() => removeField(index)} />
 			</div>
 			{field.type === "Multiple Choice" ? (
 				<div className={styles.choices_container}>
