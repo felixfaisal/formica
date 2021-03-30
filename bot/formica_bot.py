@@ -18,7 +18,7 @@ form_name = "Event Registration"
 
 form_init_msg = "To start, type !start"
 
-
+author_index = 0
 responses = []
 form_started = False
 
@@ -41,6 +41,7 @@ def get_question(questions, cur_index):
 
 def set_response(response, author, index):
     global responses
+    global author_index
     # get the responses from the database
     # with open('dummy_responses.json', 'r') as r:
     #     responses = json.load(r)
@@ -56,12 +57,12 @@ def set_response(response, author, index):
         # print("target: ", target)
 
         # get index
-        target_index = responses.index(target)
+        author_index = responses.index(target)
         #print("found at index ", target_index)    
 
         #set response & id
-        responses[target_index]['responses'].append(response.content)
-        responses[target_index]['response_ids'].append(response.id)
+        responses[author_index]['responses'].append(response.content)
+        responses[author_index]['response_ids'].append(response.id)
         print("set: ", responses)
     except:
         print("not found")
@@ -69,25 +70,36 @@ def set_response(response, author, index):
         responses.append({'username': str(author), 'user_id': str(author.id), 'responses': [response.content], 'response_ids': [response.id]})
         print("appended: ", responses)
 
-        target_index = len(responses) - 1
+        author_index = len(responses) - 1
     
-    return target_index
+    #return user_index
 
 def edit_response(new_response):
+    global author_index
     # search responses for corresponding id
+
     try:
-        target = next(item for item in responses if item['response_ids'][item] == str(new_response.id))
+        print("response ids:")
+        for item in responses[author_index]['response_ids']:
+            if item == new_response.id:
+                target = item
+                target_index = responses[author_index]['response_ids'].index(target)
+        #target = next(item for item in responses if item['response_ids'][item] == str(new_response.id))
+        #target = next(item for item in responses[author_index]['response_ids'] if item==str(new_response.id))
+        #just get the specific user
+
     except:
         print("id not found")
     else:
-        print("id found")
+        print(f"id found at index {target_index}")
         # write over the response 
+        responses[author_index]['responses'][target_index] = str(new_response.content)
     
 
 def end_form(questions, author_index):
     form_started = False
     global responses
-    confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then type !finished.', color = form_color)
+    confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here and click ✅!', color = form_color)
 
     # print("responses: ", responses)
     # print("1st q: ", questions[0]['question'])
@@ -169,7 +181,8 @@ async def on_message(message):
 
             # save response
             cur_response = msg.content
-            author_index = set_response(msg, message.author, cur_index)
+            #author_index = set_response(msg, message.author, cur_index)
+            set_response(msg, message.author, cur_index)
             print(f"received response: {cur_response}, id: {msg.id}")
 
             # send feedback to user
