@@ -10,6 +10,7 @@ intents.reactions = True
 client = discord.Client(intents = intents)
 
 form_color = 0xff8906
+emoji_options = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣', '6⃣', '7⃣', '8⃣', '9⃣']
 # define messages
 welcome_title = "Welcome to Formica, the in-discord form service!"
 welcome_msg = "It looks like you have a form to fill out. To do so, please react to this message with any emoji. Then, check your inbox!"
@@ -36,7 +37,22 @@ def start_form():
 
 
 def get_question(questions, cur_index):
-    cur_q_embed = discord.Embed(title = questions[cur_index]['question'], description = questions[cur_index]['description'], color = form_color)
+    # The process of making the embed is the same, whether the q_type is text or multi-choice
+    cur_q_embed = discord.Embed(title = questions[cur_index]['question'], description = questions[cur_index]['description'], color = form_color) 
+
+    # check if we have an m/c question
+    if questions[cur_index]['input_type'] == "multiple choice":
+        tot_options = len(questions[cur_index]['options'])
+
+        # add m/c instructions to question description
+        cur_q_embed.description += "\nAnswer by reacting with the corresponding emoji."
+
+        # iterate through the options and emojis, adding them to the embed
+        for index in range(tot_options):
+            print(emoji_options[index])
+            print(index)
+            cur_q_embed.add_field(name = f"{emoji_options[index]} {questions[cur_index]['options'][index]}", value = '** **', inline = False)
+    
     return cur_q_embed
 
 def set_response(response, author, index):
@@ -84,9 +100,6 @@ def edit_response(new_response):
             if item == new_response.id:
                 target = item
                 target_index = responses[author_index]['response_ids'].index(target)
-        #target = next(item for item in responses if item['response_ids'][item] == str(new_response.id))
-        #target = next(item for item in responses[author_index]['response_ids'] if item==str(new_response.id))
-        #just get the specific user
 
     except:
         print("id not found")
@@ -123,7 +136,6 @@ def submit_responses():
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
-    #get_questions()
 
 # listen for messages/commands
 @client.event
