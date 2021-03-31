@@ -9,12 +9,16 @@ intents.reactions = True
 
 client = discord.Client(intents = intents)
 
+# form stuff
+form_name = ""
 form_color = 0xff8906
+#form_server = ""
+form_alert_channel = ""
+
 emoji_options = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣', '6⃣', '7⃣', '8⃣', '9⃣']
 # define messages
 welcome_title = "Welcome to Formica, the in-discord form service!"
 welcome_msg = "It looks like you have a form to fill out. To do so, please react to this message with any emoji. Then, check your inbox!"
-form_name = "Event Registration"
 
 
 form_init_msg = "To start, type !start"
@@ -32,11 +36,18 @@ form_started = False
 
 def start_form():
     form_started = True
-    global responses, questions, q_count
+    global responses, questions, q_count, form_name, form_channel, form_alert_channel
+
+    # get questions
     with open("dummy_questions.json", "r") as q:
         questions = json.load(q)
         q_count = len(questions)
     
+    # later: get form name, form server, and channel to send updates to
+    form_name = "Event Registration"
+    form_alert_channel = client.get_channel(824348394411262013)
+    
+    # get responses
     with open('dummy_responses.json', 'r') as r:
         responses = json.load(r)
 
@@ -120,7 +131,6 @@ def edit_response(edited_response, question_type):
 
     # search responses for corresponding id
     try:
-        print("response ids:")
         for item in responses[author_index]['response_ids']:
             if item == new_response_id:
                 target = item
@@ -153,16 +163,21 @@ def end_form(author_index):
     
     return confirmation_embed
 
-def submit_responses():
-    global responses
+def submit_responses(user):
+    global responses, form_name
 
     #write to the database
     with open('dummy_responses.json', 'w') as w:
         json.dump(responses, w)
 
-    #make an embed
-    submitted_embed = discord.Embed(title = 'Form submitted', description = 'You can view and manage your responses here: <insert link>', color = form_color)
-    return submitted_embed
+    #make submission confirmation for the user
+    submission_alert_user = discord.Embed(title = 'Form submitted', description = 'You can view and manage your responses here: <insert link>', color = form_color)
+
+    # make a submission confirmation for the form author
+    submission_alert_author = discord.Embed(title = f'{user} has submitted a form', description = 'To manage your forms, click here: <insert link>', color = form_color)
+    submission_alert_author.add_field(name = 'Form:', value = form_name, inline = False)
+
+    return submission_alert_user, submission_alert_author
 
 
 @client.event
@@ -272,14 +287,20 @@ async def on_message(message):
         except:
             print("wrong reaction")
         else:
-            submitted_embed = submit_responses()
-            await user.send(embed=submitted_embed)
+            # submit response, get the confirmation embeds
+            submission_alert_user, submission_alert_author = submit_responses(user)
+
+            # send a submission confirmation to the user
+            await user.send(embed=submission_alert_user)
+
+            # send a submission confirmation to the author
+            await form_alert_channel.send(embed=submission_alert_author)
 
 # detect message edits
 @client.event
 async def on_message_edit(before, after):
     if before.content != after.content:
-        print(f"Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
+        # print(f"Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
         # edit the response & get an updated embed
         old_confirmation = await after.channel.fetch_message(confirmation_id)
         new_confirmation = edit_response(after, "text")
@@ -289,9 +310,8 @@ async def on_message_edit(before, after):
 @client.event
 async def on_reaction_add(reaction, user):
     # need to make sure this doesn't clash with the intital rxn
-    print("user: ", user)
-    print("message id: ", reaction.message.id)
-    print("option: ", reaction.message)
+    # print("user: ", user)
+    # print("message id: ", reaction.message.id)
 
     #ignore, if the reaction is from ourselves
     if user == client.user:
