@@ -21,11 +21,13 @@ form_init_msg = "To start, type !start"
 
 author_index = 0
 responses = []
+questions = []
+q_count = 0
 form_started = False
 
 def start_form():
     form_started = True
-    global responses
+    global responses, questions, q_count
     with open("dummy_questions.json", "r") as q:
         questions = json.load(q)
         q_count = len(questions)
@@ -33,15 +35,15 @@ def start_form():
     with open('dummy_responses.json', 'r') as r:
         responses = json.load(r)
 
-    return questions, q_count
 
-
-def get_question(questions, cur_index):
+def get_question(cur_index):
+    global questions
+    q_type = questions[cur_index]['input_type']
     # The process of making the embed is the same, whether the q_type is text or multi-choice
     cur_q_embed = discord.Embed(title = questions[cur_index]['question'], description = questions[cur_index]['description'], color = form_color) 
 
     # check if we have an m/c question
-    if questions[cur_index]['input_type'] == "multiple choice":
+    if q_type == "multiple choice":
         tot_options = len(questions[cur_index]['options'])
 
         # add m/c instructions to question description
@@ -49,23 +51,15 @@ def get_question(questions, cur_index):
 
         # iterate through the options and emojis, adding them to the embed
         for index in range(tot_options):
-            print(emoji_options[index])
-            print(index)
             cur_q_embed.add_field(name = f"{emoji_options[index]} {questions[cur_index]['options'][index]}", value = '** **', inline = False)
-    
-    return cur_q_embed
+    else:
+        tot_options = 0
+    return cur_q_embed, q_type, tot_options
 
-def set_response(response, author, index):
-    global responses
-    global author_index
-    # get the responses from the database
-    # with open('dummy_responses.json', 'r') as r:
-    #     responses = json.load(r)
+def set_response(response, response_id, author, index):
+    global responses, author_index
     
-    # test
-    # print("retrieved responses: ", database_responses)
-    # print("type: ", type(database_responses))
-    # print(f"response: {response}, author: {author}, author id: {author.id}")
+    print(f"response: {response}, author: {author}, author id: {author.id}")
 
     # search database for the user
     try:
@@ -77,13 +71,13 @@ def set_response(response, author, index):
         #print("found at index ", target_index)    
 
         #set response & id
-        responses[author_index]['responses'].append(response.content)
-        responses[author_index]['response_ids'].append(response.id)
+        responses[author_index]['responses'].append(response)
+        responses[author_index]['response_ids'].append(response_id)
         print("set: ", responses)
     except:
         print("not found")
         # append to database
-        responses.append({'username': str(author), 'user_id': str(author.id), 'responses': [response.content], 'response_ids': [response.id]})
+        responses.append({'username': str(author), 'user_id': str(author.id), 'responses': [response], 'response_ids': [response_id]})
         print("appended: ", responses)
 
         author_index = len(responses) - 1
@@ -92,8 +86,8 @@ def set_response(response, author, index):
 
 def edit_response(new_response):
     global author_index
-    # search responses for corresponding id
 
+    # search responses for corresponding id
     try:
         print("response ids:")
         for item in responses[author_index]['response_ids']:
@@ -109,15 +103,13 @@ def edit_response(new_response):
         responses[author_index]['responses'][target_index] = str(new_response.content)
     
 
-def end_form(questions, author_index):
+def end_form(author_index):
+    global questions, responses
     form_started = False
-    global responses
+
     confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
 
-    # print("responses: ", responses)
-    # print("1st q: ", questions[0]['question'])
-    # print("1st response: ", responses[author_index]['responses'][0])
-
+    # add questions and answers to the embed
     for item in range(len(questions)):
         confirmation_embed.add_field(name = questions[item]['question'], value = responses[author_index]['responses'][item], inline = False)
     
@@ -125,9 +117,11 @@ def end_form(questions, author_index):
 
 def submit_responses():
     global responses
+
     #write to the database
     with open('dummy_responses.json', 'w') as w:
         json.dump(responses, w)
+
     #make an embed
     submitted_embed = discord.Embed(title = 'Form submitted', description = 'You can view and manage your responses here: <insert link>', color = form_color)
     return submitted_embed
@@ -173,40 +167,57 @@ async def on_message(message):
     if msg.startswith('!start'):
         if form_started == False:
             cur_index = 0
-            questions, q_count = start_form()   
+            start_form()
 
         while cur_index < q_count:
-            #print(f"cur index: {cur_index}, total qs: {q_count}")
+            print(f"cur index: {cur_index}, total qs: {q_count}")
 
             # send the current question
-            q_embed = get_question(questions, cur_index)
-            await message.channel.send(embed=q_embed)
+            q_embed, q_type, tot_options = get_question(cur_index)
+            q_message = await message.channel.send(embed=q_embed)
             print("question id: ", message.id)
             print("question sent at: ", message.created_at)
             print("question: ", q_embed.title)
 
-            # wait for response
-            def check(m):
-                # check that it's the right user and channel
-                # later: check that we're on the right question or else the form restarts
-                return m.author.id == message.author.id and m.channel == message.channel
+            # check question type
+            if q_type == "text":
+                # wait for response
+                def check(m):
+                    # check that it's the right user and channel
+                    # later: check that we're on the right question or else the form restarts
+                    return m.author.id == message.author.id and m.channel == message.channel
 
-            msg = await client.wait_for('message', check=check)
+                msg = await client.wait_for('message', check=check)
 
-            # save response
-            cur_response = msg.content
-            #author_index = set_response(msg, message.author, cur_index)
-            set_response(msg, message.author, cur_index)
-            print(f"received response: {cur_response}, id: {msg.id}")
+                # save response
+                set_response(msg.content, msg.id, message.author, cur_index)
 
-            # send feedback to user
-            # await message.channel.send(f"Response received: {msg.content}")
+            elif q_type == "multiple choice":
+                # add the option emojis to our message
+                for index in range(tot_options):
+                    await q_message.add_reaction(emoji_options[index])
+                
+                # wait for reaction
+                def check_reaction(reaction, user):
+                    # check that the emoji is within the range of alloted options & it's from the right user
+                    return (str(reaction.emoji) in emoji_options[0:tot_options]) and (user == message.author)
+                
+                reaction, user = await client.wait_for('reaction_add', check=check_reaction)
+
+                #get the option they selected
+                option_index = emoji_options.index(str(reaction.emoji))
+                response = questions[cur_index]['options'][option_index]
+
+                #save response
+                set_response(response, q_message.id, user, cur_index)
+                
 
             # update counters
             cur_index += 1
+            
         
-        #await message.channel.send("Questions completed")
-        confirmation_embed = end_form(questions, author_index)
+        # send confirmation message
+        confirmation_embed = end_form(author_index)
         confirmation_msg = await message.channel.send(embed=confirmation_embed)
         await confirmation_msg.add_reaction('✅')
 
@@ -219,7 +230,6 @@ async def on_message(message):
         except:
             print("wrong reaction")
         else:
-            print(user)
             submitted_embed = submit_responses()
             await user.send(embed=submitted_embed)
 
