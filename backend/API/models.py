@@ -1,5 +1,7 @@
 from django.db import models
 from .managers import DiscordUserOauth2Manager
+from django_mysql.models import JSONField
+
 # Create your models here.
 class Task(models.Model):
     title = models.CharField(max_length=200)
@@ -24,3 +26,14 @@ class DiscordUser(models.Model):
     
     def is_active(self, request):
         return True
+
+class FormCreate(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    userid = models.BigIntegerField()
+    Formfields = JSONField()
+
+class FormResponse(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    formid = models.BigIntegerField()
+    responseid = models.BigIntegerField()
+    response = JSONField()
