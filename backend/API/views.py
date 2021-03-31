@@ -41,12 +41,13 @@ def discord_logout(request):
 
 def discord_login_redirect(request):
     code = request.GET.get('code')
-    print(code)
+    #print(code)
     user = exchange_code(code)
-    print("Going to authenticate")
+    #print("Going to authenticate")
     discord_user = authenticate(request, user=user)
+    #print(discord_user)
     discord_user = list(discord_user).pop()
-    print(discord_user)
+    #print(discord_user)
     login(request, discord_user)
     #return JsonResponse(user)
     return redirect('index')
