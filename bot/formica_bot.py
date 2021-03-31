@@ -149,7 +149,6 @@ def edit_response(edited_response, question_type):
 
 def end_form(author_index):
     global questions, responses, confirmation_embed
-    form_started = False
 
     # confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
 
@@ -160,7 +159,8 @@ def end_form(author_index):
     return confirmation_embed
 
 def submit_responses(user):
-    global responses, form_name
+    global responses, form_name, form_started
+    form_started = False
 
     #write to the database
     with open('dummy_responses.json', 'w') as w:
@@ -225,10 +225,15 @@ async def on_message(message):
             print("!start invoked in a non-private channel")
             return
         
-        global tot_options, confirmation_id
+        global tot_options, confirmation_id, form_started
+
         if form_started == False:
+            form_started = True
             cur_index = 0
             start_form()
+        else:
+            print("form already started")
+            await message.author.send("Oops! You've already started this form. Answer the previous question to proceed.\nYou can answer by sending a message, or if it's a multiple choice, by reacting to the message.")
     
         while cur_index < q_count:
             print(f"cur index: {cur_index}, total qs: {q_count}")
@@ -246,8 +251,8 @@ async def on_message(message):
                 # wait for response
                 def check(m):
                     # check that it's the right user and channel
-                    # later: check that we're on the right question or else the form restarts
-                    return m.author.id == message.author.id and m.channel == message.channel
+                    # ignore message if it's the !start command
+                    return m.author.id == message.author.id and m.channel == message.channel and m.content.startswith('!start') == False
 
                 msg = await client.wait_for('message', check=check)
 
