@@ -22,6 +22,7 @@ form_init_msg = "To start, type !start"
 author_index = 0
 responses = []
 questions = []
+mc_ids = []
 q_count = 0
 form_started = False
 
@@ -54,6 +55,7 @@ def get_question(cur_index):
             cur_q_embed.add_field(name = f"{emoji_options[index]} {questions[cur_index]['options'][index]}", value = '** **', inline = False)
     else:
         tot_options = 0
+
     return cur_q_embed, q_type, tot_options
 
 def set_response(response, response_id, author, index):
@@ -84,14 +86,26 @@ def set_response(response, response_id, author, index):
     
     #return user_index
 
-def edit_response(new_response):
-    global author_index
+def edit_response(edited_response, question_type):
+    global author_index, questions
+    
+    #grab the message and id
+    if question_type == "text":
+        new_response = edited_response.content
+        new_response_id = edited_response.id
+
+    elif question_type == "multiple choice":
+        # get the index
+        emoji_index = emoji_options.index(str(edited_response.emoji))
+        # grab the corresponding option and set that as the new message
+        new_response = questions[author_index]['options'][emoji_index]
+        new_response_id = edited_response.message.id
 
     # search responses for corresponding id
     try:
         print("response ids:")
         for item in responses[author_index]['response_ids']:
-            if item == new_response.id:
+            if item == new_response_id:
                 target = item
                 target_index = responses[author_index]['response_ids'].index(target)
 
@@ -99,9 +113,12 @@ def edit_response(new_response):
         print("id not found")
     else:
         print(f"id found at index {target_index}")
-        # write over the response 
-        responses[author_index]['responses'][target_index] = str(new_response.content)
-    
+
+        # write over the response      
+        responses[author_index]['responses'][target_index] = str(new_response)
+
+        
+
 
 def end_form(author_index):
     global questions, responses
@@ -175,8 +192,7 @@ async def on_message(message):
             # send the current question
             q_embed, q_type, tot_options = get_question(cur_index)
             q_message = await message.channel.send(embed=q_embed)
-            print("question id: ", message.id)
-            print("question sent at: ", message.created_at)
+            print("question id: ", q_message.id)
             print("question: ", q_embed.title)
 
             # check question type
@@ -193,6 +209,9 @@ async def on_message(message):
                 set_response(msg.content, msg.id, message.author, cur_index)
 
             elif q_type == "multiple choice":
+                global mc_ids
+                mc_ids.append(q_message.id)
+
                 # add the option emojis to our message
                 for index in range(tot_options):
                     await q_message.add_reaction(emoji_options[index])
@@ -211,11 +230,9 @@ async def on_message(message):
                 #save response
                 set_response(response, q_message.id, user, cur_index)
                 
-
             # update counters
             cur_index += 1
-            
-        
+                    
         # send confirmation message
         confirmation_embed = end_form(author_index)
         confirmation_msg = await message.channel.send(embed=confirmation_embed)
@@ -239,7 +256,24 @@ async def on_message_edit(before, after):
     if before.content != after.content:
         print(f"Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
         # edit the response
-        edit_response(after)
+        edit_response(after, "text")
+
+# detect edits to mc questions
+@client.event
+async def on_reaction_add(reaction, user):
+    # need to make sure this doesn't clash with the intital rxn
+    print("user: ", user)
+    print("message id: ", reaction.message.id)
+
+    #ignore, if the reaction is from ourselves
+    if user == client.user:
+        return
+
+    # check if it's an mc question
+    if (reaction.message.id in mc_ids):
+        print("change to mc response detected")
+
+        edit_response(reaction, "multiple choice")
 
 # listen for reactions
 # @client.event
