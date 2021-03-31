@@ -25,6 +25,9 @@ questions = []
 mc_ids = []
 tot_options = 0
 q_count = 0
+confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
+
+confirmation_id = 0
 form_started = False
 
 def start_form():
@@ -87,7 +90,7 @@ def set_response(response, response_id, author, index):
     #return user_index
 
 def edit_response(edited_response, question_type):
-    global author_index, questions
+    global author_index, questions, confirmation_embed
     
     #grab the message and id
     if question_type == "text":
@@ -123,14 +126,18 @@ def edit_response(edited_response, question_type):
         # write over the response      
         responses[author_index]['responses'][target_index] = str(new_response)
 
+        #edit the confirmation message
+        new_confirmation = confirmation_embed
+        new_confirmation.set_field_at(index = target_index, name = questions[target_index]['question'], value = new_response, inline = False)
+        return new_confirmation
         
 
 
 def end_form(author_index):
-    global questions, responses
+    global questions, responses, confirmation_embed
     form_started = False
 
-    confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
+    # confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
 
     # add questions and answers to the embed
     for item in range(len(questions)):
@@ -188,12 +195,12 @@ async def on_message(message):
             await user.send(embed=form_init)
     
     if msg.startswith('!start'):
+        global tot_options, confirmation_id
         if form_started == False:
             cur_index = 0
             start_form()
     
         while cur_index < q_count:
-            global tot_options
             print(f"cur index: {cur_index}, total qs: {q_count}")
 
             # send the current question
@@ -243,6 +250,7 @@ async def on_message(message):
         # send confirmation message
         confirmation_embed = end_form(author_index)
         confirmation_msg = await message.channel.send(embed=confirmation_embed)
+        confirmation_id = confirmation_msg.id
         await confirmation_msg.add_reaction('✅')
 
         # wait for a reaction
@@ -262,8 +270,10 @@ async def on_message(message):
 async def on_message_edit(before, after):
     if before.content != after.content:
         print(f"Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
-        # edit the response
-        edit_response(after, "text")
+        # edit the response & get an updated embed
+        old_confirmation = await after.channel.fetch_message(confirmation_id)
+        new_confirmation = edit_response(after, "text")
+        await old_confirmation.edit(embed = new_confirmation)
 
 # detect edits to mc questions
 @client.event
@@ -280,7 +290,9 @@ async def on_reaction_add(reaction, user):
     if (reaction.message.id in mc_ids):
         print("change to mc response detected")
 
-        edit_response(reaction, "multiple choice")
+        old_confirmation = await reaction.message.channel.fetch_message(confirmation_id)
+        new_confirmation = edit_response(reaction, "multiple choice")
+        await old_confirmation.edit(embed = new_confirmation)
 
 # listen for reactions
 # @client.event
