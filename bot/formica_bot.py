@@ -3,14 +3,14 @@ import os
 import json
 from decouple import config
 
-intents = discord.Intents().default()
-intents.members = True
-intents.reactions = True
+intents = discord.Intents().all()
+# intents.members = True
+# intents.reactions = True
 
 client = discord.Client(intents = intents)
 
 # form stuff
-form_name = ""
+form_name = "Name"
 form_color = 0xff8906
 #form_server = ""
 form_alert_channel = ""
@@ -36,16 +36,12 @@ form_started = False
 
 def start_form():
     form_started = True
-    global responses, questions, q_count, form_name, form_channel, form_alert_channel
+    global responses, questions, q_count
 
     # get questions
     with open("dummy_questions.json", "r") as q:
         questions = json.load(q)
         q_count = len(questions)
-    
-    # later: get form name, form server, and channel to send updates to
-    form_name = "Event Registration"
-    form_alert_channel = client.get_channel(824348394411262013)
     
     # get responses
     with open('dummy_responses.json', 'r') as r:
@@ -183,6 +179,10 @@ def submit_responses(user):
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+    # later: get form name, form server, and channel to send updates to
+    global form_name, form_channel, form_alert_channel
+    form_name = "Event Registration"
+    form_alert_channel = client.get_channel(824348394411262013)
 
 # listen for messages/commands
 @client.event
@@ -213,11 +213,18 @@ async def on_message(message):
         else:
             print(user)
             form_init = discord.Embed(title = form_name, description = form_init_msg, color = form_color)
-            form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would!\n You can edit your response by hovering on your message and clicking 'edit'.\n To see a list of available commands, type !help.", inline = False)
+            form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would.\n You can edit your response by hovering on your message and clicking 'edit'", inline = False)
 
             await user.send(embed=form_init)
     
     if msg.startswith('!start'):
+        # check that we're in a DM channel, with the user that sent the command
+        print("channel type: ", message.channel)
+        #print(f"channel recipient: {message.channel.recipient}, message author: {message.author}")
+        if message.channel.type != "private" and message.channel.recipient != message.author:
+            print("!start invoked in a non-private channel")
+            return
+        
         global tot_options, confirmation_id
         if form_started == False:
             cur_index = 0
@@ -228,7 +235,7 @@ async def on_message(message):
 
             # send the current question
             q_embed, q_type = get_question(cur_index)
-            q_message = await message.channel.send(embed=q_embed)
+            q_message = await message.author.send(embed=q_embed)
             # save the question id
             questions[cur_index]['question_id'] = q_message.id
             print("question id: ", q_message.id)
