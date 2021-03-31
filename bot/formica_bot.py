@@ -78,12 +78,12 @@ def set_response(response, response_id, author, index):
         #set response & id
         responses[author_index]['responses'].append(response)
         responses[author_index]['response_ids'].append(response_id)
-        print("set: ", responses)
+        #print("set: ", responses)
     except:
         print("not found")
         # append to database
         responses.append({'username': str(author), 'user_id': str(author.id), 'responses': [response], 'response_ids': [response_id]})
-        print("appended: ", responses)
+        #print("appended: ", responses)
 
         author_index = len(responses) - 1
     
@@ -105,10 +105,18 @@ def edit_response(edited_response, question_type):
         if emoji_index >= tot_options:
             print(f"invalid option {emoji_index} selected")
             return
+        
+        # get the id
+        new_response_id = edited_response.message.id
+
+        # find the question index
+        for index in range(len(questions)):
+            if questions[index]['question_id'] == new_response_id:
+                print("FLAG: question found")
+                q_index = index
 
         # grab the corresponding option and set that as the new message
-        new_response = questions[author_index]['options'][emoji_index]
-        new_response_id = edited_response.message.id
+        new_response = questions[q_index]['options'][emoji_index]       
 
     # search responses for corresponding id
     try:
@@ -206,6 +214,8 @@ async def on_message(message):
             # send the current question
             q_embed, q_type = get_question(cur_index)
             q_message = await message.channel.send(embed=q_embed)
+            # save the question id
+            questions[cur_index]['question_id'] = q_message.id
             print("question id: ", q_message.id)
             print("question: ", q_embed.title)
 
@@ -281,6 +291,7 @@ async def on_reaction_add(reaction, user):
     # need to make sure this doesn't clash with the intital rxn
     print("user: ", user)
     print("message id: ", reaction.message.id)
+    print("option: ", reaction.message)
 
     #ignore, if the reaction is from ourselves
     if user == client.user:
