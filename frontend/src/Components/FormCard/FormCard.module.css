@@ -14,6 +14,7 @@
   margin-bottom: 2vw;
   cursor: pointer;
   transition: transform 0.5s;
+  text-decoration: none;
 }
 
 .card_container:hover {

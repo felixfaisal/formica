@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  max-height: 90%;
+}
+
+.title {
+  font-size: var(--h2);
+  color: var(--title-text-color);
+  margin: 0;
+  margin-bottom: 3vw;
+}
+
+.row {
+  display: inline-flex;
+  align-self: stretch;
+  justify-self: stretch;
+  justify-content: stretch;
+  align-items: stretch;
+  min-width: 100%;
+}
+
+.row > div {
+  width: fit-content;
+  border-bottom: 1px solid var(--tertiary-color);
+  min-width: 20%;
+}
+
+.heading {
+  font-size: var(--h3);
+  color: var(--title-text-color);
+  margin-bottom: 1vw;
+}
+
+.data {
+  font-size: var(--normal-text);
+  color: var(--paragraph-color);
+  margin-bottom: 0.5vw;
+}
