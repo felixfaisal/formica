@@ -23,6 +23,7 @@ author_index = 0
 responses = []
 questions = []
 mc_ids = []
+tot_options = 0
 q_count = 0
 form_started = False
 
@@ -38,7 +39,7 @@ def start_form():
 
 
 def get_question(cur_index):
-    global questions
+    global questions, tot_options
     q_type = questions[cur_index]['input_type']
     # The process of making the embed is the same, whether the q_type is text or multi-choice
     cur_q_embed = discord.Embed(title = questions[cur_index]['question'], description = questions[cur_index]['description'], color = form_color) 
@@ -53,10 +54,9 @@ def get_question(cur_index):
         # iterate through the options and emojis, adding them to the embed
         for index in range(tot_options):
             cur_q_embed.add_field(name = f"{emoji_options[index]} {questions[cur_index]['options'][index]}", value = '** **', inline = False)
-    else:
-        tot_options = 0
 
-    return cur_q_embed, q_type, tot_options
+
+    return cur_q_embed, q_type
 
 def set_response(response, response_id, author, index):
     global responses, author_index
@@ -97,6 +97,12 @@ def edit_response(edited_response, question_type):
     elif question_type == "multiple choice":
         # get the index
         emoji_index = emoji_options.index(str(edited_response.emoji))
+
+        #check that index is valid
+        if emoji_index >= tot_options:
+            print(f"invalid option {emoji_index} selected")
+            return
+
         # grab the corresponding option and set that as the new message
         new_response = questions[author_index]['options'][emoji_index]
         new_response_id = edited_response.message.id
@@ -185,12 +191,13 @@ async def on_message(message):
         if form_started == False:
             cur_index = 0
             start_form()
-
+    
         while cur_index < q_count:
+            global tot_options
             print(f"cur index: {cur_index}, total qs: {q_count}")
 
             # send the current question
-            q_embed, q_type, tot_options = get_question(cur_index)
+            q_embed, q_type = get_question(cur_index)
             q_message = await message.channel.send(embed=q_embed)
             print("question id: ", q_message.id)
             print("question: ", q_embed.title)
