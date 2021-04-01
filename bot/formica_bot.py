@@ -4,6 +4,7 @@ import json
 from decouple import config
 
 intents = discord.Intents().all()
+intents.reactions = True
 client = discord.Client(intents = intents)
 
 # form details
@@ -126,7 +127,6 @@ def edit_response(edited_response, question_type):
         # find the question index
         for index in range(len(questions)):
             if questions[index]['question_id'] == new_response_id:
-                print("FLAG: question found")
                 q_index = index
 
         # grab the corresponding option and set that as the new message
@@ -218,9 +218,9 @@ async def on_message(message):
         try:
             reaction, user = await client.wait_for('reaction_add', check=check_reaction)
         except:
+            # add timeout here if needed
             print("something went wrong")
         else:
-            print(user)
             form_init = discord.Embed(title = form_name, description = "To start, type !start", color = form_color)
             form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would.\n You can edit your response by hovering on your message and clicking 'edit'", inline = False)
 
@@ -236,25 +236,26 @@ async def on_message(message):
         
         global tot_options, confirmation_id, form_started, form_submitted
         
-        # get our questions and responses
-        get_form()
-        # search for the user in the saved responses
-        get_user(message.author)
+        
 
-        # check if form has already been submitted by the user
-        if form_submitted == True:
-            print("This user has already submitted a form")
-            await message.author.send("It looks like you've already submitted this form. You can manage your responses here: <insert link>")
-            return
 
         # check if form has already been started
         if form_started == False:
             form_started = True
             cur_index = 0
-            #start_form()
+            # get our questions and responses
+            get_form()
+            # search for the user in the saved responses
+            get_user(message.author)
         else:
             print("form already started")
             await message.author.send("Oops! You've already started this form. Answer the previous question to proceed.\nYou can answer by sending a message, or by reacting to the question if it's a multiple choice.")
+        
+        # check if form has already been submitted by the user
+        if form_submitted == True:
+            print("This user has already submitted a form")
+            await message.author.send("It looks like you've already submitted this form. You can manage your responses here: <insert link>")
+            return
     
         while cur_index < q_count:
             print(f"cur index: {cur_index}, total qs: {q_count}")
@@ -291,14 +292,14 @@ async def on_message(message):
                 # wait for reaction
                 def check_reaction(reaction, user):
                     # check that the emoji is within the range of alloted options & it's from the right user
-                    return (str(reaction.emoji) in emoji_options[0:tot_options]) and (user == message.author)
+                    return (str(reaction.emoji) in emoji_options[0:tot_options]) and (user == message.author) and reaction.message.content.startswith('!start') == False
                 
                 reaction, user = await client.wait_for('reaction_add', check=check_reaction)
 
                 #get the option they selected
                 option_index = emoji_options.index(str(reaction.emoji))
                 response = questions[cur_index]['options'][option_index]
-
+                
                 #save response
                 set_response(response, q_message.id, user, cur_index)
                 
@@ -352,11 +353,13 @@ async def on_reaction_add(reaction, user):
 
     # check if it's an mc question
     if (reaction.message.id in mc_ids):
-        print("change to mc response detected")
-
-        old_confirmation = await reaction.message.channel.fetch_message(confirmation_id)
-        new_confirmation = edit_response(reaction, "multiple choice")
-        await old_confirmation.edit(embed = new_confirmation)
+        try:
+            old_confirmation = await reaction.message.channel.fetch_message(confirmation_id)
+            new_confirmation = edit_response(reaction, "multiple choice")
+            await old_confirmation.edit(embed = new_confirmation)
+            print("change to mc response detected")
+        except:
+            return
 
 # run bot
 BOT_TOKEN = config('TOKEN')
