@@ -29,11 +29,11 @@ class DiscordUser(models.Model):
 
 class FormCreate(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    userid = models.BigIntegerField()
+    userid = models.ForeignKey(DiscordUser, on_delete=models.CASCADE)
     Formfields = JSONField()
 
 class FormResponse(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    formid = models.BigIntegerField()
+    form = models.ForeignKey(FormCreate, on_delete=models.CASCADE)
     responseid = models.BigIntegerField()
     response = JSONField()
