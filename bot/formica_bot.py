@@ -4,38 +4,35 @@ import json
 from decouple import config
 
 intents = discord.Intents().all()
-# intents.members = True
-# intents.reactions = True
-
 client = discord.Client(intents = intents)
 
-# form stuff
+# form details
+form_started = False
+form_submitted = False #keeps track of whether the user has submitted the form already
 form_name = "Name"
-form_color = 0xff8906
+form_color = 0xff8906 #colour of the embed msgs
 #form_server = ""
-form_alert_channel = ""
+form_alert_channel = "" #channel to alert whenever a user submits a form
 
-emoji_options = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣', '6⃣', '7⃣', '8⃣', '9⃣']
-# define messages
-welcome_title = "Welcome to Formica, the in-discord form service!"
-welcome_msg = "It looks like you have a form to fill out. To do so, please react to this message with any emoji. Then, check your inbox!"
-
-
-form_init_msg = "To start, type !start"
-
-author_index = 0
+# question details
 responses = []
 questions = []
 mc_ids = []
 tot_options = 0
 q_count = 0
+
+# user details (the person filling out the form)
+user_index = 0
+
+# multiple choice emojis
+emoji_options = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣', '6⃣', '7⃣', '8⃣', '9⃣']
+
+# global messages
 confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
-
 confirmation_id = 0
-form_started = False
 
-def start_form():
-    form_started = True
+# Description: Gets the questions and responses from the database
+def get_form():
     global responses, questions, q_count
 
     # get questions
@@ -47,7 +44,7 @@ def start_form():
     with open('dummy_responses.json', 'r') as r:
         responses = json.load(r)
 
-
+# Description: Fetches the current question to create an embedded question message
 def get_question(cur_index):
     global questions, tot_options
     q_type = questions[cur_index]['input_type']
@@ -65,39 +62,49 @@ def get_question(cur_index):
         for index in range(tot_options):
             cur_q_embed.add_field(name = f"{emoji_options[index]} {questions[cur_index]['options'][index]}", value = '** **', inline = False)
 
-
     return cur_q_embed, q_type
 
+# Description: Searches the saved responses for the user. 
+# If not found, appends them to the responses. If found, checks if they already submitted this form
+def get_user(user):
+    global responses, user_index, form_submitted
+
+    #search for the user
+    try:
+        target = next(item for item in responses if item['username'] == str(user))      
+    except:
+        #create a new user with empty responses
+        print("not found")
+        # append to database
+        responses.append({'username': str(user), 'user_id': str(user.id), 'responses': [], 'response_ids': [], 'form_submitted': "false" })
+        #print("appended: ", responses)
+
+        user_index = len(responses) - 1
+    else:
+        # get index
+        user_index = responses.index(target)
+        print("found at index ", user_index) 
+        # if user exists, check if they've already submitted a form
+        if responses[user_index]['form_submitted'] == "true":
+            print("User has already submitted a form")
+            form_submitted = True
+            return
+
+# Description: Saves the received response
 def set_response(response, response_id, author, index):
-    global responses, author_index
+    global responses, user_index
     
     print(f"response: {response}, author: {author}, author id: {author.id}")
 
-    # search database for the user
-    try:
-        target = next(user for user in responses if user['username'] == str(author) )
-        # print("target: ", target)
+    #set response & id
+    responses[user_index]['responses'].append(response)
+    responses[user_index]['response_ids'].append(response_id)
+    #print("set: ", responses)
 
-        # get index
-        author_index = responses.index(target)
-        #print("found at index ", target_index)    
-
-        #set response & id
-        responses[author_index]['responses'].append(response)
-        responses[author_index]['response_ids'].append(response_id)
-        #print("set: ", responses)
-    except:
-        print("not found")
-        # append to database
-        responses.append({'username': str(author), 'user_id': str(author.id), 'responses': [response], 'response_ids': [response_id]})
-        #print("appended: ", responses)
-
-        author_index = len(responses) - 1
-    
-    #return user_index
-
+# Description: Overwrites the old message with the new message
+# Uses message ids to determine where to overwrite the message
 def edit_response(edited_response, question_type):
-    global author_index, questions, confirmation_embed
+    global user_index, questions, confirmation_embed
     
     #grab the message and id
     if question_type == "text":
@@ -127,10 +134,10 @@ def edit_response(edited_response, question_type):
 
     # search responses for corresponding id
     try:
-        for item in responses[author_index]['response_ids']:
+        for item in responses[user_index]['response_ids']:
             if item == new_response_id:
                 target = item
-                target_index = responses[author_index]['response_ids'].index(target)
+                target_index = responses[user_index]['response_ids'].index(target)
 
     except:
         print("id not found")
@@ -138,42 +145,44 @@ def edit_response(edited_response, question_type):
         print(f"id found at index {target_index}")
 
         # write over the response      
-        responses[author_index]['responses'][target_index] = str(new_response)
+        responses[user_index]['responses'][target_index] = str(new_response)
 
         #edit the confirmation message
         new_confirmation = confirmation_embed
         new_confirmation.set_field_at(index = target_index, name = questions[target_index]['question'], value = new_response, inline = False)
         return new_confirmation
         
-
-
-def end_form(author_index):
+# Description: Creates a confirmation message. Summarizes questions and answers
+def end_form(user_index):
     global questions, responses, confirmation_embed
-
-    # confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
 
     # add questions and answers to the embed
     for item in range(len(questions)):
-        confirmation_embed.add_field(name = questions[item]['question'], value = responses[author_index]['responses'][item], inline = False)
+        confirmation_embed.add_field(name = questions[item]['question'], value = responses[user_index]['responses'][item], inline = False)
     
     return confirmation_embed
 
+# Description: Writes the responses to the database, creates a submission confirmation message for the user and form creator
 def submit_responses(user):
-    global responses, form_name, form_started
+    global responses, form_name, form_started, form_submitted
     form_started = False
+    form_submitted = True
 
-    #write to the database
+    # flag the user as haven already responded
+    responses[user_index]['form_submitted'] = "true"
+
+    # write to the database
     with open('dummy_responses.json', 'w') as w:
         json.dump(responses, w)
-
+    
     #make submission confirmation for the user
     submission_alert_user = discord.Embed(title = 'Form submitted', description = 'You can view and manage your responses here: <insert link>', color = form_color)
 
-    # make a submission confirmation for the form author
-    submission_alert_author = discord.Embed(title = f'{user} has submitted a form', description = 'To manage your forms, click here: <insert link>', color = form_color)
-    submission_alert_author.add_field(name = 'Form:', value = form_name, inline = False)
+    # make a submission confirmation for the form creator
+    submission_alert_creator = discord.Embed(title = f'{user} has submitted a form', description = 'To manage your forms, click here: <insert link>', color = form_color)
+    submission_alert_creator.add_field(name = 'Form:', value = form_name, inline = False)
 
-    return submission_alert_user, submission_alert_author
+    return submission_alert_user, submission_alert_creator
 
 
 @client.event
@@ -196,7 +205,7 @@ async def on_message(message):
     # listen for commands
     if msg.startswith('!formica'):
         #embed constructor
-        welcome_embed = discord.Embed(title = welcome_title, description = welcome_msg, color = form_color)
+        welcome_embed = discord.Embed(title = "Welcome to Formica, the in-discord form service!", description = "It looks like you have a form to fill out. To do so, please react to this message with any emoji. Then, check your inbox!", color = form_color)
         welcome_embed.add_field(name = "Form: ", value = form_name, inline = False)
 
         # send welcome message
@@ -212,7 +221,7 @@ async def on_message(message):
             print("something went wrong")
         else:
             print(user)
-            form_init = discord.Embed(title = form_name, description = form_init_msg, color = form_color)
+            form_init = discord.Embed(title = form_name, description = "To start, type !start", color = form_color)
             form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would.\n You can edit your response by hovering on your message and clicking 'edit'", inline = False)
 
             await user.send(embed=form_init)
@@ -225,15 +234,27 @@ async def on_message(message):
             print("!start invoked in a non-private channel")
             return
         
-        global tot_options, confirmation_id, form_started
+        global tot_options, confirmation_id, form_started, form_submitted
+        
+        # get our questions and responses
+        get_form()
+        # search for the user in the saved responses
+        get_user(message.author)
 
+        # check if form has already been submitted by the user
+        if form_submitted == True:
+            print("This user has already submitted a form")
+            await message.author.send("It looks like you've already submitted this form. You can manage your responses here: <insert link>")
+            return
+
+        # check if form has already been started
         if form_started == False:
             form_started = True
             cur_index = 0
-            start_form()
+            #start_form()
         else:
             print("form already started")
-            await message.author.send("Oops! You've already started this form. Answer the previous question to proceed.\nYou can answer by sending a message, or if it's a multiple choice, by reacting to the message.")
+            await message.author.send("Oops! You've already started this form. Answer the previous question to proceed.\nYou can answer by sending a message, or by reacting to the question if it's a multiple choice.")
     
         while cur_index < q_count:
             print(f"cur index: {cur_index}, total qs: {q_count}")
@@ -285,7 +306,7 @@ async def on_message(message):
             cur_index += 1
                     
         # send confirmation message
-        confirmation_embed = end_form(author_index)
+        confirmation_embed = end_form(user_index)
         confirmation_msg = await message.channel.send(embed=confirmation_embed)
         confirmation_id = confirmation_msg.id
         await confirmation_msg.add_reaction('✅')
@@ -300,13 +321,13 @@ async def on_message(message):
             print("wrong reaction")
         else:
             # submit response, get the confirmation embeds
-            submission_alert_user, submission_alert_author = submit_responses(user)
+            submission_alert_user, submission_alert_creator = submit_responses(user)
 
             # send a submission confirmation to the user
             await user.send(embed=submission_alert_user)
 
-            # send a submission confirmation to the author
-            await form_alert_channel.send(embed=submission_alert_author)
+            # send a submission confirmation to the form creator
+            await form_alert_channel.send(embed=submission_alert_creator)
 
 # detect message edits
 @client.event
@@ -336,34 +357,6 @@ async def on_reaction_add(reaction, user):
         old_confirmation = await reaction.message.channel.fetch_message(confirmation_id)
         new_confirmation = edit_response(reaction, "multiple choice")
         await old_confirmation.edit(embed = new_confirmation)
-
-# listen for reactions
-# @client.event
-# async def on_reaction_add(reaction, user):
-#     print("user: ", user)
-#     #ignore, if the reaction is from ourselves
-#     if user == client.user:
-#         print("reaction is from ourselves")
-#     else:
-#         # print("message content: ", reaction.message.content)
-#         # print("message content: ", reaction.message.embeds[0].title)
-#         # grab the title of the embed msg that was reacted to
-#         message_title = reaction.message.embeds[0].title
-
-#         # check if the message was the welcome msg
-#         if message_title == welcome_title:
-#         #if reaction.message.content == welcome_msg:
-#             # send the form instruction message to the user
-#             form_init = discord.Embed(title = form_name, description = form_init_msg, color = form_color)
-#             form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would!\n You can edit your response by hovering on your message and clicking 'edit'.\n To see a list of available commands, type !help.", inline = False)
-
-#             await user.send(embed=form_init)
-
-        # if reaction.emoji == '✅' and reaction.message.content == '!start':
-        #     submit_responses()
-        #     await user.send("Responses have been submitted")
-
-
 
 # run bot
 BOT_TOKEN = config('TOKEN')
