@@ -13,5 +13,6 @@ urlpatterns = [
     path('login/', views.discord_login, name='login'),
     path('login/redirect/', views.discord_login_redirect, name='loginredirect'),
     path('forms/', views.formlist, name='formlist'), 
-    path('responses/', views.responselist, name='responselist')
+    path('responses/', views.responselist, name='responselist'), 
+    path('formcreate/', views.formcreateresponse, name='formcreateresponse')
 ]

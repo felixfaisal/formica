@@ -30,14 +30,14 @@ class DiscordUser(models.Model):
 class FormCreate(models.Model):
     id = models.BigIntegerField(primary_key=True)
     userid = models.ForeignKey(DiscordUser, on_delete=models.CASCADE)
-    Formfields = JSONField()
+    Formfields = models.JSONField()
     FormName = models.CharField(max_length=200)
 
-    def __str__():
-        return FormName
+    def __str__(self):
+        return self.FormName
 
 class FormResponse(models.Model):
     id = models.BigIntegerField(primary_key=True)
     form = models.ForeignKey(FormCreate, on_delete=models.CASCADE)
     responseid = models.BigIntegerField()
-    response = JSONField()
+    response = models.JSONField()

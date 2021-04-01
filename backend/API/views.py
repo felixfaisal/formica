@@ -76,7 +76,7 @@ def exchange_code(code):
 
 @api_view(["GET"])
 def formlist(request):
-    forms = FormCreate.objects.all()
+    forms = FormCreate.objects.filter(userid=request.user)
     serializer = FormCreateSerializer(forms, many=True)
     return Response(serializer.data)
 
@@ -97,6 +97,23 @@ def taskdetail(request, pk):
     task = Task.objects.get(id=pk)
     serializer = TaskSerializer(task, many=False)
     return Response(serializer.data)
+
+@api_view(["POST"])
+def formcreateresponse(request):
+    serializer = FormCreateSerializer(data=request.data)
+    
+    if serializer.is_valid():
+       form = serializer.data 
+       form["userid"] = request.user
+       newform = FormCreate()
+       newform.id = form['id']
+       newform.userid = form['userid']
+       newform.FormName = form['FormName']
+       newform.Formfields = form['Formfields']
+       newform.save()
+    
+    return Response(serializer.data)
+
 
 
 @api_view(["POST"])
