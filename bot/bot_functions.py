@@ -3,9 +3,9 @@ import os
 import json
 import globals
 
-intents = discord.Intents().all()
-intents.reactions = True
-client = discord.Client(intents = intents)
+# intents = discord.Intents().all()
+# intents.reactions = True
+# client = discord.Client(intents = intents)
 
 # Description: Gets the form details (eg. form name)
 def get_form_specs():
