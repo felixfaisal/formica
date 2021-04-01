@@ -76,26 +76,16 @@ def exchange_code(code):
 
 @api_view(["GET"])
 def formlist(request):
-    forms = FormCreate.objects.filter(userid=request.user)
-    serializer = FormCreateSerializer(forms, many=True)
-    return Response(serializer.data)
+    if request.user:
+        forms = FormCreate.objects.filter(userid=request.user)
+        serializer = FormCreateSerializer(forms, many=True)
+        return Response(serializer.data)
+    return Response("You are not logged in!")
 
 @api_view(["GET"])
 def responselist(request):
     response = FormResponse.objects.all()
     serializer = FormResponseSerializer(response, many=True)
-    return Response(serializer.data)
-
-@api_view(["GET"])
-def tasklist(request):
-    tasks = Task.objects.all()
-    serializer = TaskSerializer(tasks, many=True)
-    return Response(serializer.data)
-
-@api_view(["GET"])
-def taskdetail(request, pk):
-    task = Task.objects.get(id=pk)
-    serializer = TaskSerializer(task, many=False)
     return Response(serializer.data)
 
 @api_view(["POST"])
@@ -116,28 +106,3 @@ def formcreateresponse(request):
 
 
 
-@api_view(["POST"])
-def listcreate(request):
-    serializer = TaskSerializer(data=request.data)
-    
-    if serializer.is_valid():
-        serializer.save()
-
-    return(serializer.data)
-
-@api_view(["POST"])
-def listupdate(request, pk):
-    task = Task.objects.get(id=pk)
-    serializer = TaskSerializer(instance=task, data=request.data)
-
-    if serializer.is_valid():
-        serializer.save()
-
-    return Response(serializer.data)
-
-@api_view(["DELETE", "GET"])
-def listdelete(request, pk): 
-    task = Task.objects.get(id=pk)
-    task.delete()
-
-    return Response("Succesfully Deleted")
