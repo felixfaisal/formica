@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 # Create your views here.
-from .serializer import TaskSerializer, FormCreateSerializer
-from .models import Task, FormCreate
+from .serializer import TaskSerializer, FormCreateSerializer, FormResponseSerializer
+from .models import Task, FormCreate, FormResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response 
 import requests
@@ -78,6 +78,12 @@ def exchange_code(code):
 def formlist(request):
     forms = FormCreate.objects.all()
     serializer = FormCreateSerializer(forms, many=True)
+    return Response(serializer.data)
+
+@api_view(["GET"])
+def responselist(request):
+    response = FormResponse.objects.all()
+    serializer = FormResponseSerializer(response, many=True)
     return Response(serializer.data)
 
 @api_view(["GET"])
