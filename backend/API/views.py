@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 # Create your views here.
-from .serializer import TaskSerializer, FormCreateSerializer, FormResponseSerializer
-from .models import Task, FormCreate, FormResponse
+from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer
+from .models import FormCreate, FormResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response 
 import requests
@@ -19,38 +19,68 @@ redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=72830
 @login_required(login_url='login/')
 @api_view(["GET"])
 def index(request):
-    print(os.getenv("CLIENT_ID"))
-    print(request.user)
-    api_urls = {
-        "List":"/list/",
-        "Detail View":"/list-detail/<str:pk>/",
-        "Create":"/list-create/",
-        "Update":"/list-update/<str:pk>/",
-        "Delete":"/list-delete/<str:pk>/"
-    }
-    return Response(api_urls)
+    serializer = DiscordUserSerializer(request.user)
+    #print(request.user)
+    return Response(serializer.data)
 
 
 def discord_login(request): 
     return redirect(redirect_url_discord)
 
 def discord_logout(request):
-    user = request.user
     logout(request)
     return JsonResponse("Succesfully Logged out", safe=False)
 
 def discord_login_redirect(request):
     code = request.GET.get('code')
-    #print(code)
     user = exchange_code(code)
-    #print("Going to authenticate")
     discord_user = authenticate(request, user=user)
-    #print(discord_user)
     discord_user = list(discord_user).pop()
-    #print(discord_user)
     login(request, discord_user)
-    #return JsonResponse(user)
     return redirect('index')
+
+
+@login_required(login_url='login/')
+@api_view(["GET"])
+def formlist(request):
+    if request.user:
+        forms = FormCreate.objects.filter(userid=request.user)
+        serializer = FormCreateSerializer(forms, many=True)
+        return Response(serializer.data)
+    return Response("You are not logged in!")
+
+@login_required(login_url='login/')
+@api_view(["GET"])
+def responselist(request):
+    response = FormResponse.objects.all()
+    serializer = FormResponseSerializer(response, many=True)
+    return Response(serializer.data)
+
+@login_required(login_url='login/')
+@api_view(["GET"])
+def formresponse(request, FormName):
+    form = FormCreate.objects.get(FormName=FormName, userid=request.user)
+    response = FormResponse.objects.filter(form=form)
+    serializer = FormResponseSerializer(response, many=True)
+    return Response(serializer.data)
+
+@login_required(login_url='login/')
+@api_view(["POST"])
+def formcreateresponse(request):
+    serializer = FormCreateSerializer(data=request.data)
+    
+    if serializer.is_valid():
+       form = serializer.data 
+       form["userid"] = request.user
+       newform = FormCreate()
+       newform.id = form['id']
+       newform.userid = form['userid']
+       newform.FormName = form['FormName']
+       newform.Formfields = form['Formfields']
+       newform.save()
+    
+    return Response(serializer.data)
+
 
 def exchange_code(code):
     data = {
@@ -73,36 +103,4 @@ def exchange_code(code):
     })
     user = response.json()
     return user
-
-@api_view(["GET"])
-def formlist(request):
-    if request.user:
-        forms = FormCreate.objects.filter(userid=request.user)
-        serializer = FormCreateSerializer(forms, many=True)
-        return Response(serializer.data)
-    return Response("You are not logged in!")
-
-@api_view(["GET"])
-def responselist(request):
-    response = FormResponse.objects.all()
-    serializer = FormResponseSerializer(response, many=True)
-    return Response(serializer.data)
-
-@api_view(["POST"])
-def formcreateresponse(request):
-    serializer = FormCreateSerializer(data=request.data)
-    
-    if serializer.is_valid():
-       form = serializer.data 
-       form["userid"] = request.user
-       newform = FormCreate()
-       newform.id = form['id']
-       newform.userid = form['userid']
-       newform.FormName = form['FormName']
-       newform.Formfields = form['Formfields']
-       newform.save()
-    
-    return Response(serializer.data)
-
-
 
