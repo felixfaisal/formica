@@ -25,7 +25,7 @@ SECRET_KEY = 't+j5&w9)7uvr=^6#w$9^af)a8$bk-h((^+wwrwy@+w64qc8!kd'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTHENTICATION_BACKENDS = [
     'API.auth.DiscordAuthenticationBackend'
