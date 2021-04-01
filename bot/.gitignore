@@ -6,3 +6,8 @@ config.json
 dummy_questions.json
 dummy_responses.json
 dummy_responses_example.json
+form_response.json
+
+#test files
+globals.py
+bot_functions.py

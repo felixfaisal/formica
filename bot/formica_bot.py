@@ -3,6 +3,16 @@ import os
 import json
 from decouple import config
 
+# import globals 
+
+# from bot_functions import get_form
+# from bot_functions import get_question
+# from bot_functions import get_user 
+# from bot_functions import set_response 
+# from bot_functions import edit_response 
+# from bot_functions import end_form 
+# from bot_functions import submit_responses
+
 intents = discord.Intents().all()
 intents.reactions = True
 client = discord.Client(intents = intents)
@@ -29,8 +39,9 @@ user_index = 0
 emoji_options = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣', '6⃣', '7⃣', '8⃣', '9⃣']
 
 # global messages
-confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
+# confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
 confirmation_id = 0
+
 
 # Description: Gets the questions and responses from the database
 def get_form():
@@ -104,8 +115,8 @@ def set_response(response, response_id, author, index):
 
 # Description: Overwrites the old message with the new message
 # Uses message ids to determine where to overwrite the message
-def edit_response(edited_response, question_type):
-    global user_index, questions, confirmation_embed
+def edit_response(old_confirmation, edited_response, question_type):
+    global user_index, questions
     
     #grab the message and id
     if question_type == "text":
@@ -148,14 +159,16 @@ def edit_response(edited_response, question_type):
         responses[user_index]['responses'][target_index] = str(new_response)
 
         #edit the confirmation message
-        new_confirmation = confirmation_embed
+        print("🔴 old confirmation: ", old_confirmation)
+        new_confirmation = old_confirmation.embeds[0]
         new_confirmation.set_field_at(index = target_index, name = questions[target_index]['question'], value = new_response, inline = False)
         return new_confirmation
-        
+    
 # Description: Creates a confirmation message. Summarizes questions and answers
 def end_form(user_index):
-    global questions, responses, confirmation_embed
+    global questions, responses
 
+    confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
     # add questions and answers to the embed
     for item in range(len(questions)):
         confirmation_embed.add_field(name = questions[item]['question'], value = responses[user_index]['responses'][item], inline = False)
@@ -187,6 +200,7 @@ def submit_responses(user):
 
 @client.event
 async def on_ready():
+    #globals.initialize()
     print('We have logged in as {0.user}'.format(client))
     # later: get form name, form server, and channel to send updates to
     global form_name, form_channel, form_alert_channel
@@ -235,9 +249,6 @@ async def on_message(message):
             return
         
         global tot_options, confirmation_id, form_started, form_submitted
-        
-        
-
 
         # check if form has already been started
         if form_started == False:
@@ -337,7 +348,7 @@ async def on_message_edit(before, after):
         # print(f"Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
         # edit the response & get an updated embed
         old_confirmation = await after.channel.fetch_message(confirmation_id)
-        new_confirmation = edit_response(after, "text")
+        new_confirmation = edit_response(old_confirmation, after, "text")
         await old_confirmation.edit(embed = new_confirmation)
 
 # detect edits to mc questions
@@ -355,7 +366,7 @@ async def on_reaction_add(reaction, user):
     if (reaction.message.id in mc_ids):
         try:
             old_confirmation = await reaction.message.channel.fetch_message(confirmation_id)
-            new_confirmation = edit_response(reaction, "multiple choice")
+            new_confirmation = edit_response(old_confirmation, reaction, "multiple choice")
             await old_confirmation.edit(embed = new_confirmation)
             print("change to mc response detected")
         except:
