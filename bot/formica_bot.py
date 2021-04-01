@@ -22,15 +22,12 @@ form_started = False
 form_submitted = False #keeps track of whether the user has submitted the form already
 form_name = "Name"
 form_color = 0xff8906 #colour of the embed msgs
-#form_server = ""
-form_alert_channel = "" #channel to alert whenever a user submits a form
 
 # question details
 responses = []
 questions = []
 mc_ids = []
-tot_options = 0
-q_count = 0
+tot_options = 0 #tot multiple choice options
 
 # user details (the person filling out the form)
 user_index = 0
@@ -39,13 +36,16 @@ user_index = 0
 emoji_options = ['1⃣', '2⃣', '3⃣', '4⃣', '5⃣', '6⃣', '7⃣', '8⃣', '9⃣']
 
 # global messages
-# confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = form_color)
 confirmation_id = 0
 
 
 # Description: Gets the questions and responses from the database
 def get_form():
-    global responses, questions, q_count
+    global responses, questions
+
+    # get channel to send alerts to
+    form_alert_channel = client.get_channel(824348394411262013)
+    #form_server = ""
 
     # get questions
     with open("dummy_questions.json", "r") as q:
@@ -55,6 +55,8 @@ def get_form():
     # get responses
     with open('dummy_responses.json', 'r') as r:
         responses = json.load(r)
+    
+    return q_count, form_alert_channel
 
 # Description: Fetches the current question to create an embedded question message
 def get_question(cur_index):
@@ -202,10 +204,9 @@ def submit_responses(user):
 async def on_ready():
     #globals.initialize()
     print('We have logged in as {0.user}'.format(client))
-    # later: get form name, form server, and channel to send updates to
-    global form_name, form_channel, form_alert_channel
+    # later: get form name, form server
+    global form_name, form_channel
     form_name = "Event Registration"
-    form_alert_channel = client.get_channel(824348394411262013)
 
 # listen for messages/commands
 @client.event
@@ -255,7 +256,7 @@ async def on_message(message):
             form_started = True
             cur_index = 0
             # get our questions and responses
-            get_form()
+            q_count, form_alert_channel = get_form()
             # search for the user in the saved responses
             get_user(message.author)
         else:
