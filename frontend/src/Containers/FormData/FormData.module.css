@@ -31,6 +31,8 @@
   font-size: var(--h3);
   color: var(--title-text-color);
   margin-bottom: 1vw;
+  text-transform: uppercase;
+  padding: 1vw 0vw;
 }
 
 .data {
