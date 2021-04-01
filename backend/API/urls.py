@@ -11,5 +11,6 @@ urlpatterns = [
     path('listupdate/<str:pk>/', views.listupdate, name='listupdate'),
     path('listdelete/<str:pk>/', views.listdelete, name='listdelete'),
     path('login/', views.discord_login, name='login'),
-    path('login/redirect/', views.discord_login_redirect, name='loginredirect')
+    path('login/redirect/', views.discord_login_redirect, name='loginredirect'),
+    path('forms/', views.formlist, name='formlist')
 ]

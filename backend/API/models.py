@@ -31,6 +31,10 @@ class FormCreate(models.Model):
     id = models.BigIntegerField(primary_key=True)
     userid = models.ForeignKey(DiscordUser, on_delete=models.CASCADE)
     Formfields = JSONField()
+    FormName = models.CharField(max_length=200)
+
+    def __str__():
+        return FormName
 
 class FormResponse(models.Model):
     id = models.BigIntegerField(primary_key=True)
