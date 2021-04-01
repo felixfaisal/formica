@@ -1,13 +1,14 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 import styles from "./FormCard.module.css";
 
 import { ReactComponent as Person } from "../../Assets/Images/person.svg";
 import { ReactComponent as Send } from "../../Assets/Images/send.svg";
 
-const FormCard = ({ title, responses, shared, accepting }) => {
+const FormCard = ({ id, title, responses, shared, accepting }) => {
 	return (
-		<div className={styles.card_container}>
+		<Link className={styles.card_container} to={`forms/${id}`}>
 			<h2 className={styles.card_title}>
 				{title.slice(0, 25)}
 				{title.length > 25 ? "..." : null}
@@ -26,7 +27,7 @@ const FormCard = ({ title, responses, shared, accepting }) => {
 				<span className={accepting ? styles.accepting : styles.not_accepting} />
 				{!accepting ? "Not " : null}Accepting Responses
 			</h3>
-		</div>
+		</Link>
 	);
 };
 

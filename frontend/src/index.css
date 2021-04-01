@@ -18,6 +18,7 @@ code {
 * {
   box-sizing: border-box;
   max-width: 100%;
+  max-height: 100%;
 }
 
 :root {
@@ -41,4 +42,26 @@ code {
   --normal-text: 16px;
   --small-text: 12px;
   --border-radius: 5px;
+}
+
+/* width */
+::-webkit-scrollbar {
+  height: 5px;
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color-dark);
 }

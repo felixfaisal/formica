@@ -4,6 +4,7 @@ import { Route, Switch } from "react-router";
 import Dashboard from "../Dashboard";
 import Forms from "../Forms/Forms";
 import CreateForm from "../CreateForm/CreateForm";
+import FormData from "../FormData/FormData";
 
 import TabNav from "../../Components/TabNav/TabNav";
 
@@ -22,6 +23,9 @@ const Home = () => {
 					</Route>
 					<Route exact path="/forms">
 						<Forms />
+					</Route>
+					<Route exact path="/forms/:id">
+						<FormData />
 					</Route>
 					<Route exact path="/create">
 						<CreateForm />

@@ -8,7 +8,13 @@ import forms from "../../Assets/Data/forms";
 
 const Forms = () => {
 	const displayForms = forms.map((form) => (
-		<FormCard title={form.title} responses={form.responses} shared={form.shared} accepting={form.accepting} />
+		<FormCard
+			title={form.title}
+			id={form.id}
+			responses={form.responses}
+			shared={form.shared}
+			accepting={form.accepting}
+		/>
 	));
 
 	return <div className={styles.container}>{displayForms}</div>;
