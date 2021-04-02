@@ -49,19 +49,24 @@ def discord_login_redirect(request):
     return JsonResponse(token.key, safe=False)
 
 
-@login_required(login_url='login/')
+
 @api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def formlist(request):
     if request.user:
         #forms = FormCreate.objects.filter(userid=request.user)
         forms = FormCreate.objects.all()
         serializer = FormCreateSerializer(forms, many=True)
+
         return Response(serializer.data)
+        
     return Response("You are not logged in!")
 
-@login_required(login_url='login/')
 @api_view(["GET"])
+@authentication_classes([TokenAuthentication])
 def responselist(request):
+    print(request.user)
     response = FormResponse.objects.all()
     serializer = FormResponseSerializer(response, many=True)
     return Response(serializer.data)
@@ -74,8 +79,9 @@ def formresponse(request, FormName):
     serializer = FormResponseSerializer(response, many=True)
     return Response(serializer.data)
 
-@login_required(login_url='login/')
+
 @api_view(["POST"])
+@authentication_classes([TokenAuthentication])
 def formcreateresponse(request):
     serializer = FormCreateSerializer(data=request.data)
     
@@ -87,6 +93,7 @@ def formcreateresponse(request):
        newform.userid = form['userid']
        newform.FormName = form['FormName']
        newform.Formfields = form['Formfields']
+       print(newform)
        newform.save()
     
     return Response(serializer.data)
