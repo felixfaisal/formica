@@ -24,9 +24,8 @@ class DiscordUser(models.Model):
     is_anonymous = False
 
     is_authenticated = True
-
-    def is_active(self, request):
-        return True
+    
+    is_active = True
 
     @receiver(post_save, sender=settings.AUTH_USER_MODEL)
     def create_auth_token(sender, instance=None, created=False, **kwargs):

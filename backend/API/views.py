@@ -22,7 +22,6 @@ redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=72830
 @login_required(login_url='login/')
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def index(request):
     #token = Token.objects.get(user_id=request.user.id)
     print(request.user)
@@ -44,12 +43,13 @@ def discord_login_redirect(request):
     discord_user = authenticate(request, user=user)
     discord_user = list(discord_user).pop()
     login(request, discord_user)
+    print(request.user)
     token = Token.objects.get(user_id=discord_user)
     print(token.key)
-    return redirect('index')
+    return JsonResponse(token.key, safe=False)
 
 
-#@login_required(login_url='login/')
+@login_required(login_url='login/')
 @api_view(["GET"])
 def formlist(request):
     if request.user:
