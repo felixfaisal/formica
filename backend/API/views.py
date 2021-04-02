@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+from rest_framework.authentication import TokenAuthentication
 # Create your views here.
 from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer
 from .models import FormCreate, FormResponse
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response 
 import requests
 import environ 
@@ -11,6 +13,7 @@ from dotenv import load_dotenv
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import os
+from rest_framework.authtoken.models import Token
 load_dotenv()
 
 
@@ -18,10 +21,14 @@ redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=72830
 
 @login_required(login_url='login/')
 @api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def index(request):
-    serializer = DiscordUserSerializer(request.user)
+    #token = Token.objects.get(user_id=request.user.id)
+    print(request.user)
     #print(request.user)
-    return Response(serializer.data)
+    #return Response(serializer.data)
+    return JsonResponse("Have false", safe=False)
 
 
 def discord_login(request): 
@@ -37,14 +44,17 @@ def discord_login_redirect(request):
     discord_user = authenticate(request, user=user)
     discord_user = list(discord_user).pop()
     login(request, discord_user)
+    token = Token.objects.get(user_id=discord_user)
+    print(token.key)
     return redirect('index')
 
 
-@login_required(login_url='login/')
+#@login_required(login_url='login/')
 @api_view(["GET"])
 def formlist(request):
     if request.user:
-        forms = FormCreate.objects.filter(userid=request.user)
+        #forms = FormCreate.objects.filter(userid=request.user)
+        forms = FormCreate.objects.all()
         serializer = FormCreateSerializer(forms, many=True)
         return Response(serializer.data)
     return Response("You are not logged in!")

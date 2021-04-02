@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ['*']
 AUTHENTICATION_BACKENDS = [
     'API.auth.DiscordAuthenticationBackend'
 ]
-
+AUTH_USER_MODEL = 'API.DiscordUser'
 
 # Application definition
 
@@ -44,7 +44,15 @@ INSTALLED_APPS = [
     'API.apps.ApiConfig',
     'rest_framework',
     'corsheaders',
+    'rest_framework.authtoken',
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
