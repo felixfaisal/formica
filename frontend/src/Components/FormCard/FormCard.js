@@ -8,7 +8,7 @@ import { ReactComponent as Send } from "../../Assets/Images/send.svg";
 
 const FormCard = ({ id, title, responses, shared, accepting }) => {
 	return (
-		<Link className={styles.card_container} to={`forms/${id}`}>
+		<Link className={styles.card_container} to={`forms/${id}/responses`}>
 			<h2 className={styles.card_title}>
 				{title.slice(0, 25)}
 				{title.length > 25 ? "..." : null}

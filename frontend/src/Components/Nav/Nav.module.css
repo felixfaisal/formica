@@ -3,8 +3,7 @@
   padding: 1vw;
   padding-left: 5vw;
   padding-right: 5vw;
-  /* background-color: var(--primary-color); */
-  position: fixed;
+  position: absolute;
   display: flex;
   align-items: center;
   justify-content: space-between;
