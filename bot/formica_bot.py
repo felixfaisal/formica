@@ -22,10 +22,6 @@ client = discord.Client(intents = intents)
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
-    # form server
-    #global form_name, form_channel
-    alert_channel_id, globals.form_name = get_form_specs()
-    globals.form_alert_channel = client.get_channel(alert_channel_id)
     
 # listen for messages/commands
 @client.event
@@ -38,6 +34,9 @@ async def on_message(message):
 
     # listen for commands
     if msg.startswith('!formica'):
+        # get form specs
+        alert_channel_id, globals.form_name = get_form_specs()
+        globals.form_alert_channel = client.get_channel(alert_channel_id)
         #embed constructor
         welcome_embed = discord.Embed(title = "Welcome to Formica, the in-discord form service!", description = "It looks like you have a form to fill out. To do so, please react to this message with any emoji. Then, check your inbox!", color = globals.form_color)
         welcome_embed.add_field(name = "Form: ", value = globals.form_name, inline = False)
@@ -71,7 +70,12 @@ async def on_message(message):
         # check if form has already been started
         if globals.form_started == False:
             globals.form_started = True
+
+            # get form specs
+            alert_channel_id, globals.form_name = get_form_specs()
+            globals.form_alert_channel = client.get_channel(alert_channel_id)
             cur_index = 0
+            
             # get our questions and responses
             q_count = get_form()
             # search for the user in the saved responses
