@@ -7,8 +7,9 @@ urlpatterns = [
     path('oauth2/logout/', views.discord_logout, name='logout'),
     path('oauth2/login/', views.discord_login, name='login'),
     path('oauth2/login/redirect/', views.discord_login_redirect, name='loginredirect'),
-    path('api/forms/', views.formlist, name='formlist'), 
+    path('api/form/list', views.formlist, name='formlist'), 
     path('api/responses/', views.responselist, name='responselist'), 
-    path('api/formcreate/', views.formcreateresponse, name='formcreateresponse'), 
-    path('api/formresponse/<str:FormName>', views.formresponse, name='formresponse')
+    path('api/form/create/', views.formcreateresponse, name='formcreateresponse'), 
+    path('api/form/response/<str:FormName>', views.formresponse, name='formresponse'),
+    path('api/user/create/', views.userCreate, name='userCreate')
 ]

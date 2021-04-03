@@ -99,6 +99,26 @@ def formcreateresponse(request):
     return Response(serializer.data)
 
 
+@api_view(['GET','POST'])
+def userCreate(request):
+    access_token = request.data.get('access_token')
+    user = getUserInformation(access_token)
+    discord_user = authenticate(request, user=user)
+    discord_user = list(discord_user).pop()
+    #login(request, discord_user)
+    #print(request.user)
+    token = Token.objects.get(user_id=discord_user)
+    print(token.key)
+    return Response(token.key)
+
+def getUserInformation(access_token):
+    response = requests.get("https://discord.com/api/v6/users/@me", headers={
+        'Authorization': 'Bearer %s' % access_token
+    })
+    user = response.json()
+    return user
+
+
 def exchange_code(code):
     data = {
         "client_id":os.getenv("CLIENT_ID"),
@@ -114,7 +134,9 @@ def exchange_code(code):
     response = requests.post("https://discord.com/api/oauth2/token", data=data, headers=headers)
     #print(response.json())
     credentials = response.json()
+    print('Access token')
     access_token = credentials['access_token']
+    print(access_token)
     response = requests.get("https://discord.com/api/v6/users/@me", headers={
         'Authorization': 'Bearer %s' % access_token
     })
