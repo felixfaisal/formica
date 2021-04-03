@@ -23,7 +23,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Installing node dependencies
-      run: npm ci
+      run: npm install
       working-directory: ./frontend
     
     - name: Performing React build 
