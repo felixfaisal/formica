@@ -14,6 +14,8 @@ from bot_functions import edit_response
 from bot_functions import end_form 
 from bot_functions import submit_responses
 
+from bot_validation import validate_response
+
 intents = discord.Intents().all()
 intents.reactions = True
 client = discord.Client(intents = intents)
@@ -89,6 +91,7 @@ async def on_message(message):
             print("This user has already submitted a form")
             await message.author.send("It looks like you've already submitted this form. You can manage your responses here: <insert link>")
             return
+        
     
         while cur_index < q_count:
             print(f"cur index: {cur_index}, total qs: {q_count}")
@@ -100,21 +103,10 @@ async def on_message(message):
             globals.questions[cur_index]['question_id'] = q_message.id
             print("question id: ", q_message.id)
             print("question: ", q_embed.title)
+            print("question type: ", q_type)
 
-            # check question type
-            if q_type == "text":
-                # wait for response
-                def check(m):
-                    # check that it's the right user and channel
-                    # ignore message if it's the !start command
-                    return m.author.id == message.author.id and m.channel == message.channel and m.content.startswith('!start') == False
-
-                msg = await client.wait_for('message', check=check)
-
-                # save response
-                set_response(msg.content, msg.id, message.author, cur_index)
-
-            elif q_type == "multiple choice":
+            # check question type (we don't need to validate text or m/c)
+            if q_type == "multiple choice":
                 #global mc_ids
                 globals.mc_ids.append(q_message.id)
 
@@ -135,6 +127,34 @@ async def on_message(message):
                 
                 #save response
                 set_response(response, q_message.id, user, cur_index)
+            else:
+                # wait for response
+                def check(m):
+                    # check that it's the right user and channel
+                    # ignore message if it's the !start command
+                    return m.author.id == message.author.id and m.channel == message.channel and m.content.startswith('!start') == False
+
+                msg = await client.wait_for('message', check=check)
+
+                # validate response (if it's an email, phone, or number)
+                if q_type == "email" or q_type == "phone" or q_type =="number":
+                    print("🔴 non text or mc detected")
+                    valid_response = validate_response(msg.content, q_type)
+
+                    #if response is invalid, prompt user to try again
+                    while valid_response == False:
+                        await message.author.send("It looks like your response was in the wrong format. Please try again")
+                        # wait for response
+                        def check(m):
+                            # check that it's the right user and channel
+                            # ignore message if it's the !start command
+                            return m.author.id == message.author.id and m.channel == message.channel and m.content.startswith('!start') == False
+
+                        msg = await client.wait_for('message', check=check)
+                        valid_response = validate_response(msg.content, q_type)
+                    
+                # If it's a text response, save the response
+                set_response(msg.content, msg.id, message.author, cur_index)
                 
             # update counters
             cur_index += 1
