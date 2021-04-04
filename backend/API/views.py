@@ -123,15 +123,16 @@ def userLogout(request):
     login = LoginTable.objects.get(user=request.user)
     return JsonResponse('False', safe=False)
     
-def getServerInformation(access_token, serverid):
-    response = requests.get("https://discord.com/api/v6/users/@me", headers={
+def getServerChannels(access_token, serverid):
+    discord_url = "https://discord.com/api/v6/guilds/"+serverid+"/channels"
+    response = requests.get(discord_url, headers={
         'Authorization': 'Bearer %s' % access_token
     })
     channels = response.json()
     return channels
 
 def getUserServers(access_token):
-    response = requests.get("https://discord.com/api/v6/users/@me", headers={
+    response = requests.get("https://discord.com/api/v6/users/@me/guilds", headers={
         'Authorization': 'Bearer %s' % access_token
     })
     servers = response.json()
