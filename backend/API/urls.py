@@ -12,6 +12,8 @@ urlpatterns = [
     path('api/form/create/', views.formcreateresponse, name='formcreateresponse'), 
     path('api/form/response/<str:FormName>', views.formresponse, name='formresponse'),
     path('api/user/create/', views.userCreate, name='userCreate'), 
-    path('api/user/login', views.userLogin, name='userLogin'), 
-    path('api/user/logout', views.userLogout, name='userLogout')
+    path('api/user/login/', views.userLogin, name='userLogin'), 
+    path('api/user/logout/', views.userLogout, name='userLogout'), 
+    path('api/user/server/', views.userServers, name='userServer'), 
+    path('api/user/channels/<str:ServerID', views.serverChannels, name='serverChannels')
 ]

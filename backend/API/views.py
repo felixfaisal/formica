@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from rest_framework.authentication import TokenAuthentication
 # Create your views here.
 from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer
-from .models import FormCreate, FormResponse, LoginTable
+from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response 
@@ -122,6 +122,20 @@ def userLogin(request):
 def userLogout(request):
     login = LoginTable.objects.get(user=request.user)
     return JsonResponse('False', safe=False)
+
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+def userServers(request): 
+    access_token = AccessTokenTable.objects.get(user=request.user)
+    servers = getUserServers(access_token)
+    return Response(servers)
+
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+def serverChannels(request, ServerID):
+    access_token = AccessTokenTable.objects.get(user=request.user)
+    channels = getServerChannels(access_token, ServerID)
+    return Response(channels)
     
 def getServerChannels(access_token, serverid):
     discord_url = "https://discord.com/api/v6/guilds/"+serverid+"/channels"
