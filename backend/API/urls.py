@@ -11,5 +11,7 @@ urlpatterns = [
     path('api/responses/', views.responselist, name='responselist'), 
     path('api/form/create/', views.formcreateresponse, name='formcreateresponse'), 
     path('api/form/response/<str:FormName>', views.formresponse, name='formresponse'),
-    path('api/user/create/', views.userCreate, name='userCreate')
+    path('api/user/create/', views.userCreate, name='userCreate'), 
+    path('api/user/login', views.userLogin, name='userLogin'), 
+    path('api/user/logout', views.userLogout, name='userLogout')
 ]
