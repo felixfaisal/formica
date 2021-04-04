@@ -47,3 +47,6 @@ class FormResponse(models.Model):
     responseid = models.BigIntegerField()
     response = models.JSONField()
 
+class LoginTable(models.Model):
+    loggedIn = models.BooleanField()
+    user = models.ForeignKey(DiscordUser, on_delete=models.CASCADE)
