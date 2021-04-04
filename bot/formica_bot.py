@@ -137,7 +137,7 @@ async def on_message(message):
                 msg = await client.wait_for('message', check=check)
 
                 # validate response (if it's an email, phone, or number)
-                if q_type == "email" or q_type == "phone" or q_type =="number":
+                if q_type == "email" or q_type == "phone" or q_type =="number":                        
                     print("🔴 non text or mc detected")
                     valid_response = validate_response(msg.content, q_type)
 

@@ -39,7 +39,7 @@ def get_question(cur_index):
     # The process of making the embed is the same, whether the q_type is text or multi-choice
     cur_q_embed = discord.Embed(title = globals.questions[cur_index]['question'], description = globals.questions[cur_index]['description'], color = globals.form_color) 
 
-    # check if we have an m/c question
+    # add the appropriate insturctions to the question
     if q_type == "multiple choice":
         globals.tot_options = len(globals.questions[cur_index]['options'])
 
@@ -49,6 +49,8 @@ def get_question(cur_index):
         # iterate through the options and emojis, adding them to the embed
         for index in range(globals.tot_options):
             cur_q_embed.add_field(name = f"{globals.emoji_options[index]} {globals.questions[cur_index]['options'][index]}", value = '** **', inline = False)
+    elif q_type == "phone":
+        cur_q_embed.description += "Answer in the format +X XXX XXXX, starting with your country code.\n Example: +1 123 123 1234\n If you need help, you can find your country code here: https://countrycode.org"
 
     return cur_q_embed, q_type
 
