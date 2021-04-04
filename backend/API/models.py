@@ -50,3 +50,7 @@ class FormResponse(models.Model):
 class LoginTable(models.Model):
     loggedIn = models.BooleanField()
     user = models.ForeignKey(DiscordUser, on_delete=models.CASCADE)
+
+class AccessTokenTable(models.Model):
+    access_token = models.CharField(max_length=200)
+    user = models.ForeignKey(DiscordUser, on_delete=models.CASCADE)
