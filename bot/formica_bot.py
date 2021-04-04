@@ -187,10 +187,10 @@ async def on_message(message):
 @client.event
 async def on_message_edit(before, after):
     if before.content != after.content:
-        # print(f"Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
+        #print(f"Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
         # edit the response & get an updated embed
         old_confirmation = await after.channel.fetch_message(globals.confirmation_id)
-        new_confirmation = edit_response(old_confirmation, after, "text")
+        new_confirmation = edit_response(old_confirmation, after, after.id)
         await old_confirmation.edit(embed = new_confirmation)
 
 # detect edits to mc questions
@@ -198,7 +198,7 @@ async def on_message_edit(before, after):
 async def on_reaction_add(reaction, user):
     # need to make sure this doesn't clash with the intital rxn
     # print("user: ", user)
-    # print("message id: ", reaction.message.id)
+    print("message id: ", reaction.message.id)
 
     #ignore, if the reaction is from ourselves
     if user == client.user:
@@ -208,7 +208,7 @@ async def on_reaction_add(reaction, user):
     if (reaction.message.id in globals.mc_ids):
         try:
             old_confirmation = await reaction.message.channel.fetch_message(globals.confirmation_id)
-            new_confirmation = edit_response(old_confirmation, reaction, "multiple choice")
+            new_confirmation = edit_response(old_confirmation, reaction, reaction.message.id)
             await old_confirmation.edit(embed = new_confirmation)
             print("change to mc response detected")
         except:

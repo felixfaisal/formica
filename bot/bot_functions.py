@@ -3,6 +3,8 @@ import os
 import json
 import globals
 
+from bot_validation import validate_response
+
 # intents = discord.Intents().all()
 # intents.reactions = True
 # client = discord.Client(intents = intents)
@@ -85,11 +87,23 @@ def set_response(response, response_id, author, index):
 
 # Description: Overwrites the old message with the new message
 # Uses message ids to determine where to overwrite the message
-def edit_response(old_confirmation, edited_response, question_type):    
+def edit_response(old_confirmation, edited_response, new_response_id): 
+    # grab the id
+    #new_response_id = edited_response.message.id
+
+    # find the question index
+    for index in range(len(globals.questions)):
+        if globals.questions[index]['question_id'] == new_response_id:
+            q_index = index
+ 
+    # get the question type
+    question_type = globals.questions[q_index]['input_type']   
+    print("🔴 edited question type: ", question_type)
+
     #grab the message and id
     if question_type == "text":
         new_response = edited_response.content
-        new_response_id = edited_response.id
+        #new_response_id = edited_response.id
 
     elif question_type == "multiple choice":
         # get the index
@@ -101,12 +115,12 @@ def edit_response(old_confirmation, edited_response, question_type):
             return
         
         # get the id
-        new_response_id = edited_response.message.id
+        #new_response_id = edited_response.message.id
 
-        # find the question index
-        for index in range(len(globals.questions)):
-            if globals.questions[index]['question_id'] == new_response_id:
-                q_index = index
+        # # find the question index
+        # for index in range(len(globals.questions)):
+        #     if globals.questions[index]['question_id'] == new_response_id:
+        #         q_index = index
 
         # grab the corresponding option and set that as the new message
         new_response = globals.questions[q_index]['options'][emoji_index]       
