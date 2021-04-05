@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from rest_framework.authentication import TokenAuthentication
 # Create your views here.
-from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer
-from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable
+from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer, UserServersSerializer
+from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable, UserServers
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response 
@@ -17,7 +17,7 @@ from rest_framework.authtoken.models import Token
 load_dotenv()
 
 
-redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=728306573696303135&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth2%2Flogin%2Fredirect%2F&response_type=code&scope=identify"
+redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=728306573696303135&permissions=68608&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth2%2Flogin%2Fredirect%2F&response_type=code&scope=identify%20guilds%20bot"
 
 @login_required(login_url='login/')
 @api_view(["GET"])
@@ -39,14 +39,31 @@ def discord_logout(request):
 
 def discord_login_redirect(request):
     code = request.GET.get('code')
-    user = exchange_code(code)
+    access_token = getAccessToken(code)
+    user = getUserInformation(access_token)
+    servers = getUserServers(access_token)
+    print(servers)
     discord_user = authenticate(request, user=user)
     discord_user = list(discord_user).pop()
+    serverinfo = UserServers(user=discord_user, servers=servers)
+    serverinfo.save()
     login(request, discord_user)
     print(request.user)
+    print('Access token on redirect')
+    print(access_token)
     token = Token.objects.get(user_id=discord_user)
+    try:
+        atoken = AccessTokenTable.objects.get(user=discord_user)
+    except Exception:
+        print('Creating new access token')
+        atoken = AccessTokenTable(user=discord_user, access_token=access_token)
+        atoken.save()
+    
+    atoken.access_token = access_token
+    atoken.save()
     print(token.key)
-    return JsonResponse(token.key, safe=False)
+    #redirect_url_react = 'http://localhost:3000/dashboard?token='+token.key
+    return redirect('http://localhost:3000/dashboard?user='+str(token.key))
 
 
 
@@ -105,11 +122,14 @@ def userCreate(request):
     user = getUserInformation(access_token)
     discord_user = authenticate(request, user=user)
     discord_user = list(discord_user).pop()
-    #login(request, discord_user)
-    #print(request.user)
     token = Token.objects.get(user_id=discord_user)
-    print(token.key)
-    return Response(token.key)
+    #print(token.key)
+    print('Access token')
+    print(access_token)
+    atoken = AccessTokenTable(user=discord_user, access_token=access_token)
+    atoken.save()
+    #redirect_url_react = 'http://localhost:3000/dashboard?token='+token.key
+    #return redirect(redirect_url_discord)
 
 @api_view(['GET','POST'])
 @authentication_classes([TokenAuthentication])
@@ -126,18 +146,25 @@ def userLogout(request):
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def userServers(request): 
-    access_token = AccessTokenTable.objects.get(user=request.user)
+    # access_token = AccessTokenTable.objects.get(user=request.user)
+    # servers = UserServers.objects.filter(user=request.user)
+    # serializer = UserServersSerializer(servers, many=True)
+    # return Response(serializer.data)
+    access_token = AccessTokenTable.objects.get(user=request.user).access_token
+    #print(access_token.access_token)
     servers = getUserServers(access_token)
     return Response(servers)
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def serverChannels(request, ServerID):
-    access_token = AccessTokenTable.objects.get(user=request.user)
+    access_token = AccessTokenTable.objects.get(user=request.user).access_token
+    print(access_token)
     channels = getServerChannels(access_token, ServerID)
     return Response(channels)
     
 def getServerChannels(access_token, serverid):
+    print('Reached API query function')
     discord_url = "https://discord.com/api/v6/guilds/"+serverid+"/channels"
     response = requests.get(discord_url, headers={
         'Authorization': 'Bearer %s' % access_token
@@ -146,11 +173,12 @@ def getServerChannels(access_token, serverid):
     return channels
 
 def getUserServers(access_token):
+    print('Reached to API query')
     response = requests.get("https://discord.com/api/v6/users/@me/guilds", headers={
         'Authorization': 'Bearer %s' % access_token
     })
     servers = response.json()
-    return server
+    return servers
 
 def getUserInformation(access_token):
     response = requests.get("https://discord.com/api/v6/users/@me", headers={
@@ -158,6 +186,25 @@ def getUserInformation(access_token):
     })
     user = response.json()
     return user
+
+def getAccessToken(code): 
+    data = {
+        "client_id":os.getenv("CLIENT_ID"),
+        "client_secret":os.getenv("CLIENT_SECRET"),
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": "http://localhost:8000/oauth2/login/redirect/", 
+        "scope": "identify"
+    }
+    headers = {
+        "Content-type": "application/x-www-form-urlencoded"
+    }
+    response = requests.post("https://discord.com/api/oauth2/token", data=data, headers=headers)
+    #print(response.json())
+    credentials = response.json()
+    print('Access token')
+    access_token = credentials['access_token']
+    return access_token
 
 
 def exchange_code(code):

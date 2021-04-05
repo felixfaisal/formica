@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import  FormCreate, FormResponse, DiscordUser
+from .models import  FormCreate, FormResponse, DiscordUser, UserServers
 
 
 class FormCreateSerializer(serializers.ModelSerializer):
@@ -16,3 +16,8 @@ class DiscordUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = DiscordUser
         fields = '__all__'
+
+class UserServersSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model = UserServers
+        fields = ['servers']

@@ -15,5 +15,5 @@ urlpatterns = [
     path('api/user/login/', views.userLogin, name='userLogin'), 
     path('api/user/logout/', views.userLogout, name='userLogout'), 
     path('api/user/server/', views.userServers, name='userServer'), 
-    path('api/user/channels/<str:ServerID', views.serverChannels, name='serverChannels')
+    path('api/user/channels/<str:ServerID>', views.serverChannels, name='serverChannels')
 ]
