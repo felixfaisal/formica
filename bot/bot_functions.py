@@ -3,6 +3,8 @@ import os
 import json
 import globals
 
+from bot_validation import validate_response
+
 # intents = discord.Intents().all()
 # intents.reactions = True
 # client = discord.Client(intents = intents)
@@ -37,7 +39,7 @@ def get_question(cur_index):
     # The process of making the embed is the same, whether the q_type is text or multi-choice
     cur_q_embed = discord.Embed(title = globals.questions[cur_index]['question'], description = globals.questions[cur_index]['description'], color = globals.form_color) 
 
-    # check if we have an m/c question
+    # add the appropriate insturctions to the question
     if q_type == "multiple choice":
         globals.tot_options = len(globals.questions[cur_index]['options'])
 
@@ -47,6 +49,8 @@ def get_question(cur_index):
         # iterate through the options and emojis, adding them to the embed
         for index in range(globals.tot_options):
             cur_q_embed.add_field(name = f"{globals.emoji_options[index]} {globals.questions[cur_index]['options'][index]}", value = '** **', inline = False)
+    elif q_type == "phone":
+        cur_q_embed.description += "Answer in the format +X XXX XXXX, starting with your country code.\n Example: +1 123 123 1234\n If you need help, you can find your country code here: https://countrycode.org"
 
     return cur_q_embed, q_type
 
@@ -81,56 +85,57 @@ def set_response(response, response_id, author, index):
     #set response & id
     globals.responses[globals.user_index]['responses'].append(response)
     globals.responses[globals.user_index]['response_ids'].append(response_id)
-    #print("set: ", responses)
+    #print("🔴 set: ", globals.responses)
 
 # Description: Overwrites the old message with the new message
 # Uses message ids to determine where to overwrite the message
-def edit_response(old_confirmation, edited_response, question_type):    
-    #grab the message and id
-    if question_type == "text":
-        new_response = edited_response.content
-        new_response_id = edited_response.id
+def edit_response(old_confirmation, edited_response, new_response_id): 
+    # find the question index (the question index is the same as the response index)
+    for index in range(len(globals.responses[globals.user_index]['response_ids'])):
+        if globals.responses[globals.user_index]['response_ids'][index] == new_response_id:
+            q_index = index
+ 
+    # get the question type
+    question_type = globals.questions[q_index]['input_type']   
+    #print("🔴 edited question type: ", question_type)
 
-    elif question_type == "multiple choice":
-        # get the index
+    # validate response and grab the message content
+    if question_type == "multiple choice":
+        valid_response = True
+        # get the index of the emoji
         emoji_index = globals.emoji_options.index(str(edited_response.emoji))
 
         #check that index is valid
         if emoji_index >= globals.tot_options:
             print(f"invalid option {emoji_index} selected")
             return
-        
-        # get the id
-        new_response_id = edited_response.message.id
 
-        # find the question index
-        for index in range(len(globals.questions)):
-            if globals.questions[index]['question_id'] == new_response_id:
-                q_index = index
-
-        # grab the corresponding option and set that as the new message
-        new_response = globals.questions[q_index]['options'][emoji_index]       
-
-    # search responses for corresponding id
-    try:
-        for item in globals.responses[globals.user_index]['response_ids']:
-            if item == new_response_id:
-                target = item
-                target_index = globals.responses[globals.user_index]['response_ids'].index(target)
-
-    except:
-        print("id not found")
+        # use the emoji index to grab the corresponding option and set that as the new message
+        new_response = globals.questions[q_index]['options'][emoji_index]      
     else:
-        print(f"id found at index {target_index}")
+        if question_type == "email" or question_type == "phone" or question_type == "number":
+            valid_response = validate_response(edited_response.content, question_type)
 
-        # write over the response      
-        globals.responses[globals.user_index]['responses'][target_index] = str(new_response)
+            if valid_response == False:
+                return(None, valid_response)
+        else:
+            # If the q_type isn't any of the above, then it's a text response
+            # Text responses are always valid 
+            valid_response = True    
 
-        #edit the confirmation message
-        print("🔴 old confirmation: ", old_confirmation)
+        new_response = edited_response.content
+
+    # write over the response      
+    globals.responses[globals.user_index]['responses'][q_index] = str(new_response)
+
+    #edit the confirmation message (if form was completed)
+    if old_confirmation != None:
+        #print("old confirmation: ", old_confirmation)
         new_confirmation = old_confirmation.embeds[0]
-        new_confirmation.set_field_at(index = target_index, name = globals.questions[target_index]['question'], value = new_response, inline = False)
-        return new_confirmation
+        new_confirmation.set_field_at(index = q_index, name = globals.questions[q_index]['question'], value = new_response, inline = False)
+    else:
+        new_confirmation = None
+    return new_confirmation, valid_response
     
 # Description: Creates a confirmation message. Summarizes questions and answers
 def end_form():
