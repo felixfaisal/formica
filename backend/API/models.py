@@ -54,3 +54,7 @@ class LoginTable(models.Model):
 class AccessTokenTable(models.Model):
     access_token = models.CharField(max_length=200)
     user = models.ForeignKey(DiscordUser, on_delete=models.CASCADE)
+
+class UserServers(models.Model):
+    servers = models.JSONField()
+    user = models.ForeignKey(DiscordUser, on_delete=models.CASCADE)
