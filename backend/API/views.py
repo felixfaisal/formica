@@ -145,6 +145,20 @@ def userLogout(request):
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
+def userInformation(request):
+    #print(request.user)
+    serializer = DiscordUserSerializer(data=request.user, many=False)
+    serializer.is_valid()
+    jsondata = {
+        "tag": request.user.discord_tag, 
+        "avatar": request.user.avatar, 
+        "flags": request.user.flags,
+    }
+    return JsonResponse(jsondata, safe=False)
+    #return Response("Oops! You're not logged in")
+
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
 def userServers(request): 
     # access_token = AccessTokenTable.objects.get(user=request.user)
     # servers = UserServers.objects.filter(user=request.user)

@@ -15,7 +15,7 @@ class FormResponseSerializer(serializers.ModelSerializer):
 class DiscordUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = DiscordUser
-        fields = '__all__'
+        fields = ['discord_tag', 'avatar']
 
 class UserServersSerializer(serializers.ModelSerializer):
     class Meta: 
