@@ -181,7 +181,7 @@ async def on_message(message):
 @client.event
 async def on_message_edit(before, after):
     if before.content != after.content:
-        print(f"🔴 Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
+        #print(f"🔴 Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
         # edit the response & get an updated embed
         try:
             old_confirmation = await after.channel.fetch_message(globals.confirmation_id)

@@ -85,7 +85,7 @@ def set_response(response, response_id, author, index):
     #set response & id
     globals.responses[globals.user_index]['responses'].append(response)
     globals.responses[globals.user_index]['response_ids'].append(response_id)
-    print("🔴 set: ", globals.responses)
+    #print("🔴 set: ", globals.responses)
 
 # Description: Overwrites the old message with the new message
 # Uses message ids to determine where to overwrite the message
