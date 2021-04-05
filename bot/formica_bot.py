@@ -144,14 +144,8 @@ async def on_message(message):
                     #if response is invalid, prompt user to try again
                     while valid_response == False:
                         await message.author.send("It looks like your response was in the wrong format. Please try again")
-                        # wait for response
-                        def check(m):
-                            # check that it's the right user and channel
-                            # ignore message if it's the !start command
-                            return m.author.id == message.author.id and m.channel == message.channel and m.content.startswith('!start') == False
-
-                        msg = await client.wait_for('message', check=check)
-                        valid_response = validate_response(msg.content, q_type)
+                        msg = await client.wait_for('message', check=check) # wait for response
+                        valid_response = validate_response(msg.content, q_type) # re-validate
                     
                 # If it's a text response, save the response
                 set_response(msg.content, msg.id, message.author, cur_index)
