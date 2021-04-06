@@ -11,6 +11,7 @@ export const auth = (
 			return {
 				...state,
 				isLoggedIn: true,
+				token: action.payload.token,
 			};
 		}
 		default:

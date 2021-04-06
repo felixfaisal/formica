@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import Button from "../../Components/Button";
+import Toast from "../../Components/Toast";
 
 import styles from "./Landing.module.css";
 

@@ -17,9 +17,7 @@ const FormStatistics = () => {
 			else dayWiseObject[date] = 1;
 		});
 
-		console.log(dayWiseObject);
 		const dayWiseArray = Object.keys(dayWiseObject).map((key) => ({ x: key, y: dayWiseObject[key] }));
-		console.log(dayWiseArray);
 		setData([
 			{
 				color: "steelblue",

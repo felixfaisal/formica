@@ -12,11 +12,11 @@ const FormData = () => {
 	return (
 		<>
 			<h3 className={styles.title}>Form {id} :- </h3>
-			<div className={styles.tabs}>
+			{/* <div className={styles.tabs}>
 				<Link to={`/forms/${id}/responses`}>Responses</Link>
 				<Link to={`/forms/${id}/statistics`}>Statistics</Link>
 				<Link to={`/forms/${id}/sharing`}>Sharing</Link>
-			</div>
+			</div> */}
 			<Switch>
 				<Route exact path={`/forms/${id}/responses`}>
 					<FormResponses />

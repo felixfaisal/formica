@@ -1,3 +1,6 @@
-const BASE_URL = "http://localhost:3000/api/v1";
+const BASE_URL = "http://localhost:8000";
 
-export const EXAMPLE_URL = `${BASE_URL}/examples`;
+export const LOGIN_URL = `${BASE_URL}/oauth2/login`;
+
+export const USER_URL = `${BASE_URL}/api/user`;
+export const USER_INFORMATION_URL = `${USER_URL}/information`;
