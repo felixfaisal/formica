@@ -1,7 +1,7 @@
-import { getUserInformationService } from "../../Services/users.service";
-import { GET_USER_INFORMATION, LOGIN } from "../ActionTypes";
+import { getUserInformationService, getUserServersService } from "../../Services/users.service";
+import { GET_USER_INFORMATION, GET_USER_SERVERS, LOGIN } from "../ActionTypes";
 
-export const getUserInformation = (token) => async (dispatch, getState) => {
+export const getUserInformation = (token) => async (dispatch) => {
 	try {
 		const userData = await getUserInformationService(token);
 		console.log(userData);
@@ -14,6 +14,20 @@ export const getUserInformation = (token) => async (dispatch, getState) => {
 			type: LOGIN,
 			payload: { token },
 		});
+	} catch (err) {
+		throw err;
+	}
+};
+
+export const getUserServers = () => async (dispatch, getState) => {
+	try {
+		const {
+			auth: { token },
+		} = getState();
+
+		const servers = await getUserServersService(token);
+
+		dispatch({ type: GET_USER_SERVERS, payload: { servers } });
 	} catch (err) {
 		throw err;
 	}

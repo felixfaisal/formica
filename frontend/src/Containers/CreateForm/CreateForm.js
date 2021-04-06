@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 import Button from "../../Components/Button";
+
+import { getUserServers } from "../../Redux/ActionCreators/user.creator";
 
 import styles from "./CreateForm.module.css";
 
@@ -8,6 +11,10 @@ import { ReactComponent as Close } from "../../Assets/Images/close.svg";
 import { ReactComponent as Add } from "../../Assets/Images/add.svg";
 
 const CreateForm = () => {
+	const { userId, servers } = useSelector((state) => state.user);
+	const dispatch = useDispatch();
+
+	const [loading, setLoading] = useState(true);
 	const [title, setTitle] = useState();
 	const [fields, setFields] = useState([]);
 	const [server, setServer] = useState();
@@ -39,9 +46,33 @@ const CreateForm = () => {
 		]);
 	};
 
+	useEffect(() => {
+		getServers();
+	}, []);
+
+	const getServers = async () => {
+		try {
+			await dispatch(getUserServers());
+			setLoading(false);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	const handleSave = () => {
-		const modifiedFields = fields.map((field) => ({ ...field, input_type: field.input_type.toLowerCase() }));
-		console.log(modifiedFields);
+		try {
+			const modifiedFields = fields.map((field) => ({ ...field, input_type: field.input_type.toLowerCase() }));
+			const formData = {
+				userid: userId,
+				FormName: title,
+				Formfields: modifiedFields,
+				server,
+			};
+
+			console.log(formData);
+		} catch (err) {
+			throw err;
+		}
 	};
 
 	const displayFields = fields.map((field, index) => (
@@ -96,7 +127,11 @@ const CreateForm = () => {
 		</div>
 	));
 
-	return (
+	return loading ? (
+		<div className={styles.container}>
+			<h3 className={styles.subtitle}>Please Wait...</h3>
+		</div>
+	) : (
 		<div className={styles.container}>
 			<input
 				type="text"
@@ -110,9 +145,9 @@ const CreateForm = () => {
 			<Button title="Add Field" className={styles.button} onClick={addField} />
 			<h3 className={styles.subtitle}>Select Server</h3>
 			<select className={styles.select} value={server} onChange={({ target: { value } }) => setServer(value)}>
-				<option>Server 1</option>
-				<option>Server 2</option>
-				<option>Server 3</option>
+				{servers.map((server) => (
+					<option>{server.name}</option>
+				))}
 			</select>
 			<Button title="Save" className={`${styles.save} ${styles.button}`} onClick={handleSave} />
 		</div>
