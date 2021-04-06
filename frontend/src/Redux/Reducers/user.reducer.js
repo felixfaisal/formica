@@ -1,12 +1,11 @@
-import { GET_USER_INFORMATION } from "../ActionTypes";
+import { GET_USER_INFORMATION, LOGOUT } from "../ActionTypes";
 
-export const user = (
-	state = {
-		name: null,
-		avatar: null,
-	},
-	action
-) => {
+const initialState = {
+	name: null,
+	avatar: null,
+};
+
+export const user = (state = initialState, action) => {
 	switch (action.type) {
 		case GET_USER_INFORMATION: {
 			return {
@@ -14,6 +13,9 @@ export const user = (
 				name: action.payload.name,
 				avatar: action.payload.avatar,
 			};
+		}
+		case LOGOUT: {
+			return initialState;
 		}
 		default:
 			return state;

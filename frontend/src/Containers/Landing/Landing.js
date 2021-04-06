@@ -1,13 +1,23 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import Button from "../../Components/Button";
-import Toast from "../../Components/Toast";
 
 import styles from "./Landing.module.css";
 
 import { ReactComponent as Hero } from "../../Assets/Images/hero.svg";
 
 const Landing = () => {
+	const { isLoggedIn } = useSelector((state) => state.auth);
+
+	const history = useHistory();
+
+	const handleProceed = () => {
+		if (isLoggedIn) history.push("/dashboard");
+		else window.location.href = "http://localhost:8000/oauth2/login";
+	};
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.info}>
@@ -18,7 +28,7 @@ const Landing = () => {
 					their favourite app, Discord! Formica is fully transparent and allows users to see where their data
 					is being shared and allows them to delete the data if they wish to.
 				</p>
-				<Button title="Let's Go!" />
+				<Button title="Let's Go!" onClick={handleProceed} />
 			</div>
 			<div>
 				<Hero className={styles.hero} />
