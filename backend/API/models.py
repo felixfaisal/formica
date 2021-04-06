@@ -34,6 +34,7 @@ class DiscordUser(models.Model):
 
 class FormCreate(models.Model):
     id = models.BigIntegerField(primary_key=True)
+    serverid = models.BigIntegerField()
     userid = models.ForeignKey(DiscordUser, on_delete=models.CASCADE)
     Formfields = models.JSONField()
     FormName = models.CharField(max_length=200)

@@ -5,7 +5,7 @@ from .models import  FormCreate, FormResponse, DiscordUser, UserServers
 class FormCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = FormCreate 
-        fields = ['id','Formfields','FormName']
+        fields = ['id','Formfields','FormName','serverid']
 
 class FormResponseSerializer(serializers.ModelSerializer):
     class Meta: 

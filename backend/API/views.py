@@ -114,6 +114,7 @@ def formcreateresponse(request):
         newform.userid = form['userid']
         newform.FormName = form['FormName']
         newform.Formfields = form['Formfields']
+        newform.serverid = form['serverid']
         print(newform)
         newform.save()
 
