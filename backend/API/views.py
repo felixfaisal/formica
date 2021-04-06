@@ -157,6 +157,7 @@ def userInformation(request):
     serializer = DiscordUserSerializer(data=request.user, many=False)
     serializer.is_valid()
     jsondata = {
+        "userid": request.user.id,
         "tag": request.user.discord_tag,
         "avatar": request.user.avatar,
         "flags": request.user.flags,
