@@ -13,7 +13,7 @@ const CreateForm = () => {
 	const [server, setServer] = useState();
 
 	const addField = () => {
-		setFields([...fields, { type: "text", title: "", options: [] }]);
+		setFields([...fields, { input_type: "text", question: "", options: [], question_id: 0 }]);
 	};
 
 	const removeField = (index) => {
@@ -40,7 +40,8 @@ const CreateForm = () => {
 	};
 
 	const handleSave = () => {
-		console.log(fields);
+		const modifiedFields = fields.map((field) => ({ ...field, input_type: field.input_type.toLowerCase() }));
+		console.log(modifiedFields);
 	};
 
 	const displayFields = fields.map((field, index) => (
@@ -50,21 +51,25 @@ const CreateForm = () => {
 					type="text"
 					placeholder="Enter Question"
 					className={styles.text_field}
-					value={field.title}
-					name="title"
+					value={field.question}
+					name="question"
 					onChange={({ target: { name, value } }) => changeField(index, name, value)}
+					autoFocus
 				/>
 				<select
-					name="type"
+					name="input_type"
 					className={styles.select}
 					onChange={({ target: { name, value } }) => changeField(index, name, value)}
 				>
 					<option>Text</option>
+					<option>Number</option>
 					<option>Multiple Choice</option>
+					<option>Email</option>
+					<option>Phone</option>
 				</select>
 				<Close className={styles.close} onClick={() => removeField(index)} />
 			</div>
-			{field.type === "Multiple Choice" ? (
+			{field.input_type === "Multiple Choice" ? (
 				<div className={styles.choices_container}>
 					{field.options.map((option, optionIndex) => (
 						<input
@@ -78,7 +83,7 @@ const CreateForm = () => {
 					))}
 				</div>
 			) : null}
-			{field.type === "Multiple Choice" ? (
+			{field.input_type === "Multiple Choice" ? (
 				<div
 					className={styles.add_container}
 					onClick={() => changeField(index, "options", [...field.options, ""])}
