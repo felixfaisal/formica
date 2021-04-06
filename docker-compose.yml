@@ -10,4 +10,18 @@ services:
         build: ./backend
         ports:
             - "8000:8000"
+        depends_on:
+            - db
+
+    db:
+        image: mysql 
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root 
+            MYSQL_DATABASE: formica
+            MYSQL_USER: newuser
+            MYSQL_PASSWORD: user_password
+      
+
     
