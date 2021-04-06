@@ -14,6 +14,8 @@ from bot_functions import edit_response
 from bot_functions import end_form 
 from bot_functions import submit_responses
 
+from bot_validation import validate_response
+
 intents = discord.Intents().all()
 intents.reactions = True
 client = discord.Client(intents = intents)
@@ -89,6 +91,7 @@ async def on_message(message):
             print("This user has already submitted a form")
             await message.author.send("It looks like you've already submitted this form. You can manage your responses here: <insert link>")
             return
+        
     
         while cur_index < q_count:
             print(f"cur index: {cur_index}, total qs: {q_count}")
@@ -98,23 +101,12 @@ async def on_message(message):
             q_message = await message.author.send(embed=q_embed)
             # save the question id
             globals.questions[cur_index]['question_id'] = q_message.id
-            print("question id: ", q_message.id)
             print("question: ", q_embed.title)
+            print("question id: ", q_message.id)
+            print("question type: ", q_type)
 
-            # check question type
-            if q_type == "text":
-                # wait for response
-                def check(m):
-                    # check that it's the right user and channel
-                    # ignore message if it's the !start command
-                    return m.author.id == message.author.id and m.channel == message.channel and m.content.startswith('!start') == False
-
-                msg = await client.wait_for('message', check=check)
-
-                # save response
-                set_response(msg.content, msg.id, message.author, cur_index)
-
-            elif q_type == "multiple choice":
+            # check question type (we don't need to validate text or m/c)
+            if q_type == "multiple choice":
                 #global mc_ids
                 globals.mc_ids.append(q_message.id)
 
@@ -135,6 +127,28 @@ async def on_message(message):
                 
                 #save response
                 set_response(response, q_message.id, user, cur_index)
+            else:
+                # wait for response
+                def check(m):
+                    # check that it's the right user and channel
+                    # ignore message if it's the !start command
+                    return m.author.id == message.author.id and m.channel == message.channel and m.content.startswith('!start') == False
+
+                msg = await client.wait_for('message', check=check)
+
+                # validate response (if it's an email, phone, or number)
+                if q_type == "email" or q_type == "phone" or q_type =="number":                        
+                    print("🔴 non text or mc detected")
+                    valid_response = validate_response(msg.content, q_type)
+
+                    #if response is invalid, prompt user to try again
+                    while valid_response == False:
+                        await message.author.send("It looks like your response was in the wrong format. Please try again")
+                        msg = await client.wait_for('message', check=check) # wait for response
+                        valid_response = validate_response(msg.content, q_type) # re-validate
+                    
+                # If it's a text response, save the response
+                set_response(msg.content, msg.id, message.author, cur_index)
                 
             # update counters
             cur_index += 1
@@ -167,32 +181,42 @@ async def on_message(message):
 @client.event
 async def on_message_edit(before, after):
     if before.content != after.content:
-        # print(f"Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
+        #print(f"🔴 Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
         # edit the response & get an updated embed
-        old_confirmation = await after.channel.fetch_message(globals.confirmation_id)
-        new_confirmation = edit_response(old_confirmation, after, "text")
-        await old_confirmation.edit(embed = new_confirmation)
+        try:
+            old_confirmation = await after.channel.fetch_message(globals.confirmation_id)
+        except:
+            # if user edited response b4 the end of the form, we don't need to update the confirmation msg
+            new_confirmation, valid_response = edit_response(None, after, after.id)
+            if valid_response == False:
+                await after.reply("It looks like your edited response was in the wrong format. Please try editing your response again.")
+        else:
+            new_confirmation, valid_response = edit_response(old_confirmation, after, after.id)
+            if valid_response == False:
+                await after.reply("It looks like your edited response was in the wrong format. Please try editing your response again.")
+            else:
+                await old_confirmation.edit(embed = new_confirmation)
 
 # detect edits to mc questions
 @client.event
 async def on_reaction_add(reaction, user):
     # need to make sure this doesn't clash with the intital rxn
-    # print("user: ", user)
-    # print("message id: ", reaction.message.id)
+    #print("edited message id: ", reaction.message.id)
 
     #ignore, if the reaction is from ourselves
     if user == client.user:
         return
 
-    # check if it's an mc question
+    # check if it's an mc question; we don't need to validate mc responses
     if (reaction.message.id in globals.mc_ids):
         try:
             old_confirmation = await reaction.message.channel.fetch_message(globals.confirmation_id)
-            new_confirmation = edit_response(old_confirmation, reaction, "multiple choice")
-            await old_confirmation.edit(embed = new_confirmation)
-            print("change to mc response detected")
         except:
-            return
+            # if user edited response b4 the end of the form, we don't need to update the confirmation msg
+            new_confirmation, valid_response = edit_response(None, reaction, reaction.message.id)
+        else:
+            new_confirmation, valid_response = edit_response(old_confirmation, reaction, reaction.message.id)
+            await old_confirmation.edit(embed = new_confirmation)
 
 # run bot
 BOT_TOKEN = config('TOKEN')
