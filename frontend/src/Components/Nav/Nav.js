@@ -20,7 +20,7 @@ const useQuery = () => {
 const Nav = () => {
 	const [loginText, setLoginText] = useState("Loading...");
 	const { isLoggedIn } = useSelector((state) => state.auth);
-	const { name } = useSelector((state) => state.user);
+	const { name, userId, avatar } = useSelector((state) => state.user);
 
 	const dispatch = useDispatch();
 	const query = useQuery();
@@ -61,7 +61,7 @@ const Nav = () => {
 			{isLoggedIn ? (
 				<Link to="/dashboard" className={styles.brand}>
 					<h2>{name}</h2>
-					<DiscordLogo className={styles.logo} />
+					<img src={`https://cdn.discordapp.com/avatars/${userId}/${avatar}`} className={styles.logo} />
 					<Logout className={styles.logout} onClick={handleLogout} />
 				</Link>
 			) : (

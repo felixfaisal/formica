@@ -8,7 +8,7 @@ export const getUserInformation = (token) => async (dispatch, getState) => {
 
 		dispatch({
 			type: GET_USER_INFORMATION,
-			payload: { name: userData.tag.split("#")[0], avatar: userData.avatar },
+			payload: { name: userData.tag.split("#")[0], avatar: userData.avatar, userId: userData.userid },
 		});
 		dispatch({
 			type: LOGIN,
