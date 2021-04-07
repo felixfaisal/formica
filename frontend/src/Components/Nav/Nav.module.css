@@ -3,8 +3,7 @@
   padding: 1vw;
   padding-left: 5vw;
   padding-right: 5vw;
-  /* background-color: var(--primary-color); */
-  position: fixed;
+  position: absolute;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -27,4 +26,11 @@
 .logo {
   height: 50px;
   width: 50px;
+  border-radius: 50%;
+}
+
+.logout {
+  height: 40px;
+  width: 40px;
+  margin-left: 1vw;
 }

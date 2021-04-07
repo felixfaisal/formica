@@ -24,7 +24,7 @@ const Home = () => {
 					<Route exact path="/forms">
 						<Forms />
 					</Route>
-					<Route exact path="/forms/:id">
+					<Route path="/forms/:id">
 						<FormData />
 					</Route>
 					<Route exact path="/create">
