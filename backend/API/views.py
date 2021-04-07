@@ -188,6 +188,21 @@ def serverChannels(request, ServerID):
     channels = getServerChannels(access_token, ServerID)
     return Response(channels)
 
+@api_views(['GET', 'POST'])
+def botFormList(request):
+    forms = FormCreate.objects.all()
+    serializer = FormCreateSerializer(forms, many=True)
+    return Response(serializer.data)
+
+@api_views(['GET', 'POST'])
+def botFormResponse(request, formName):
+    serializer = FormResponseSerializer(data=request.data, many=False)
+    if serializer.is_valid():
+        serializer.save()
+    
+    return Response(serializer.data)
+
+
 
 def getServerChannels(access_token, serverid):
     print('Reached API query function')

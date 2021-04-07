@@ -33,7 +33,7 @@ class DiscordUser(models.Model):
             Token.objects.create(user=instance)
 
 class FormCreate(models.Model):
-    id = models.BigIntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     serverid = models.BigIntegerField()
     userid = models.ForeignKey(DiscordUser, on_delete=models.CASCADE)
     Formfields = models.JSONField()
@@ -43,7 +43,7 @@ class FormCreate(models.Model):
         return self.FormName
 
 class FormResponse(models.Model):
-    id = models.BigIntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     form = models.ForeignKey(FormCreate, on_delete=models.CASCADE)
     responseid = models.BigIntegerField()
     response = models.JSONField()
