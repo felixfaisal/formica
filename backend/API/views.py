@@ -188,13 +188,13 @@ def serverChannels(request, ServerID):
     channels = getServerChannels(access_token, ServerID)
     return Response(channels)
 
-@api_views(['GET', 'POST'])
+@api_view(['GET', 'POST'])
 def botFormList(request):
     forms = FormCreate.objects.all()
     serializer = FormCreateSerializer(forms, many=True)
     return Response(serializer.data)
 
-@api_views(['GET', 'POST'])
+@api_view(['GET', 'POST'])
 def botFormResponse(request, formName):
     serializer = FormResponseSerializer(data=request.data, many=False)
     if serializer.is_valid():
@@ -202,7 +202,7 @@ def botFormResponse(request, formName):
     
     return Response(serializer.data)
 
-@api_views(['GET'])
+@api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 def dashboardInformation(request):
     forms = FormCreate.objects.filter(userid=request.user).count()
