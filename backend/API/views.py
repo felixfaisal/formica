@@ -92,7 +92,7 @@ def responselist(request):
     return Response(serializer.data)
 
 
-@login_required(login_url='login/')
+# @login_required(login_url='login/')
 @api_view(["GET"])
 def formresponse(request, FormName):
     form = FormCreate.objects.get(FormName=FormName, userid=request.user)
@@ -110,7 +110,7 @@ def formcreateresponse(request):
         form = serializer.data
         form["userid"] = request.user
         newform = FormCreate()
-        newform.id = form['id']
+        #newform.id = form['id']
         newform.userid = form['userid']
         newform.FormName = form['FormName']
         newform.Formfields = form['Formfields']
