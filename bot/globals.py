@@ -1,12 +1,11 @@
 # form details
 form_started = False
-form_submitted = False #keeps track of whether the user has submitted the form already
 form_name = "Name"
 form_alert_channel = ""
 form_color = 0xff8906 #colour of the embed msgs
 
 # question details
-responses = []
+local_responses = []
 questions = []
 mc_ids = []
 tot_options = 0 #tot multiple choice options

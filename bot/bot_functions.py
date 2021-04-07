@@ -1,3 +1,5 @@
+# Functions that handle the form go here
+
 import discord
 import os
 import json
@@ -9,35 +11,12 @@ from bot_validation import validate_response
 # intents.reactions = True
 # client = discord.Client(intents = intents)
 
-# Description: Gets the form details (eg. form name)
-def get_form_specs():
-    # get channel to send alerts to
-    alert_channel_id = 824348394411262013
-    # get form name
-    form_name = "Event Registration"
-    #form_alert_channel = client.get_channel(alert_channel_id)
-
-    return alert_channel_id, form_name
-
-# Description: Gets the questions and responses from the database
-def get_form():
-    # get questions
-    with open("dummy_questions.json", "r") as q:
-        globals.questions = json.load(q)
-        q_count = len(globals.questions)
-    
-    # get responses
-    with open('dummy_responses.json', 'r') as r:
-        globals.responses = json.load(r)
-    
-    return q_count
-
 # Description: Fetches the current question to create an embedded question message
 def get_question(cur_index):
     # get question type
     q_type = globals.questions[cur_index]['input_type']
     # The process of making the embed is the same, whether the q_type is text or multi-choice
-    cur_q_embed = discord.Embed(title = globals.questions[cur_index]['question'], description = globals.questions[cur_index]['description'], color = globals.form_color) 
+    cur_q_embed = discord.Embed(title = globals.questions[cur_index]['question'], description = '** **', color = globals.form_color) 
 
     # add the appropriate insturctions to the question
     if q_type == "multiple choice":
@@ -57,42 +36,45 @@ def get_question(cur_index):
 # Description: Searches the saved responses for the user. 
 # If not found, appends them to the responses. If found, checks if they already submitted this form
 def get_user(user):
+    user_submitted = False
     #search for the user
     try:
-        target = next(item for item in globals.responses if item['username'] == str(user))      
+        target = next(item for item in globals.local_responses if item['user_id'] == user.id)      
     except:
         #create a new user with empty responses
         print("not found")
         # append to database
-        globals.responses.append({'username': str(user), 'user_id': str(user.id), 'responses': [], 'response_ids': [], 'form_submitted': "false" })
+        globals.local_responses.append({'form_id': "", 'username': str(user), 'user_id': str(user.id), 'responses': [], 'response_ids': []})
         #print("appended: ", responses)
 
-        globals.user_index = len(globals.responses) - 1
+        globals.user_index = len(globals.local_responses) - 1
     else:
         # get index
-        globals.user_index = globals.responses.index(target)
+        globals.user_index = globals.local_responses.index(target)
         print("found at index ", globals.user_index) 
-        # if user exists, check if they've already submitted a form
-        if globals.responses[globals.user_index]['form_submitted'] == "true":
-            print("User has already submitted a form")
-            globals.form_submitted = True
-            return
+
+        # check if the form has already been completed by them
+        if len(globals.local_responses[user_index]['responses']) >= len(globals.questions):
+            user_submitted = True
+    
+    return user_submitted
+        
 
 # Description: Saves the received response
 def set_response(response, response_id, author, index):    
     print(f"response: {response}, author: {author}, author id: {author.id}")
 
     #set response & id
-    globals.responses[globals.user_index]['responses'].append(response)
-    globals.responses[globals.user_index]['response_ids'].append(response_id)
-    #print("🔴 set: ", globals.responses)
+    globals.local_responses[globals.user_index]['responses'].append(response)
+    globals.local_responses[globals.user_index]['response_ids'].append(response_id)
+    #print("🔴 set: ", globals.local_responses)
 
 # Description: Overwrites the old message with the new message
 # Uses message ids to determine where to overwrite the message
 def edit_response(old_confirmation, edited_response, new_response_id): 
     # find the question index (the question index is the same as the response index)
-    for index in range(len(globals.responses[globals.user_index]['response_ids'])):
-        if globals.responses[globals.user_index]['response_ids'][index] == new_response_id:
+    for index in range(len(globals.local_responses[globals.user_index]['response_ids'])):
+        if globals.local_responses[globals.user_index]['response_ids'][index] == new_response_id:
             q_index = index
  
     # get the question type
@@ -126,7 +108,7 @@ def edit_response(old_confirmation, edited_response, new_response_id):
         new_response = edited_response.content
 
     # write over the response      
-    globals.responses[globals.user_index]['responses'][q_index] = str(new_response)
+    globals.local_responses[globals.user_index]['responses'][q_index] = str(new_response)
 
     #edit the confirmation message (if form was completed)
     if old_confirmation != None:
@@ -143,27 +125,6 @@ def end_form():
     confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = globals.form_color)
     # add questions and answers to the embed
     for item in range(len(globals.questions)):
-        confirmation_embed.add_field(name = globals.questions[item]['question'], value = globals.responses[globals.user_index]['responses'][item], inline = False)
+        confirmation_embed.add_field(name = globals.questions[item]['question'], value = globals.local_responses[globals.user_index]['responses'][item], inline = False)
     
     return confirmation_embed
-
-# Description: Writes the responses to the database, creates a submission confirmation message for the user and form creator
-def submit_responses(user):
-    globals.form_started = False
-    globals.form_submitted = True
-
-    # flag the user as haven already responded
-    globals.responses[globals.user_index]['form_submitted'] = "true"
-
-    # write to the database
-    with open('dummy_responses.json', 'w') as w:
-        json.dump(globals.responses, w)
-    
-    #make submission confirmation for the user
-    submission_alert_user = discord.Embed(title = 'Form submitted', description = 'You can view and manage your responses here: <insert link>', color = globals.form_color)
-
-    # make a submission confirmation for the form creator
-    submission_alert_creator = discord.Embed(title = f'{user} has submitted a form', description = 'To manage your forms, click here: <insert link>', color = globals.form_color)
-    submission_alert_creator.add_field(name = 'Form:', value = globals.form_name, inline = False)
-
-    return submission_alert_user, submission_alert_creator

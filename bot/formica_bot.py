@@ -1,3 +1,5 @@
+# Main control flow and coroutines go here
+
 import discord
 import os
 import json
@@ -5,14 +7,15 @@ from decouple import config
 
 import globals 
 
-from bot_functions import get_form_specs
-from bot_functions import get_form
+from bot_requests import get_form_specs
+from bot_requests import get_form
+from bot_requests import submit_responses
+
 from bot_functions import get_question
 from bot_functions import get_user 
 from bot_functions import set_response 
 from bot_functions import edit_response 
 from bot_functions import end_form 
-from bot_functions import submit_responses
 
 from bot_validation import validate_response
 
@@ -81,13 +84,13 @@ async def on_message(message):
             # get our questions and responses
             q_count = get_form()
             # search for the user in the saved responses
-            get_user(message.author)
+            user_submitted = get_user(message.author)
         else:
             print("form already started")
             await message.author.send("Oops! You've already started this form. Answer the previous question to proceed.\nYou can answer by sending a message, or by reacting to the question if it's a multiple choice.")
         
         # check if form has already been submitted by the user
-        if globals.form_submitted == True:
+        if user_submitted == True:
             print("This user has already submitted a form")
             await message.author.send("It looks like you've already submitted this form. You can manage your responses here: <insert link>")
             return
