@@ -69,7 +69,7 @@ const CreateForm = () => {
 				userid: userId,
 				FormName: title,
 				Formfields: modifiedFields,
-				serverid: server.split(" ").pop().match(/\d+/g)[0],
+				serverid: server ? server.split(" ").pop().match(/\d+/g)[0] : servers[0].id,
 			};
 
 			await dispatch(createForm(formData));
