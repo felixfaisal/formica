@@ -6,6 +6,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617376991000,
 	},
 	{
 		id: 2,
@@ -14,6 +15,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617376991000,
 	},
 	{
 		id: 3,
@@ -22,6 +24,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617376991000,
 	},
 	{
 		id: 1,
@@ -30,6 +33,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617376991000,
 	},
 	{
 		id: 2,
@@ -38,6 +42,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617463391000,
 	},
 	{
 		id: 3,
@@ -46,6 +51,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617463391000,
 	},
 	{
 		id: 1,
@@ -54,6 +60,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617463391000,
 	},
 	{
 		id: 2,
@@ -62,6 +69,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617549791000,
 	},
 	{
 		id: 3,
@@ -70,6 +78,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617636191000,
 	},
 	{
 		id: 1,
@@ -78,6 +87,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617636191000,
 	},
 	{
 		id: 2,
@@ -86,6 +96,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617722591000,
 	},
 	{
 		id: 3,
@@ -94,6 +105,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617722591000,
 	},
 	{
 		id: 1,
@@ -102,6 +114,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617722591000,
 	},
 	{
 		id: 2,
@@ -110,6 +123,7 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617722591000,
 	},
 	{
 		id: 3,
@@ -118,5 +132,6 @@ export default [
 		"Other Field": "Something",
 		"Another Field": "Something else",
 		"One More Field": "Something other than the last one",
+		timestamp: 1617722591000,
 	},
 ];

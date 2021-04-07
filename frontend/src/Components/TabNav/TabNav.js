@@ -7,7 +7,6 @@ import tabs from "../../Assets/Data/tabs";
 
 const TabNav = () => {
 	const location = useLocation();
-	console.log(location);
 
 	const displayTabs = tabs.map((tab) => (
 		<Link to={tab.path} className={`${styles.tab} ${location.pathname === tab.path ? styles.active_tab : null}`}>

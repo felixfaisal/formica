@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 import Button from "../../Components/Button";
+import Toast from "../../Components/Toast";
+
+import { getUserServers } from "../../Redux/ActionCreators/user.creator";
+import { createForm } from "../../Redux/ActionCreators/forms.creator";
 
 import styles from "./CreateForm.module.css";
 
@@ -8,12 +13,16 @@ import { ReactComponent as Close } from "../../Assets/Images/close.svg";
 import { ReactComponent as Add } from "../../Assets/Images/add.svg";
 
 const CreateForm = () => {
+	const { userId, servers } = useSelector((state) => state.user);
+	const dispatch = useDispatch();
+
+	const [loading, setLoading] = useState(true);
 	const [title, setTitle] = useState();
 	const [fields, setFields] = useState([]);
 	const [server, setServer] = useState();
 
 	const addField = () => {
-		setFields([...fields, { type: "text", title: "", options: [] }]);
+		setFields([...fields, { input_type: "text", question: "", options: [], question_id: 0 }]);
 	};
 
 	const removeField = (index) => {
@@ -39,8 +48,43 @@ const CreateForm = () => {
 		]);
 	};
 
-	const handleSave = () => {
-		console.log(fields);
+	useEffect(() => {
+		getServers();
+	}, []);
+
+	const getServers = async () => {
+		try {
+			await dispatch(getUserServers());
+			setLoading(false);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
+	const handleSave = async () => {
+		try {
+			setLoading(true);
+			const modifiedFields = fields.map((field) => ({ ...field, input_type: field.input_type.toLowerCase() }));
+			const formData = {
+				userid: userId,
+				FormName: title,
+				Formfields: modifiedFields,
+				serverid: server ? server.split(" ").pop().match(/\d+/g)[0] : servers[0].id,
+			};
+
+			await dispatch(createForm(formData));
+
+			Toast("Form Created Successfully!", "success");
+
+			setTitle("");
+			setFields([]);
+			setServer(null);
+		} catch (err) {
+			console.log(err);
+			Toast("Some error has occured, please try again!", "error");
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const displayFields = fields.map((field, index) => (
@@ -50,21 +94,25 @@ const CreateForm = () => {
 					type="text"
 					placeholder="Enter Question"
 					className={styles.text_field}
-					value={field.title}
-					name="title"
+					value={field.question}
+					name="question"
 					onChange={({ target: { name, value } }) => changeField(index, name, value)}
+					autoFocus
 				/>
 				<select
-					name="type"
+					name="input_type"
 					className={styles.select}
 					onChange={({ target: { name, value } }) => changeField(index, name, value)}
 				>
 					<option>Text</option>
+					<option>Number</option>
 					<option>Multiple Choice</option>
+					<option>Email</option>
+					<option>Phone</option>
 				</select>
 				<Close className={styles.close} onClick={() => removeField(index)} />
 			</div>
-			{field.type === "Multiple Choice" ? (
+			{field.input_type === "Multiple Choice" ? (
 				<div className={styles.choices_container}>
 					{field.options.map((option, optionIndex) => (
 						<input
@@ -78,7 +126,7 @@ const CreateForm = () => {
 					))}
 				</div>
 			) : null}
-			{field.type === "Multiple Choice" ? (
+			{field.input_type === "Multiple Choice" ? (
 				<div
 					className={styles.add_container}
 					onClick={() => changeField(index, "options", [...field.options, ""])}
@@ -91,7 +139,11 @@ const CreateForm = () => {
 		</div>
 	));
 
-	return (
+	return loading ? (
+		<div className={styles.container}>
+			<h3 className={styles.subtitle}>Please Wait...</h3>
+		</div>
+	) : (
 		<div className={styles.container}>
 			<input
 				type="text"
@@ -105,9 +157,13 @@ const CreateForm = () => {
 			<Button title="Add Field" className={styles.button} onClick={addField} />
 			<h3 className={styles.subtitle}>Select Server</h3>
 			<select className={styles.select} value={server} onChange={({ target: { value } }) => setServer(value)}>
-				<option>Server 1</option>
-				<option>Server 2</option>
-				<option>Server 3</option>
+				{servers
+					.filter((server) => server.permissions_new[0] === "8")
+					.map((server) => (
+						<option>
+							{server.name} ({server.id})
+						</option>
+					))}
 			</select>
 			<Button title="Save" className={`${styles.save} ${styles.button}`} onClick={handleSave} />
 		</div>
