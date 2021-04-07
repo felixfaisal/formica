@@ -9,3 +9,4 @@ export const USER_SERVERS_URL = `${USER_URL}/server`;
 export const FORMS_URL = `${BASE_URL}/api/form`;
 export const CREATE_FORMS_URL = `${FORMS_URL}/create/`;
 export const GET_FORMS_URL = `${FORMS_URL}/list`;
+export const GET_FORM_RESPONSES_URL = `${FORMS_URL}/response`;

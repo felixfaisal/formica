@@ -26,3 +26,11 @@
 .tabs > *:hover {
   background-color: var(--primary-color);
 }
+
+.subtitle {
+  color: var(--title-text-color);
+  font-size: var(--h3);
+  font-family: 'Volkorn', sans-serif;
+  margin-top: 1vw;
+  margin-bottom: 0;
+}
