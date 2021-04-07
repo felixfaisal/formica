@@ -42,7 +42,7 @@ def discord_login_redirect(request):
     access_token = getAccessToken(code)
     user = getUserInformation(access_token)
     servers = getUserServers(access_token)
-    print(servers)
+    #print(servers)
     discord_user = authenticate(request, user=user)
     discord_user = list(discord_user).pop()
     serverinfo = UserServers(user=discord_user, servers=servers)
