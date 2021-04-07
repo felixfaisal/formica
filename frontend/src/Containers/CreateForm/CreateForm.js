@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import Button from "../../Components/Button";
+import Toast from "../../Components/Toast";
 
 import { getUserServers } from "../../Redux/ActionCreators/user.creator";
+import { createForm } from "../../Redux/ActionCreators/forms.creator";
 
 import styles from "./CreateForm.module.css";
 
@@ -59,19 +61,29 @@ const CreateForm = () => {
 		}
 	};
 
-	const handleSave = () => {
+	const handleSave = async () => {
 		try {
+			setLoading(true);
 			const modifiedFields = fields.map((field) => ({ ...field, input_type: field.input_type.toLowerCase() }));
 			const formData = {
 				userid: userId,
 				FormName: title,
 				Formfields: modifiedFields,
-				server,
+				serverid: server.split(" ")[1].match(/\d+/g)[0],
 			};
 
-			console.log(formData);
+			await dispatch(createForm(formData));
+
+			Toast("Form Created Successfully!", "success");
+
+			setTitle("");
+			setFields([]);
+			setServer(null);
 		} catch (err) {
-			throw err;
+			console.log(err);
+			Toast("Some error has occured, please try again!", "error");
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -145,9 +157,13 @@ const CreateForm = () => {
 			<Button title="Add Field" className={styles.button} onClick={addField} />
 			<h3 className={styles.subtitle}>Select Server</h3>
 			<select className={styles.select} value={server} onChange={({ target: { value } }) => setServer(value)}>
-				{servers.map((server) => (
-					<option>{server.name}</option>
-				))}
+				{servers
+					.filter((server) => server.permissions_new[0] === "8")
+					.map((server) => (
+						<option>
+							{server.name} ({server.id})
+						</option>
+					))}
 			</select>
 			<Button title="Save" className={`${styles.save} ${styles.button}`} onClick={handleSave} />
 		</div>

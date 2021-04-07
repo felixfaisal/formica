@@ -4,7 +4,6 @@ import { GET_USER_INFORMATION, GET_USER_SERVERS, LOGIN } from "../ActionTypes";
 export const getUserInformation = (token) => async (dispatch) => {
 	try {
 		const userData = await getUserInformationService(token);
-		console.log(userData);
 
 		dispatch({
 			type: GET_USER_INFORMATION,
