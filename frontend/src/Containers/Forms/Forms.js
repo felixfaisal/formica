@@ -39,7 +39,9 @@ const Forms = () => {
 	));
 
 	return loading ? (
-		<h3 className={styles.subtitle}>Please Wait...</h3>
+		<div className={styles.container}>
+			<h3 className={styles.subtitle}>Please Wait...</h3>
+		</div>
 	) : (
 		<div className={styles.container}>{displayForms}</div>
 	);
