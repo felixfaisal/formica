@@ -11,8 +11,4 @@ export default [
 		title: "Create Form",
 		path: "/create",
 	},
-	{
-		title: "My Data",
-		path: "/data",
-	},
 ];
