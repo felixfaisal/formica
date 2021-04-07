@@ -18,5 +18,6 @@ urlpatterns = [
     path('api/user/channels/<str:ServerID>', views.serverChannels, name='serverChannels'),
     path('api/user/information', views.userInformation, name='userInformation'),
     path('api/bot/forms/', views.botFormList, name='botFormList'),
-    path('api/bot/response/', views.botFormResponse, name='botFormResponse')
+    path('api/bot/response/', views.botFormResponse, name='botFormResponse'),
+    path('api/user/dashboard', views.dashboardInformation, name='dashboardInformation')
 ]

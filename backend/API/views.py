@@ -202,6 +202,20 @@ def botFormResponse(request, formName):
     
     return Response(serializer.data)
 
+@api_views(['GET'])
+@authentication_classes([TokenAuthentication])
+def dashboardInformation(request):
+    forms = FormCreate.objects.filter(userid=request.user).count()
+    responses = FormResponse.objects.filter(responseid=request.user.id).count()
+    shared_servers = 5
+    formJson = {
+        "Forms Created":forms,
+        "Total Responses": responses,
+        "Shared Servers": shared_servers
+    }
+    return JsonResponse(formJson, safe=False)
+
+
 
 
 def getServerChannels(access_token, serverid):
