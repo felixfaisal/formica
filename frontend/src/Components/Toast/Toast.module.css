@@ -1,13 +1,13 @@
 .notify_success {
   background-color: var(--green);
-  font-size: var(--h3);
+  font-size: var(--normal-text);
   font-family: 'Volkorn', sans-serif;
   font-weight: 700;
 }
 
 .notify_error {
   background-color: var(--red);
-  font-size: var(--h3);
+  font-size: var(--normal-text);
   font-family: 'Volkorn', sans-serif;
   font-weight: 700;
 }
