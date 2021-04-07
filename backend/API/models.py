@@ -12,7 +12,7 @@ class DiscordUser(models.Model):
     objects = DiscordUserOauth2Manager()
     id = models.CharField(primary_key=True, max_length=100)
     discord_tag = models.CharField(max_length=100)
-    avatar = models.CharField(max_length=100)
+    avatar = models.CharField(max_length=100, null = True)
     public_flags = models.IntegerField()
     flags = models.IntegerField()
     locale = models.CharField(max_length=100)
