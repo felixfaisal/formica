@@ -141,7 +141,7 @@ async def on_message(message):
 
                 # validate response (if it's an email, phone, or number)
                 if q_type == "email" or q_type == "phone" or q_type =="number":                        
-                    print("🔴 non text or mc detected")
+                    #print("🔴 non text or mc detected")
                     valid_response = validate_response(msg.content, q_type)
 
                     #if response is invalid, prompt user to try again
