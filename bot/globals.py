@@ -3,6 +3,7 @@ form_started = False
 form_name = "Name"
 form_alert_channel = ""
 form_color = 0xff8906 #colour of the embed msgs
+form_index = 0
 
 # question details
 local_responses = []

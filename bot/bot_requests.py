@@ -9,7 +9,9 @@ import globals
 PARAMS = {}
 # API endpoints
 Q_URL = "" # questions
-R_URL = "" # responses
+GET_REQUESTS_URL = "" # responses we receive from database
+POST_REQUESTS_URL = "" # responses we send to database
+
 
     # API key
 
@@ -43,7 +45,7 @@ def get_form():
         globals.local_responses = json.load(r)
 
     # # get responses from database
-    # get_responses = requests.get(url = R_URL, params = PARAMS)
+    # get_responses = requests.get(url = GET_REQUESTS_URL, params = PARAMS)
     # db_responses = []
 
     # # fill a local array with the database responses
@@ -75,7 +77,7 @@ def submit_responses(user):
     #     db_responses.append({"form_id": item['form_id'], "user_id": item['user_id'], "Response": tmp_responses})
     
     # # send post request and save response
-    # post_request = requests.post(url = R_URL, data = db_responses)
+    # post_request = requests.post(url = POST_REQUESTS_URL, data = db_responses)
     
     
     #make submission confirmation for the user

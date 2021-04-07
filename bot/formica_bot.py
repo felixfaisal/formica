@@ -39,9 +39,33 @@ async def on_message(message):
 
     # listen for commands
     if msg.startswith('!formica'):
+        # get the form name & strip whitespaces form beginning and end
+        received_name = (msg.split("!formica", 1)[1]).strip()
+
+        # check if name is empty
+        if received_name == "":
+            await message.channel.send("Please enter !formica <form name> to start your form.")
+            return
+        else:
+            # check that form exists
+            q_index = get_form()
+            print(globals.questions)
+            print(received_name)
+            target = next((item for item in globals.questions if item["FormName"].lower() == received_name.lower()), None)
+            if target == None:
+                await message.channel.send("It looks like this form doesn't exist. Please try again!")
+                return
+            else:
+                print(target)
+                # get the index of the form
+                globals.form_index = globals.questions.index(target)
+                # save the form name
+                globals.form_name = target["FormName"]
+
         # get form specs
-        alert_channel_id, globals.form_name = get_form_specs()
-        globals.form_alert_channel = client.get_channel(alert_channel_id)
+        # alert_channel_id, globals.form_name = get_form_specs()
+        # globals.form_alert_channel = client.get_channel(alert_channel_id)
+
         #embed constructor
         welcome_embed = discord.Embed(title = "Welcome to Formica, the in-discord form service!", description = "It looks like you have a form to fill out. To do so, please react to this message with any emoji. Then, check your inbox!", color = globals.form_color)
         welcome_embed.add_field(name = "Form: ", value = globals.form_name, inline = False)
