@@ -7,7 +7,8 @@ from decouple import config
 
 import globals 
 
-from bot_requests import get_form
+from bot_requests import get_forms
+from bot_requests import get_responses
 from bot_requests import submit_responses
 
 from bot_functions import get_question
@@ -47,7 +48,7 @@ async def on_message(message):
             return
         else:
             # check that form exists
-            get_form()
+            get_forms()
             target = next((item for item in globals.forms if item["FormName"].lower() == received_name.lower()), None)
             if target == None:
                 await message.channel.send("It looks like this form doesn't exist. Please try again!")
@@ -68,6 +69,9 @@ async def on_message(message):
 
                 # extract the questions
                 globals.questions = globals.forms[globals.form_index]["Formfields"]
+
+                # get the responses
+                get_responses(globals.form_name)
 
         #embed constructor
         welcome_embed = discord.Embed(title = "Welcome to Formica, the in-discord form service!", description = "It looks like you have a form to fill out. To do so, please react to this message with any emoji. Then, check your inbox!", color = globals.form_color)
