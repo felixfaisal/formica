@@ -4,7 +4,8 @@ import discord
 from discord.ext import commands
 import os
 import json
-from decouple import config
+#from decouple import config
+from dotenv import load_dotenv
 
 import globals 
 
@@ -19,6 +20,7 @@ from bot_functions import edit_response
 from bot_functions import end_form 
 
 from bot_validation import validate_response
+load_dotenv()
 
 intents = discord.Intents().all()
 intents.reactions = True
@@ -88,7 +90,7 @@ async def formica(ctx, *, received_name: str): # so we don't have to wrap form n
             globals.form_name = target["FormName"]
 
             # get the channel to send alerts to
-            alert_channel_id = globals.forms[globals.form_index]["channel_id"]
+            alert_channel_id = 824348394411262013
             globals.form_alert_channel = client.get_channel(alert_channel_id)
 
             # extract the questions
@@ -239,7 +241,8 @@ async def start(ctx):
             # send a submission confirmation to the form creator
             await globals.form_alert_channel.send(embed=submission_alert_creator)
 
-# detect message edits
+# detect message editd
+
 @client.event
 async def on_message_edit(before, after):
     if before.content != after.content:
@@ -281,6 +284,6 @@ async def on_reaction_add(reaction, user):
             await old_confirmation.edit(embed = new_confirmation)
 
 # run bot
-BOT_TOKEN = config('TOKEN')
+BOT_TOKEN = os.getenv("TOKEN")
 client.run(BOT_TOKEN)
 
