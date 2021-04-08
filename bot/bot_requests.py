@@ -8,9 +8,9 @@ import globals
 
 PARAMS = {}
 # API endpoints
-Q_URL = "" # questions
+GET_FORMS_URL = "localhost:8000/api/bot/forms" # questions
 GET_REQUESTS_URL = "" # responses we receive from database
-POST_REQUESTS_URL = "" # responses we send to database
+POST_REQUESTS_URL = "localhost:8000/api/bot/response" # responses we send to database
 
 
     # API key
@@ -24,7 +24,7 @@ def get_form():
         globals.forms= json.load(f)
 
     # # get forms from database
-    # get_forms = requests.get(url = Q_URL, params = PARAMS)
+    # get_forms = requests.get(url = GET_FORMS_URL, params = PARAMS)
     # globals.forms = get_forms.json()
 
     # get responses (tmp; for local testing)
