@@ -105,23 +105,24 @@ async def formica(ctx, *, received_name: str): # so we don't have to wrap form n
         welcome_embed.add_field(name = "Form: ", value = globals.form_name, inline = False)
 
         # send welcome message
-        await ctx.send(embed=welcome_embed)
+        welcome_msg = await ctx.send(embed=welcome_embed)
+        globals.welcome_ids.append(welcome_msg.id)
 
-        # wait for a reaction
-        def check_reaction(reaction, user):
-            return True, user == ctx.author #true, b'c we're accepting any reaction
+        # # wait for a reaction
+        # def check_reaction(reaction, user):
+        #     return True, user == ctx.author #true, b'c we're accepting any reaction
 
-        try:
-            reaction, user = await client.wait_for('reaction_add', check=check_reaction)
-        except:
-            # add timeout here if needed
-            print("something went wrong")
-        else:
-            print("🔴 user reacted to formica")
-            form_init = discord.Embed(title = globals.form_name, description = "To start, type !start", color = globals.form_color)
-            form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would.\n You can edit your response by hovering on your message and clicking 'edit'", inline = False)
+        # try:
+        #     reaction, user = await client.wait_for('reaction_add', check=check_reaction)
+        # except:
+        #     # add timeout here if needed
+        #     print("something went wrong")
+        # else:
+        #     print("🔴 user reacted to formica")
+        #     form_init = discord.Embed(title = globals.form_name, description = "To start, type !start", color = globals.form_color)
+        #     form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would.\n You can edit your response by hovering on your message and clicking 'edit'", inline = False)
 
-            await user.send(embed=form_init)
+        #     await user.send(embed=form_init)
 
 @client.command()
 async def start(ctx):
@@ -278,6 +279,15 @@ async def on_reaction_add(reaction, user):
     
     # if not isinstance(reaction.message.channel, discord.DMChannel):
     #     print("🔴 reaction detected")
+
+    # check if reaction was added to form welcome message
+    if (reaction.message.id in globals.welcome_ids):
+        print("🔴 user reacted to formica")
+        form_init = discord.Embed(title = globals.form_name, description = "To start, type !start", color = globals.form_color)
+        form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would.\n You can edit your response by hovering on your message and clicking 'edit'", inline = False)
+
+        await user.send(embed=form_init)
+
 
     # check if it's an mc question; we don't need to validate mc responses
     if (reaction.message.id in globals.mc_ids):
