@@ -7,7 +7,6 @@ from decouple import config
 
 import globals 
 
-from bot_requests import get_form_specs
 from bot_requests import get_form
 from bot_requests import submit_responses
 
@@ -48,23 +47,27 @@ async def on_message(message):
             return
         else:
             # check that form exists
-            q_index = get_form()
-            print(globals.questions)
-            print(received_name)
-            target = next((item for item in globals.questions if item["FormName"].lower() == received_name.lower()), None)
+            get_form()
+            target = next((item for item in globals.forms if item["FormName"].lower() == received_name.lower()), None)
             if target == None:
                 await message.channel.send("It looks like this form doesn't exist. Please try again!")
                 return
             else:
                 print(target)
+
                 # get the index of the form
-                globals.form_index = globals.questions.index(target)
+                globals.form_index = globals.forms.index(target)
+                print("form index is: ", globals.form_index)
+
                 # save the form name
                 globals.form_name = target["FormName"]
 
-        # get form specs
-        # alert_channel_id, globals.form_name = get_form_specs()
-        # globals.form_alert_channel = client.get_channel(alert_channel_id)
+                # get the channel to send alerts to
+                alert_channel_id = globals.forms[globals.form_index]["channel_id"]
+                globals.form_alert_channel = client.get_channel(alert_channel_id)
+
+                # extract the questions
+                globals.questions = globals.forms[globals.form_index]["Formfields"]
 
         #embed constructor
         welcome_embed = discord.Embed(title = "Welcome to Formica, the in-discord form service!", description = "It looks like you have a form to fill out. To do so, please react to this message with any emoji. Then, check your inbox!", color = globals.form_color)
@@ -99,20 +102,19 @@ async def on_message(message):
         # check if form has already been started
         if globals.form_started == False:
             globals.form_started = True
-
-            # get form specs
-            alert_channel_id, globals.form_name = get_form_specs()
-            globals.form_alert_channel = client.get_channel(alert_channel_id)
             cur_index = 0
             
-            # get our questions and responses
-            q_count = get_form()
             # search for the user in the saved responses
             user_submitted = get_user(message.author)
         else:
             print("form already started")
             await message.author.send("Oops! You've already started this form. Answer the previous question to proceed.\nYou can answer by sending a message, or by reacting to the question if it's a multiple choice.")
         
+        # check if there's any forms to fill out
+        if len(globals.forms) == 0:
+            await message.author.send("It looks like there's no forms to fill out. Please go back to your server and check again.")
+            return
+
         # check if form has already been submitted by the user
         if user_submitted == True:
             print("This user has already submitted a form")
@@ -120,8 +122,8 @@ async def on_message(message):
             return
         
     
-        while cur_index < q_count:
-            print(f"cur index: {cur_index}, total qs: {q_count}")
+        while cur_index < len(globals.questions):
+            print(f"cur index: {cur_index}, total qs: {len(globals.questions)}")
 
             # send the current question
             q_embed, q_type = get_question(cur_index)

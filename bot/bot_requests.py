@@ -17,28 +17,15 @@ POST_REQUESTS_URL = "" # responses we send to database
 
 # keep performing get requests to get the most up to date data (querying mechanisms)
 
-
-
-# Description: Gets the form details (eg. form name)
-def get_form_specs():
-    # get channel to send alerts to
-    alert_channel_id = 824348394411262013
-    # get form name
-    form_name = "Event Registration"
-    #form_alert_channel = client.get_channel(alert_channel_id)
-
-    return alert_channel_id, form_name
-
-# Description: Gets the questions and responses from the database
+# Description: Gets the forms and responses from the database
 def get_form():
-    # get questions (tmp; for local testing)
-    with open("dummy_questions.json", "r") as q:
-        globals.questions = json.load(q)
-        q_count = len(globals.questions)
+    # get forms (tmp; for local testing)
+    with open("dummy_questions.json", "r") as f:
+        globals.forms= json.load(f)
 
-    # # get questions from database
-    # get_questions = requests.get(url = Q_URL, params = PARAMS)
-    # globals.questions = get_questions.json()
+    # # get forms from database
+    # get_forms = requests.get(url = Q_URL, params = PARAMS)
+    # globals.forms = get_forms.json()
 
     # get responses (tmp; for local testing)
     with open('dummy_responses.json', 'r') as r:
@@ -55,7 +42,6 @@ def get_form():
     #     responses = list(item["Response"].values()) # grab the responses
     #     globals.local_responses.append({'form_id': item['form_id'], 'username': "", 'user_id': item['user_id'], 'responses': responses, 'response_ids': []})
     
-    return q_count
 
 # Description: Writes the responses to the database, creates a submission confirmation message for the user and form creator
 def submit_responses(user):

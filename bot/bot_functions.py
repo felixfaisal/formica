@@ -44,7 +44,7 @@ def get_user(user):
         #create a new user with empty responses
         print("not found")
         # append to database
-        globals.local_responses.append({'form_id': "", 'username': str(user), 'user_id': str(user.id), 'responses': [], 'response_ids': []})
+        globals.local_responses.append({'form_id': globals.forms[globals.form_index]["form_id"], 'username': str(user), 'user_id': str(user.id), 'responses': [], 'response_ids': []})
         #print("appended: ", responses)
 
         globals.user_index = len(globals.local_responses) - 1
