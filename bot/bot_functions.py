@@ -54,7 +54,7 @@ def get_user(user):
         print("found at index ", globals.user_index) 
 
         # check if the form has already been completed by them
-        if len(globals.local_responses[user_index]['responses']) >= len(globals.questions):
+        if len(globals.local_responses[globals.user_index]['responses']) >= len(globals.questions):
             user_submitted = True
     
     return user_submitted

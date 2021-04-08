@@ -117,6 +117,7 @@ async def formica(ctx, *, received_name: str): # so we don't have to wrap form n
             # add timeout here if needed
             print("something went wrong")
         else:
+            print("🔴 user reacted to formica")
             form_init = discord.Embed(title = globals.form_name, description = "To start, type !start", color = globals.form_color)
             form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would.\n You can edit your response by hovering on your message and clicking 'edit'", inline = False)
 
@@ -233,6 +234,7 @@ async def start(ctx):
         except:
             print("wrong reaction")
         else:
+            print("🔴 confirmation detected")
             # submit response, get the confirmation embeds
             submission_alert_user, submission_alert_creator = submit_responses(user)
 
@@ -266,12 +268,16 @@ async def on_message_edit(before, after):
 # detect edits to mc questions
 @client.event
 async def on_reaction_add(reaction, user):
+    print("🔴 reaction detected")
     # need to make sure this doesn't clash with the intital rxn
     #print("edited message id: ", reaction.message.id)
 
     #ignore, if the reaction is from ourselves
     if user == client.user:
         return
+    
+    # if not isinstance(reaction.message.channel, discord.DMChannel):
+    #     print("🔴 reaction detected")
 
     # check if it's an mc question; we don't need to validate mc responses
     if (reaction.message.id in globals.mc_ids):

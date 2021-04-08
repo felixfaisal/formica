@@ -123,7 +123,7 @@ async def on_message(message):
             cur_index = 0
             
             # search for the user in the saved responses
-            user_submitted = get_user(message.author)
+            user_submitted = get_user(ctx.author)
         else:
             print("form already started")
             await message.author.send("Oops! You've already started this form. Answer the previous question to proceed.\nYou can answer by sending a message, or by reacting to the question if it's a multiple choice.")
