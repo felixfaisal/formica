@@ -1,26 +1,53 @@
-import React from "react";
-import { useParams } from "react-router";
+import React, { useEffect, useState } from "react";
+import { Switch, Route, Link, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+import FormResponses from "../FormResponses";
+import FormStatistics from "../FormStatistics";
+import Toast from "../../Components/Toast";
+
+import { getFormResponsesService } from "../../Services/forms.service";
 
 import styles from "./FormData.module.css";
 
-import formData from "../../Assets/Data/formData";
-
 const FormData = () => {
+	const [loading, setLoading] = useState(true);
+	const [formResponses, setFormResponses] = useState([]);
 	const { id } = useParams();
+	const { token } = useSelector((state) => state.auth);
 
-	const displayHeadings = Object.keys(formData[0]).map((key) => <div className={styles.heading}>{key}</div>);
+	useEffect(() => {
+		fetchFormResponses();
+	}, []);
 
-	const displayRow = (row) => Object.keys(row).map((key) => <div className={styles.data}>{row[key]}</div>);
+	const fetchFormResponses = async () => {
+		try {
+			const responses = await getFormResponsesService(token, id);
+			setFormResponses(responses);
+			setLoading(false);
+		} catch (err) {
+			Toast("Some error has occurred", "error");
+		}
+	};
 
-	const displayRows = formData.map((row) => <div className={styles.row}>{displayRow(row)}</div>);
-
-	return (
+	return loading ? (
+		<h3 className={styles.subtitle}>Please Wait...</h3>
+	) : (
 		<>
 			<h3 className={styles.title}>Form {id} :- </h3>
-			<div className={styles.container}>
-				<div className={styles.row}>{displayHeadings}</div>
-				{displayRows}
-			</div>
+			{/* <div className={styles.tabs}>
+				<Link to={`/forms/${id}/responses`}>Responses</Link>
+				<Link to={`/forms/${id}/statistics`}>Statistics</Link>
+				<Link to={`/forms/${id}/sharing`}>Sharing</Link>
+			</div> */}
+			<Switch>
+				<Route exact path={`/forms/${id}/responses`}>
+					<FormResponses responses={formResponses} />
+				</Route>
+				<Route exact path={`/forms/${id}/statistics`}>
+					<FormStatistics />
+				</Route>
+			</Switch>
 		</>
 	);
 };
