@@ -33,3 +33,20 @@
   color: var(--paragraph-color);
   margin-bottom: 0.5vw;
 }
+
+.checkbox {
+  height: var(--normal-text);
+  width: var(--normal-text);
+}
+
+.label {
+  font-size: var(--normal-text);
+  color: var(--title-text-color);
+  margin-bottom: 1vw;
+  display: flex;
+  align-items: center;
+}
+
+.button {
+  width: 100%;
+}

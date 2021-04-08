@@ -42,7 +42,7 @@ const FormData = () => {
 			</div> */}
 			<Switch>
 				<Route exact path={`/forms/${id}/responses`}>
-					<FormResponses responses={formResponses} />
+					<FormResponses responses={[{ id: 1, name: "Guna" }]} />
 				</Route>
 				<Route exact path={`/forms/${id}/statistics`}>
 					<FormStatistics />
