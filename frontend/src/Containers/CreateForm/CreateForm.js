@@ -58,9 +58,9 @@ const CreateForm = () => {
 		getServers();
 	}, []);
 
-	useEffect(() => {
-		getChannels();
-	}, [server]);
+	// useEffect(() => {
+	// 	getChannels();
+	// }, [server]);
 
 	const getServers = async () => {
 		try {
@@ -79,7 +79,7 @@ const CreateForm = () => {
 
 			console.log(token, serverId);
 			const channels = await getServerChannelsService(token, serverId);
-
+			console.log(channels);
 			if (Array.isArray(channels)) setChannels(channels);
 			else setChannels([]);
 
@@ -92,10 +92,10 @@ const CreateForm = () => {
 
 	const handleSave = async () => {
 		try {
-			if (channels.length === 0) {
-				Toast("Please add bot to server!", "error");
-				return;
-			}
+			// if (channels.length === 0) {
+			// 	Toast("Please add bot to server!", "error");
+			// 	return;
+			// }
 			setLoading(true);
 			const modifiedFields = fields.map((field) => ({ ...field, input_type: field.input_type.toLowerCase() }));
 			const formData = {
@@ -103,7 +103,7 @@ const CreateForm = () => {
 				FormName: title,
 				Formfields: modifiedFields,
 				serverid: server ? server.split(" ").pop().match(/\d+/g)[0] : servers[0].id,
-				channelid: channel ? server.split(" ").pop().match(/\d+/g)[0] : channels[0].id,
+				// channelid: channel ? server.split(" ").pop().match(/\d+/g)[0] : channels[0].id,
 			};
 
 			await dispatch(createForm(formData));
@@ -197,7 +197,7 @@ const CreateForm = () => {
 					</option>
 				))}
 			</select>
-			<h3 className={styles.subtitle}>Select Channel</h3>
+			{/* <h3 className={styles.subtitle}>Select Channel</h3>
 			<select className={styles.select} value={channel} onChange={({ target: { value } }) => setChannel(value)}>
 				{loadingChannels ? (
 					<option>Please Wait...</option>
@@ -208,7 +208,7 @@ const CreateForm = () => {
 						</option>
 					))
 				)}
-			</select>
+			</select> */}
 			<Button title="Save" className={`${styles.save} ${styles.button}`} onClick={handleSave} />
 		</div>
 	);
