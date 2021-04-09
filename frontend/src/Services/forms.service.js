@@ -26,6 +26,7 @@ export const getFormResponsesService = async (token, formName) => {
 		const { data } = await axios.get(`${GET_FORM_RESPONSES_URL}/${formName}`, {
 			headers: { Authorization: `token ${token}` },
 		});
+		// console.log(data)
 
 		return data;
 	} catch (err) {

@@ -44,7 +44,7 @@ class FormCreate(models.Model):
 
 class FormResponse(models.Model):
     id = models.AutoField(primary_key=True)
-    form = models.ForeignKey(FormCreate, on_delete=models.CASCADE)
+    form_id = models.BigIntegerField()
     user_id = models.BigIntegerField()
     Response = models.JSONField()
 

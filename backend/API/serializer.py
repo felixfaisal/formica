@@ -15,12 +15,12 @@ class FormBotCreateSerializer(serializers.ModelSerializer):
 class FormResponseSerializer(serializers.ModelSerializer):
     class Meta: 
         model = FormResponse
-        fields = ['form','user_id', 'Response']
+        fields = ['form_id','user_id', 'Response']
 
 class FormBotResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = FormResponse
-        fields = ['Response', 'user_id']
+        fields = ['form_id','Response', 'user_id']
 
 class UserResponseSerializer(serializers.ModelSerializer):
     class Meta:
