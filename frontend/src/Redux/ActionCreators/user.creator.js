@@ -26,7 +26,10 @@ export const getUserServers = () => async (dispatch, getState) => {
 
 		const servers = await getUserServersService(token);
 
-		dispatch({ type: GET_USER_SERVERS, payload: { servers } });
+		dispatch({
+			type: GET_USER_SERVERS,
+			payload: { servers: servers.filter((server) => server.permissions_new[0] === "8") },
+		});
 	} catch (err) {
 		throw err;
 	}

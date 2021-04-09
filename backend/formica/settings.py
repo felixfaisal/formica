@@ -54,7 +54,6 @@ REST_FRAMEWORK = {
 }
 
 
-
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -96,7 +95,7 @@ DATABASES = {
         'NAME': 'formica',
         'USER': 'newuser',
         'PASSWORD': 'user_password',
-        'HOST': 'db',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }

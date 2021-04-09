@@ -17,7 +17,9 @@ urlpatterns = [
     path('api/user/server/', views.userServers, name='userServer'), 
     path('api/user/channels/<str:ServerID>', views.serverChannels, name='serverChannels'),
     path('api/user/information', views.userInformation, name='userInformation'),
-    path('api/bot/forms/', views.botFormList, name='botFormList'),
+    path('api/bot/forms/<str:serverid>', views.botFormList, name='botFormList'),
     path('api/bot/response/', views.botFormResponse, name='botFormResponse'),
-    path('api/user/dashboard', views.dashboardInformation, name='dashboardInformation')
+    path('api/user/dashboard', views.dashboardInformation, name='dashboardInformation'),
+    path('api/bot/form/response/<str:FormName>', views.botFormResponseList, name='botFormResponseList'),
+    path('api/user/responses', views.userResponses, name='userResponses')
 ]

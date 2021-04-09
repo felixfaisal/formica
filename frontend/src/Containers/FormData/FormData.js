@@ -23,7 +23,8 @@ const FormData = () => {
 	const fetchFormResponses = async () => {
 		try {
 			const responses = await getFormResponsesService(token, id);
-			setFormResponses(responses);
+			const modifiedResponses = responses.map((response) => response.Response);
+			setFormResponses(modifiedResponses);
 			setLoading(false);
 		} catch (err) {
 			Toast("Some error has occurred", "error");

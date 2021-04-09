@@ -7,10 +7,25 @@ class FormCreateSerializer(serializers.ModelSerializer):
         model = FormCreate 
         fields = ['Formfields','FormName','serverid']
 
+class FormBotCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FormCreate
+        fields = ['form_id','Formfields','FormName','serverid']
+
 class FormResponseSerializer(serializers.ModelSerializer):
     class Meta: 
         model = FormResponse
-        fields = ['form','responseid', 'response']
+        fields = ['form_id','user_id', 'Response']
+
+class FormBotResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FormResponse
+        fields = ['form_id','Response', 'user_id']
+
+class UserResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FormResponse
+        fields = ['id','form','user_id', 'Response']
 
 class DiscordUserSerializer(serializers.ModelSerializer):
     class Meta:

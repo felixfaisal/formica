@@ -22,7 +22,7 @@ const Forms = () => {
 		try {
 			await dispatch(getForms());
 		} catch (err) {
-			Toast("An error has occurred, please try again!");
+			Toast("An error has occurred, please try again!", "error");
 		} finally {
 			setLoading(false);
 		}
