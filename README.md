@@ -1,4 +1,13 @@
 ![Imgur](https://i.imgur.com/mBTeFwN.png)
+![Discord](https://img.shields.io/badge/Made%20for%20-Discord-purple)
+![Django](https://img.shields.io/badge/Made%20with%20%20-Django%20-green)
+![React](https://img.shields.io/badge/Made%20with%20%20-React%20-blue)
+![Web](https://img.shields.io/badge/Made%20for%20%20-Web%20-Red)
+![Code Size](https://img.shields.io/github/languages/code-size/felixfaisal/formica)
+![Licesne](https://img.shields.io/github/license/felixfaisal/formica)
+![issue](https://img.shields.io/github/issues/felixfaisal/formica)
+
+
 A discord form bot that lets you create forms and visualize the data via a web interface 
 
 ## Web Interface 
