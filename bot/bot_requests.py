@@ -17,10 +17,13 @@ POST_RESPONSES_URL = "http://localhost:8000/api/bot/response/" # responses we se
 # keep performing get requests to get the most up to date data (querying mechanisms)
 
 # Description: Gets the forms from the database
-def get_forms():
+def get_forms(server_id):
+    print("server id: ", server_id)
     # get forms (tmp; for local testing)
     with open("dummy_questions.json", "r") as f:
       globals.forms= json.load(f)
+    
+    PARAMS = {server_id}
 
     # # get forms from database
     # get_forms = requests.get(url = GET_FORMS_URL, params = PARAMS)
@@ -37,7 +40,7 @@ def get_responses(form_name):
     #get_responses = requests.get(url = GET_RESPONSES_URL+str(form_name), params = PARAMS)
     #db_responses = get_responses.json()
 
-    print("🔴 db responses: ", db_responses)
+    #print("🔴 db responses: ", db_responses)
     # fill a local array with the database responses
     globals.local_responses = []
 
@@ -45,7 +48,7 @@ def get_responses(form_name):
         responses = list(item["Response"].values()) # grab the responses
         globals.local_responses.append({'form_id': item['form_id'], 'username': "", 'user_id': item['user_id'], 'responses': responses, 'response_ids': []})
     
-    print("🔴 local responses: ", globals.local_responses)
+    #print("🔴 local responses: ", globals.local_responses)
     
 
 # Description: Writes the responses to the database, creates a submission confirmation message for the user and form creator

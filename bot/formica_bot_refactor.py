@@ -52,7 +52,7 @@ async def test(ctx):
 async def formica(ctx, *, received_name: str): # so we don't have to wrap form name in quotes
     print("formica called")
     # get forms from the database
-    get_forms()
+    get_forms(ctx.guild.id)
 
     # check if name is empty
     if received_name == "start":
