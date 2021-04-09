@@ -221,7 +221,7 @@ async def start(ctx):
             cur_index += 1
                     
         # send confirmation message
-        confirmation_embed = end_form()
+        confirmation_embed = end_form(ctx.author)
         confirmation_msg = await ctx.channel.send(embed=confirmation_embed)
         globals.confirmation_id = confirmation_msg.id
         await confirmation_msg.add_reaction('✅')
