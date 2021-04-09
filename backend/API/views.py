@@ -189,8 +189,8 @@ def serverChannels(request, ServerID):
     return Response(channels)
 
 @api_view(['GET', 'POST'])
-def botFormList(request):
-    forms = FormCreate.objects.all()
+def botFormList(request,serverid):
+    forms = FormCreate.objects.filter(serverid=serverid)
     serializer = FormBotCreateSerializer(forms, many=True)
     return Response(serializer.data)
 
