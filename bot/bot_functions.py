@@ -80,9 +80,9 @@ def set_response(response, response_id, author, index):
 
 # Description: Overwrites the old message with the new message
 # Uses message ids to determine where to overwrite the message
-def edit_response(old_confirmation, edited_response, new_response_id):
+def edit_response(old_confirmation, edited_response, new_response_id, author_id):
     # get the user index (in the responses)
-    user_index = globals.trackers[edited_response.author.id]['response_index']
+    user_index = globals.trackers[author_id]['response_index']
     form_id = globals.local_responses[user_index]['form_id']
     questions = globals.local_forms[form_id]["Formfields"]
     # get the question index

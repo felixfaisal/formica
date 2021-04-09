@@ -228,11 +228,11 @@ async def on_message_edit(before, after):
             old_confirmation = await after.channel.fetch_message(confirmation_id)
         except:
             # if user edited response b4 the end of the form, we don't need to update the confirmation msg
-            new_confirmation, valid_response = edit_response(None, after, after.id)
+            new_confirmation, valid_response = edit_response(None, after, after.id, after.author.id)
             if valid_response == False:
                 await after.reply("It looks like your edited response was in the wrong format. Please try editing your response again.")
         else:
-            new_confirmation, valid_response = edit_response(old_confirmation, after, after.id)
+            new_confirmation, valid_response = edit_response(old_confirmation, after, after.id, after.author.id)
             if valid_response == False:
                 await after.reply("It looks like your edited response was in the wrong format. Please try editing your response again.")
             else:
@@ -276,13 +276,13 @@ async def on_reaction_add(reaction, user):
         
         #print("🔴 user reacted to mc")
         try:
-            confirmation_id = globals.trackers[before.author.id]['confirmation_id']
+            confirmation_id = globals.trackers[user.id]['confirmation_id']
             old_confirmation = await reaction.message.channel.fetch_message(globals.confirmation_id)
         except:
             # if user edited response b4 the end of the form, we don't need to update the confirmation msg
-            new_confirmation, valid_response = edit_response(None, reaction, reaction.message.id)
+            new_confirmation, valid_response = edit_response(None, reaction, reaction.message.id, user.id)
         else:
-            new_confirmation, valid_response = edit_response(old_confirmation, reaction, reaction.message.id)
+            new_confirmation, valid_response = edit_response(old_confirmation, reaction, reaction.message.id, user.id)
             await old_confirmation.edit(embed = new_confirmation)
 
 # run bot
