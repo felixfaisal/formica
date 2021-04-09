@@ -158,7 +158,7 @@ async def start(ctx):
 
                 #get the option they selected
                 option_index = globals.emoji_options.index(str(reaction.emoji))
-                response = globals.questions[cur_index]['options'][option_index]
+                response = globals.local_forms[form_id]["Formfields"][cur_index]['options'][option_index]
 
                 
                 #save response
