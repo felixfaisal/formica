@@ -7,10 +7,6 @@ import globals
 
 from bot_validation import validate_response
 
-# intents = discord.Intents().all()
-# intents.reactions = True
-# client = discord.Client(intents = intents)
-
 # Description: Fetches the current question to create an embedded question message
 def get_question(cur_index):
     # get question type
@@ -52,17 +48,16 @@ def get_user(user):
         #print("appended: ", responses)
         # initialize a new tracker item
         globals.trackers[user.id] = {'form_started': False,
-                            'response_index': 0,
+                            'response_index': len(globals.local_responses) - 1,
                             'confirmation_id': 0}
-
-        globals.user_index = len(globals.local_responses) - 1
     else:
         # get index
-        globals.user_index = globals.local_responses.index(target)
-        print("found at index ", globals.user_index) 
+        user_index = globals.local_responses.index(target)
+        #print("found at index ", globals.user_index) 
+        globals.trackers[user.id]['response_index'] = user_index
 
         # check if the form has already been completed by them
-        if len(globals.local_responses[globals.user_index]['responses']) >= len(globals.questions):
+        if len(globals.local_responses[user_index]['responses']) >= len(globals.questions):
             user_submitted = True
     
     return user_submitted
@@ -73,17 +68,19 @@ def set_response(response, response_id, author, index):
     print(f"response: {response}, author: {author}, author id: {author.id}")
 
     #set response & id
-    globals.local_responses[globals.user_index]['responses'].append(response)
-    globals.local_responses[globals.user_index]['response_ids'].append(response_id)
+    user_index = globals.trackers[author.id]['response_index']
+    globals.local_responses[user_index]['responses'].append(response)
+    globals.local_responses[user_index]['response_ids'].append(response_id)
     #print("🔴 set: ", globals.local_responses)
 
 # Description: Overwrites the old message with the new message
 # Uses message ids to determine where to overwrite the message
-def edit_response(old_confirmation, edited_response, new_response_id): 
-
+def edit_response(old_confirmation, edited_response, new_response_id):
+    # get the user index (in the responses)
+    user_index = globals.trackers[edited_response.author.id]['response_index']
     # get the question index
     try:
-        q_index = globals.local_responses[globals.user_index]['response_ids'].index(new_response_id)
+        q_index = globals.local_responses[user_index]['response_ids'].index(new_response_id)
     except:
         print("question id not found")
    
@@ -118,7 +115,7 @@ def edit_response(old_confirmation, edited_response, new_response_id):
         new_response = edited_response.content
 
     # write over the response      
-    globals.local_responses[globals.user_index]['responses'][q_index] = str(new_response)
+    globals.local_responses[user_index]['responses'][q_index] = str(new_response)
 
     #edit the confirmation message (if form was completed)
     if old_confirmation != None:
@@ -130,11 +127,12 @@ def edit_response(old_confirmation, edited_response, new_response_id):
     return new_confirmation, valid_response
     
 # Description: Creates a confirmation message. Summarizes questions and answers
-def end_form():
+def end_form(user):
+    user_index = globals.trackers[user.id]['response_index']
     # create a confirmation embed
     confirmation_embed = discord.Embed(title = 'Confirm your answers', description = 'React with ✅ to submit.\n If you need to edit your answers, go back and do so, then come back here.', color = globals.form_color)
     # add questions and answers to the embed
     for item in range(len(globals.questions)):
-        confirmation_embed.add_field(name = globals.questions[item]['question'], value = globals.local_responses[globals.user_index]['responses'][item], inline = False)
+        confirmation_embed.add_field(name = globals.questions[item]['question'], value = globals.local_responses[user_index]['responses'][item], inline = False)
     
     return confirmation_embed

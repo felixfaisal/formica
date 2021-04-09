@@ -25,10 +25,7 @@ load_dotenv()
 
 intents = discord.Intents().all()
 intents.reactions = True
-client = discord.Client(intents = intents)
-client = commands.Bot(command_prefix = '!')
-
-#bot = commands.Bot(command_prefix = '!')
+client = commands.Bot(command_prefix="!", intents=intents)
 
 
 @client.event
@@ -107,22 +104,6 @@ async def formica(ctx, *, received_name: str): # so we don't have to wrap form n
         # send welcome message
         welcome_msg = await ctx.send(embed=welcome_embed)
         globals.welcome_ids.append(welcome_msg.id)
-
-        # # wait for a reaction
-        # def check_reaction(reaction, user):
-        #     return True, user == ctx.author #true, b'c we're accepting any reaction
-
-        # try:
-        #     reaction, user = await client.wait_for('reaction_add', check=check_reaction)
-        # except:
-        #     # add timeout here if needed
-        #     print("something went wrong")
-        # else:
-        #     print("🔴 user reacted to formica")
-        #     form_init = discord.Embed(title = globals.form_name, description = "To start, type !start", color = globals.form_color)
-        #     form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would.\n You can edit your response by hovering on your message and clicking 'edit'", inline = False)
-
-        #     await user.send(embed=form_init)
 
 @client.command()
 async def start(ctx):
@@ -221,9 +202,9 @@ async def start(ctx):
             cur_index += 1
                     
         # send confirmation message
-        confirmation_embed = end_form()
+        confirmation_embed = end_form(ctx.author)
         confirmation_msg = await ctx.channel.send(embed=confirmation_embed)
-        globals.confirmation_id = confirmation_msg.id
+        globals.trackers[ctx.author.id]['confirmation_id'] = confirmation_msg.id
         await confirmation_msg.add_reaction('✅')
 
         # wait for a reaction
@@ -253,7 +234,8 @@ async def on_message_edit(before, after):
         #print(f"🔴 Edit detected.\n Before: {before.content}, {before.id}, {before.created_at}\n After: {after.content}, {after.id}, {after.created_at}")
         # edit the response & get an updated embed
         try:
-            old_confirmation = await after.channel.fetch_message(globals.confirmation_id)
+            confirmation_id = globals.trackers[before.author.id]['confirmation_id']
+            old_confirmation = await after.channel.fetch_message(confirmation_id)
         except:
             # if user edited response b4 the end of the form, we don't need to update the confirmation msg
             new_confirmation, valid_response = edit_response(None, after, after.id)
@@ -270,15 +252,9 @@ async def on_message_edit(before, after):
 @client.event
 async def on_reaction_add(reaction, user):
     print("🔴 reaction detected")
-    # need to make sure this doesn't clash with the intital rxn
-    #print("edited message id: ", reaction.message.id)
-
     #ignore, if the reaction is from ourselves
     if user == client.user:
         return
-    
-    # if not isinstance(reaction.message.channel, discord.DMChannel):
-    #     print("🔴 reaction detected")
 
     # check if reaction was added to form welcome message
     if (reaction.message.id in globals.welcome_ids):
@@ -288,10 +264,11 @@ async def on_reaction_add(reaction, user):
 
         await user.send(embed=form_init)
 
-
     # check if it's an mc question; we don't need to validate mc responses
-    if (reaction.message.id in globals.mc_ids):
+    elif (reaction.message.id in globals.mc_ids):
+        print("🔴 user reacted to mc")
         try:
+            confirmation_id = globals.trackers[before.author.id]['confirmation_id']
             old_confirmation = await reaction.message.channel.fetch_message(globals.confirmation_id)
         except:
             # if user edited response b4 the end of the form, we don't need to update the confirmation msg

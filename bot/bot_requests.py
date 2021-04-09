@@ -34,7 +34,7 @@ def get_responses(form_name):
         globals.local_responses = json.load(r)
 
     # get responses from database (specific form)
-    #get_responses = requests.get(url = GET_RESPONSES_URL, params = PARAMS)
+    #get_responses = requests.get(url = GET_RESPONSES_URL+str(form_name), params = PARAMS)
     #db_responses = []
     # api/bot/form/<userid>/<formName> 
     # Response 
@@ -48,8 +48,6 @@ def get_responses(form_name):
 
 # Description: Writes the responses to the database, creates a submission confirmation message for the user and form creator
 def submit_responses(user):
-    globals.form_started = False
-
     # write to the database (tmp; for local testing)
     with open('dummy_responses.json', 'w') as w:
         json.dump(globals.local_responses, w)
