@@ -277,7 +277,7 @@ async def on_reaction_add(reaction, user):
         #print("🔴 user reacted to mc")
         try:
             confirmation_id = globals.trackers[user.id]['confirmation_id']
-            old_confirmation = await reaction.message.channel.fetch_message(globals.confirmation_id)
+            old_confirmation = await reaction.message.channel.fetch_message(confirmation_id)
         except:
             # if user edited response b4 the end of the form, we don't need to update the confirmation msg
             new_confirmation, valid_response = edit_response(None, reaction, reaction.message.id, user.id)
