@@ -223,7 +223,7 @@ async def start(ctx):
         # send confirmation message
         confirmation_embed = end_form(ctx.author)
         confirmation_msg = await ctx.channel.send(embed=confirmation_embed)
-        globals.confirmation_id = confirmation_msg.id
+        globals.trackers[ctx.author.id]['confirmation_id'] = confirmation_msg.id
         await confirmation_msg.add_reaction('✅')
 
         # wait for a reaction
