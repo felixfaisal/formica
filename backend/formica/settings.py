@@ -95,7 +95,7 @@ DATABASES = {
         'NAME': 'formica',
         'USER': 'newuser',
         'PASSWORD': 'user_password',
-        'HOST': 'db',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }

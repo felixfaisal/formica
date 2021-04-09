@@ -45,7 +45,7 @@ def discord_login_redirect(request):
     access_token = getAccessToken(code)
     user = getUserInformation(access_token)
     servers = getUserServers(access_token)
-    #print(servers)
+    # print(servers)
     discord_user = authenticate(request, user=user)
     discord_user = list(discord_user).pop()
     serverinfo = UserServers(user=discord_user, servers=servers)
@@ -96,7 +96,7 @@ def responselist(request):
 @api_view(["GET"])
 def formresponse(request, FormName):
     form = FormCreate.objects.get(FormName=FormName, userid=request.user)
-    response = FormResponse.objects.filter(form=form)
+    response = FormResponse.objects.filter(form_id=form.form_id)
     serializer = FormResponseSerializer(response, many=True)
     return Response(serializer.data)
 
@@ -179,6 +179,7 @@ def userServers(request):
     servers = getUserServers(access_token)
     return Response(servers)
 
+
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def userResponses(request):
@@ -195,26 +196,31 @@ def serverChannels(request, ServerID):
     channels = getServerChannels(access_token, ServerID)
     return Response(channels)
 
+
 @api_view(['GET', 'POST'])
-def botFormList(request,serverid):
+def botFormList(request, serverid):
     forms = FormCreate.objects.filter(serverid=serverid)
     serializer = FormBotCreateSerializer(forms, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET', 'POST'])
 def botFormResponse(request, formName):
     serializer = FormBotResponseSerializer(data=request.data, many=False)
+    # print(request.data)
     if serializer.is_valid():
         data = serializer.data
+        print(serializer.data)
         newformresponse = FormResponse()
         #form = FormCreate.objects.get(FormName=formName)
-        newformresponse.form = data['form_id']
+        newformresponse.form_id = data['form_id']
         newformresponse.Response = data['Response']
         newformresponse.user_id = data['user_id']
         newformresponse.save()
         print(newformresponse)
         # serializer.save()
     return Response(serializer.data)
+
 
 @api_view(['GET', 'POST'])
 def botFormResponseList(request, FormName):
@@ -231,13 +237,11 @@ def dashboardInformation(request):
     responses = FormResponse.objects.filter(user_id=request.user.id).count()
     shared_servers = 5
     formJson = {
-        "Forms Created":forms,
+        "Forms Created": forms,
         "Total Responses": responses,
         "Shared Servers": shared_servers
     }
     return JsonResponse(formJson, safe=False)
-
-
 
 
 def getServerChannels(access_token, serverid):
