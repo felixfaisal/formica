@@ -205,7 +205,7 @@ def botFormList(request, serverid):
 
 
 @api_view(['GET', 'POST'])
-def botFormResponse(request, formName):
+def botFormResponse(request):
     serializer = FormBotResponseSerializer(data=request.data, many=False)
     # print(request.data)
     if serializer.is_valid():
@@ -225,7 +225,7 @@ def botFormResponse(request, formName):
 @api_view(['GET', 'POST'])
 def botFormResponseList(request, FormName):
     form = FormCreate.objects.get(FormName=FormName)
-    responses = FormResponse.objects.filter(form=form)
+    responses = FormResponse.objects.filter(form_id=form.form_id)
     serializer = FormResponseSerializer(responses, many=True)
     return Response(serializer.data)
 
