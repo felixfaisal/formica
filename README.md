@@ -1,6 +1,11 @@
-## Formica
+![Imgur](https://i.imgur.com/mBTeFwN.png)
 A discord form bot that lets you create forms and visualize the data via a web interface 
 
+## Web Interface 
+![Imgur](https://i.imgur.com/aHZr15T.gif)
+
+## Discord Bot 
+![Imgur](https://i.imgur.com/PmphjEm.gif)
 
 ### How to run locally 
 ```
@@ -30,3 +35,6 @@ Add the following
 ```
 TOKENT = <BotToken>
 ```
+
+## Contribution 
+Check out our ![Contribution Guidelines](/CONTRIBUTING.md)
