@@ -19,13 +19,13 @@ POST_RESPONSES_URL = "http://localhost:8000/api/bot/response/" # responses we se
 # Description: Gets the forms from the database
 def get_forms():
     # get forms (tmp; for local testing)
-    #with open("dummy_questions.json", "r") as f:
-    #    globals.forms= json.load(f)
+    with open("dummy_questions.json", "r") as f:
+       globals.forms= json.load(f)
 
     # # get forms from database
-    get_forms = requests.get(url = GET_FORMS_URL, params = PARAMS)
-    print(get_forms.json())
-    globals.forms = get_forms.json()
+    # get_forms = requests.get(url = GET_FORMS_URL, params = PARAMS)
+    # print(get_forms.json())
+    # globals.forms = get_forms.json()
 
 # Description: Gets the responses from the database
 def get_responses(form_name):
@@ -54,18 +54,18 @@ def submit_responses(user):
     with open('dummy_responses.json', 'w') as w:
         json.dump(globals.local_responses, w)
 
-    # # format responses to send to database
-    tmp_qs = []
-    db_responses = []
+    # # # format responses to send to database
+    # tmp_qs = []
+    # db_responses = []
 
-    for item in globals.questions:
-         tmp_qs.append(item['question'])
+    # for item in globals.questions:
+    #      tmp_qs.append(item['question'])
 
-    for item in globals.local_responses:
-         tmp_responses = {key:value for key, value in zip(tmp_qs, item['responses'])}
-         db_responses.append({"form_id": item['form_id'], "user_id": item['user_id'], "Response": tmp_responses})
+    # for item in globals.local_responses:
+    #      tmp_responses = {key:value for key, value in zip(tmp_qs, item['responses'])}
+    #      db_responses.append({"form_id": item['form_id'], "user_id": item['user_id'], "Response": tmp_responses})
     
-    print(db_responses)
+    # print(db_responses)
     # # send post request and save response
     # post_request = requests.post(url = POST_RESPONSES_URL+str(FormName), data = db_responses)
     
