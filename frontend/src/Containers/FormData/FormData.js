@@ -23,6 +23,7 @@ const FormData = () => {
 	const fetchFormResponses = async () => {
 		try {
 			const responses = await getFormResponsesService(token, id);
+			console.log(responses)
 			setFormResponses(responses);
 			setLoading(false);
 		} catch (err) {
