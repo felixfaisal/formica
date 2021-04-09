@@ -8,7 +8,7 @@ import globals
 
 PARAMS = {}
 # API endpoints
-GET_FORMS_URL = "http://localhost:8000/api/bot/forms" # questions
+GET_FORMS_URL = "http://localhost:8000/api/bot/forms/" # questions
 GET_RESPONSES_URL = "http://localhost:8000/api/bot/form/response/" # responses we receive from database
 POST_RESPONSES_URL = "http://localhost:8000/api/bot/response/" # responses we send to database
 
@@ -24,7 +24,7 @@ def get_forms(server_id):
     #   db_forms = json.load(f)
     
     # get forms from database
-    get_forms = requests.get(url = GET_FORMS_URL, params={server_id})
+    get_forms = requests.get(url = GET_FORMS_URL+str(server_id), params={})
     print(get_forms.json())
     db_forms = get_forms.json()
 
