@@ -51,14 +51,15 @@ def get_user(user):
                             'response_index': len(globals.local_responses) - 1,
                             'confirmation_id': 0}
     else:
-        # get index
-        user_index = globals.local_responses.index(target)
-        #print("found at index ", globals.user_index) 
-        globals.trackers[user.id]['response_index'] = user_index
+        user_submitted = True
+        # # get index
+        # user_index = globals.local_responses.index(target)
+        # #print("found at index ", globals.user_index) 
+        # globals.trackers[user.id]['response_index'] = user_index
 
-        # check if the form has already been completed by them
-        if len(globals.local_responses[user_index]['responses']) >= len(globals.questions):
-            user_submitted = True
+        # # check if the form has already been completed by them
+        # if len(globals.local_responses[user_index]['responses']) >= len(globals.questions):
+        #     user_submitted = True
     
     return user_submitted
         

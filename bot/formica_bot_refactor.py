@@ -117,6 +117,12 @@ async def start(ctx):
 
         # search for the user in the saved responses
         user_submitted = get_user(ctx.author)
+
+        # check if form has already been submitted by the user
+        if user_submitted == True:
+            print("This user has already submitted a form")
+            await ctx.author.send("It looks like you've already submitted this form. You can manage your responses here: <insert link>")
+            return
         
         # check if form has already been started
         if globals.trackers[ctx.author.id]['form_started'] == False:
@@ -131,11 +137,6 @@ async def start(ctx):
             await ctx.author.send("It looks like there's no forms to fill out. Please go back to your server and check again.")
             return
 
-        # check if form has already been submitted by the user
-        if user_submitted == True:
-            print("This user has already submitted a form")
-            await ctx.author.send("It looks like you've already submitted this form. You can manage your responses here: <insert link>")
-            return
         
     
         while cur_index < len(globals.questions):
@@ -252,14 +253,14 @@ async def on_message_edit(before, after):
 # detect edits to mc questions
 @client.event
 async def on_reaction_add(reaction, user):
-    print("🔴 reaction detected")
+    #print("🔴 reaction detected")
     #ignore, if the reaction is from ourselves
     if user == client.user:
         return
 
     # check if reaction was added to form welcome message
     if (reaction.message.id in globals.welcome_ids):
-        print("🔴 user reacted to formica")
+        #print("🔴 user reacted to formica")
         form_init = discord.Embed(title = globals.form_name, description = "To start, type !start", color = globals.form_color)
         form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would.\n You can edit your response by hovering on your message and clicking 'edit'", inline = False)
 
@@ -267,7 +268,7 @@ async def on_reaction_add(reaction, user):
 
     # check if it's an mc question; we don't need to validate mc responses
     elif (reaction.message.id in globals.mc_ids):
-        print("🔴 user reacted to mc")
+        #print("🔴 user reacted to mc")
         try:
             confirmation_id = globals.trackers[before.author.id]['confirmation_id']
             old_confirmation = await reaction.message.channel.fetch_message(globals.confirmation_id)

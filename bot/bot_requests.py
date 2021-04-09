@@ -19,32 +19,34 @@ POST_RESPONSES_URL = "http://localhost:8000/api/bot/response/" # responses we se
 # Description: Gets the forms from the database
 def get_forms():
     # get forms (tmp; for local testing)
-    # with open("dummy_questions.json", "r") as f:
-    #   globals.forms= json.load(f)
+    with open("dummy_questions.json", "r") as f:
+      globals.forms= json.load(f)
 
     # # get forms from database
-    get_forms = requests.get(url = GET_FORMS_URL, params = PARAMS)
-    print(get_forms.json())
-    globals.forms = get_forms.json()
+    # get_forms = requests.get(url = GET_FORMS_URL, params = PARAMS)
+    # print(get_forms.json())
+    # globals.forms = get_forms.json()
 
 # Description: Gets the responses from the database
 def get_responses(form_name):
     # get responses (tmp; for local testing)
     with open('dummy_responses.json', 'r') as r:
-        globals.local_responses = json.load(r)
+        db_responses = json.load(r)
 
     # get responses from database (specific form)
     #get_responses = requests.get(url = GET_RESPONSES_URL+str(form_name), params = PARAMS)
-    #db_responses = []
-    # api/bot/form/<userid>/<formName> 
-    # Response 
-    # User has not responded 
-    # # fill a local array with the database responses
-    # globals.local_responses = []
+    #db_responses = get_responses.json()
 
-    # for item in db_responses:
-    #     responses = list(item["Response"].values()) # grab the responses
-    #     globals.local_responses.append({'form_id': item['form_id'], 'username': "", 'user_id': item['user_id'], 'responses': responses, 'response_ids': []})
+    print("🔴 db responses: ", db_responses)
+    # fill a local array with the database responses
+    globals.local_responses = []
+
+    for item in db_responses:
+        responses = list(item["Response"].values()) # grab the responses
+        globals.local_responses.append({'form_id': item['form_id'], 'username': "", 'user_id': item['user_id'], 'responses': responses, 'response_ids': []})
+    
+    print("🔴 local responses: ", globals.local_responses)
+    
 
 # Description: Writes the responses to the database, creates a submission confirmation message for the user and form creator
 def submit_responses(user):
