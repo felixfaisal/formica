@@ -207,8 +207,8 @@ def botFormResponse(request, formName):
     if serializer.is_valid():
         data = serializer.data
         newformresponse = FormResponse()
-        form = FormCreate.objects.get(FormName=formName)
-        newformresponse.form = form
+        #form = FormCreate.objects.get(FormName=formName)
+        newformresponse.form = data['form_id']
         newformresponse.Response = data['Response']
         newformresponse.user_id = data['user_id']
         newformresponse.save()
