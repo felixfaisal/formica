@@ -44,8 +44,16 @@ def get_user(user):
         #create a new user with empty responses
         print("not found")
         # append to database
-        globals.local_responses.append({'form_id':'', 'username': str(user), 'user_id': str(user.id), 'responses': [], 'response_ids': []})
+        globals.local_responses.append({'form_id':'', 
+                                        'username': str(user), 
+                                        'user_id': str(user.id), 
+                                        'responses': [], 
+                                        'response_ids': []})
         #print("appended: ", responses)
+        # initialize a new tracker item
+        globals.trackers[user.id] = {'form_started': False,
+                            'response_index': 0,
+                            'confirmation_id': 0}
 
         globals.user_index = len(globals.local_responses) - 1
     else:

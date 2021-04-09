@@ -8,6 +8,7 @@ forms = []
 welcome_ids = []
 
 # question details
+trackers = {}
 local_responses = []
 questions = []
 mc_ids = []

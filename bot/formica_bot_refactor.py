@@ -132,14 +132,14 @@ async def start(ctx):
         if ctx.channel.type != "private" and ctx.channel.recipient != ctx.author:
             print("!start invoked in a non-private channel")
             return
+
+        # search for the user in the saved responses
+        user_submitted = get_user(ctx.author)
         
         # check if form has already been started
-        if globals.form_started == False:
-            globals.form_started = True
+        if globals.trackers[ctx.author.id]['form_started'] == False:
+            globals.trackers[ctx.author.id]['form_started'] = True
             cur_index = 0
-            
-            # search for the user in the saved responses
-            user_submitted = get_user(ctx.author)
         else:
             print("form already started")
             await ctx.author.send("Oops! You've already started this form. Answer the previous question to proceed.\nYou can answer by sending a message, or by reacting to the question if it's a multiple choice.")
