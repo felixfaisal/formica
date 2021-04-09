@@ -19,13 +19,13 @@ POST_RESPONSES_URL = "http://localhost:8000/api/bot/response/" # responses we se
 # Description: Gets the forms from the database
 def get_forms():
     # get forms (tmp; for local testing)
-    with open("dummy_questions.json", "r") as f:
-       globals.forms= json.load(f)
+    # with open("dummy_questions.json", "r") as f:
+    #   globals.forms= json.load(f)
 
     # # get forms from database
-    # get_forms = requests.get(url = GET_FORMS_URL, params = PARAMS)
-    # print(get_forms.json())
-    # globals.forms = get_forms.json()
+    get_forms = requests.get(url = GET_FORMS_URL, params = PARAMS)
+    print(get_forms.json())
+    globals.forms = get_forms.json()
 
 # Description: Gets the responses from the database
 def get_responses(form_name):
@@ -55,20 +55,29 @@ def submit_responses(user):
         json.dump(globals.local_responses, w)
 
     # # # format responses to send to database
-    # tmp_qs = []
-    # db_responses = []
+    tmp_qs = []
+    db_responses = []
 
-    # for item in globals.questions:
-    #      tmp_qs.append(item['question'])
+    for item in globals.questions:
+          tmp_qs.append(item['question'])
 
-    # for item in globals.local_responses:
-    #      tmp_responses = {key:value for key, value in zip(tmp_qs, item['responses'])}
-    #      db_responses.append({"form_id": item['form_id'], "user_id": item['user_id'], "Response": tmp_responses})
+    for item in globals.local_responses:
+          tmp_responses = {key:value for key, value in zip(tmp_qs, item['responses'])}
+          db_responses.append({"form_id": item['form_id'], "user_id": int(item['user_id']), "Response": json.dumps(tmp_responses)})
     
-    # print(db_responses)
+    #print(db_responses[0])
+    requestdata = json.dumps(db_responses[len(db_responses)-1])
+    requestdatajson = json.loads(requestdata)
+    print(requestdatajson['Response'])
     # # send post request and save response
-    # post_request = requests.post(url = POST_RESPONSES_URL+str(FormName), data = db_responses)
-    
+    data = {
+        'form_id':requestdatajson['form_id'],
+        'user_id':requestdatajson['user_id'],
+        'Response':requestdatajson['Response']
+    }
+    post_request = requests.post(url = POST_RESPONSES_URL, data = data)
+    print('Post Request succesfully sent')
+    print(post_request)
     
     #make submission confirmation for the user
     submission_alert_user = discord.Embed(title = 'Form submitted', description = 'You can view and manage your responses here: <insert link>', color = globals.form_color)

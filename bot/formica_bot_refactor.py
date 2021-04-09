@@ -4,8 +4,8 @@ import discord
 from discord.ext import commands
 import os
 import json
-from decouple import config
-#from dotenv import load_dotenv
+#from decouple import config
+from dotenv import load_dotenv
 
 import globals 
 
@@ -21,7 +21,7 @@ from bot_functions import end_form
 
 from bot_validation import validate_response
 
-#load_dotenv()
+load_dotenv()
 
 intents = discord.Intents().all()
 intents.reactions = True
@@ -301,7 +301,7 @@ async def on_reaction_add(reaction, user):
             await old_confirmation.edit(embed = new_confirmation)
 
 # run bot
-#BOT_TOKEN = os.getenv("TOKEN")
-BOT_TOKEN = config("TOKEN")
+BOT_TOKEN = os.getenv("TOKEN")
+#BOT_TOKEN = config("TOKEN")
 client.run(BOT_TOKEN)
 
