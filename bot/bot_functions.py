@@ -7,10 +7,6 @@ import globals
 
 from bot_validation import validate_response
 
-# intents = discord.Intents().all()
-# intents.reactions = True
-# client = discord.Client(intents = intents)
-
 # Description: Fetches the current question to create an embedded question message
 def get_question(cur_index):
     # get question type
@@ -54,8 +50,6 @@ def get_user(user):
         globals.trackers[user.id] = {'form_started': False,
                             'response_index': len(globals.local_responses) - 1,
                             'confirmation_id': 0}
-
-        #globals.user_index = len(globals.local_responses) - 1
     else:
         # get index
         user_index = globals.local_responses.index(target)
@@ -81,11 +75,12 @@ def set_response(response, response_id, author, index):
 
 # Description: Overwrites the old message with the new message
 # Uses message ids to determine where to overwrite the message
-def edit_response(old_confirmation, edited_response, new_response_id): 
-
+def edit_response(old_confirmation, edited_response, new_response_id):
+    # get the user index (in the responses)
+    user_index = globals.trackers[edited_response.author.id]['response_index']
     # get the question index
     try:
-        q_index = globals.local_responses[globals.user_index]['response_ids'].index(new_response_id)
+        q_index = globals.local_responses[user_index]['response_ids'].index(new_response_id)
     except:
         print("question id not found")
    
@@ -120,7 +115,7 @@ def edit_response(old_confirmation, edited_response, new_response_id):
         new_response = edited_response.content
 
     # write over the response      
-    globals.local_responses[globals.user_index]['responses'][q_index] = str(new_response)
+    globals.local_responses[user_index]['responses'][q_index] = str(new_response)
 
     #edit the confirmation message (if form was completed)
     if old_confirmation != None:

@@ -48,8 +48,6 @@ def get_responses(form_name):
 
 # Description: Writes the responses to the database, creates a submission confirmation message for the user and form creator
 def submit_responses(user):
-    globals.form_started = False
-
     # write to the database (tmp; for local testing)
     with open('dummy_responses.json', 'w') as w:
         json.dump(globals.local_responses, w)
