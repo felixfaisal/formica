@@ -6,7 +6,7 @@ import Button from "../../Components/Button";
 import styles from "./FormResponses.module.css";
 
 const FormResponses = ({ responses }) => {
-	const [checked, setChecked] = useState(true);
+	const [checked, setChecked] = useState(false);
 
 	const displayHeadings = responses[0]
 		? Object.keys(responses[0]).map((key) => <div className={styles.heading}>{key}</div>)
@@ -46,7 +46,7 @@ const FormResponses = ({ responses }) => {
 						borderRadius: "5px",
 						fontSize: "24px",
 						fontWeight: "bold",
-						fontFamily: "Volkorn",
+						fontFamily: "sans-serif",
 						backgroundPosition: "center",
 					}}
 				>

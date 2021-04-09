@@ -41,6 +41,7 @@ export const getServerChannelsService = async (token, serverId) => {
 
 export const getStatisticsService = async (token) => {
 	try {
+		console.log(token);
 		const { data } = await axios.get(USER_STATISTICS_URL, { headers: { Authorization: `token ${token}` } });
 
 		return data;
