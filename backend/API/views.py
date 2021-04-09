@@ -221,7 +221,7 @@ def botFormResponseList(request, FormName):
 @authentication_classes([TokenAuthentication])
 def dashboardInformation(request):
     forms = FormCreate.objects.filter(userid=request.user).count()
-    responses = FormResponse.objects.filter(responseid=request.user.id).count()
+    responses = FormResponse.objects.filter(user_id=request.user.id).count()
     shared_servers = 5
     formJson = {
         "Forms Created":forms,
