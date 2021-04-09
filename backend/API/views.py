@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from rest_framework.authentication import TokenAuthentication
 # Create your views here.
-from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer, UserServersSerializer
+from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer, UserServersSerializer, FormBotResponseSerializer, FormBotCreateSerializer
 from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable, UserServers
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -191,16 +191,31 @@ def serverChannels(request, ServerID):
 @api_view(['GET', 'POST'])
 def botFormList(request):
     forms = FormCreate.objects.all()
-    serializer = FormCreateSerializer(forms, many=True)
+    serializer = FormBotCreateSerializer(forms, many=True)
     return Response(serializer.data)
 
 @api_view(['GET', 'POST'])
 def botFormResponse(request, formName):
-    serializer = FormResponseSerializer(data=request.data, many=False)
+    serializer = FormBotResponseSerializer(data=request.data, many=False)
     if serializer.is_valid():
-        serializer.save()
-    
+        data = serializer.data
+        newformresponse = FormResponse()
+        form = FormCreate.objects.get(FormName=formName)
+        newformresponse.form = form
+        newformresponse.Response = data['Response']
+        newformresponse.user_id = data['user_id']
+        newformresponse.save()
+        print(newformresponse)
+        # serializer.save()
     return Response(serializer.data)
+
+@api_view(['GET', 'POST'])
+def botFormResponseList(request, FormName):
+    form = FormCreate.objects.get(FormName=FormName)
+    responses = FormResponse.objects.filter(form=form)
+    serializer = FormResponseSerializer(responses, many=True)
+    return Response(serializer.data)
+
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])

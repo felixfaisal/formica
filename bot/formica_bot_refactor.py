@@ -2,7 +2,6 @@
 
 import discord
 from discord.ext import commands
-import asyncio
 import os
 import json
 from decouple import config
@@ -54,10 +53,10 @@ async def formica(ctx, *, received_name: str): # so we don't have to wrap form n
     print("formica called")
     # get forms from the database
     get_forms(ctx.guild.id)
-    #await asyncio.sleep(3)
 
+    # check if name is empty
     if received_name == "start":
-        if len(globals.local_forms) == 0:
+        if len(globals.forms) == 0:
             await ctx.send("It looks like there are no forms to fill out.")
             return
         else:
@@ -65,9 +64,8 @@ async def formica(ctx, *, received_name: str): # so we don't have to wrap form n
             list_embed = discord.Embed(title = "Welcome to Formica, the in-discord form service!", description = "To start filling out a form, please type !formica <form name>", color = globals.form_color)
 
             form_list = ""
-
-            for item in globals.local_forms:
-                form_list += f" - {globals.local_forms[item]['FormName']}\n"
+            for item in globals.forms:
+                form_list += f" - {item['FormName']}\n"
 
             list_embed.add_field(name = "Available Forms: ", value = form_list, inline = False)
 
@@ -75,23 +73,34 @@ async def formica(ctx, *, received_name: str): # so we don't have to wrap form n
             return
     else:
         # check that form exists
-        #target = next((item for item in globals.forms if item["FormName"].lower() == received_name.lower()), None)
-        target = next((item for item in globals.local_forms if globals.local_forms[item]["FormName"].lower() == received_name.lower()), None)
-
+        target = next((item for item in globals.forms if item["FormName"].lower() == received_name.lower()), None)
         if target == None:
             await ctx.send("It looks like this form doesn't exist. Please try again!")
             return
         else:
-            #print(target)
+            print(target)
+
+            # get the index of the form
+            
+            globals.form_index = globals.forms.index(target)
+            print("form index is: ", globals.form_index)
+
             # save the form name
-            form_name = globals.local_forms[target]["FormName"]
+            globals.form_name = target["FormName"]
+
+            # get the channel to send alerts to
+            alert_channel_id = 824348394411262013
+            globals.form_alert_channel = client.get_channel(alert_channel_id)
+
+            # extract the questions
+            globals.questions = globals.forms[globals.form_index]["Formfields"]
 
             # get the responses
-            get_responses(form_name)
+            get_responses(globals.form_name)
 
         #embed constructor
         welcome_embed = discord.Embed(title = "Welcome to Formica, the in-discord form service!", description = "It looks like you have a form to fill out. To do so, please react to this message with any emoji. Then, check your inbox!", color = globals.form_color)
-        welcome_embed.add_field(name = "Form: ", value = form_name, inline = False)
+        welcome_embed.add_field(name = "Form: ", value = globals.form_name, inline = False)
 
         # send welcome message
         welcome_msg = await ctx.send(embed=welcome_embed)
@@ -105,52 +114,57 @@ async def start(ctx):
         if ctx.channel.type != "private" and ctx.channel.recipient != ctx.author:
             print("!start invoked in a non-private channel")
             return
+
+        # search for the user in the saved responses
+        user_submitted = get_user(ctx.author)
+
+        # check if form has already been submitted by the user
+        if user_submitted == True:
+            print("This user has already submitted a form")
+            await ctx.author.send("It looks like you've already submitted this form. You can manage your responses here: <insert link>")
+            return
         
         # check if form has already been started
         if globals.trackers[ctx.author.id]['form_started'] == False:
             globals.trackers[ctx.author.id]['form_started'] = True
             cur_index = 0
-            user_index = globals.trackers[ctx.author.id]['response_index']
-            form_id = globals.local_responses[user_index]['form_id']
-            q_count = len(globals.local_forms[form_id]["Formfields"])
-
         else:
             print("form already started")
             await ctx.author.send("Oops! You've already started this form. Answer the previous question to proceed.\nYou can answer by sending a message, or by reacting to the question if it's a multiple choice.")
         
         # check if there's any forms to fill out
-        if len(globals.local_forms) == 0:
+        if len(globals.forms) == 0:
             await ctx.author.send("It looks like there's no forms to fill out. Please go back to your server and check again.")
             return
- 
+
+        
     
-        while cur_index < q_count:
-            print(f"cur index: {cur_index}, total qs: {q_count}")
+        while cur_index < len(globals.questions):
+            print(f"cur index: {cur_index}, total qs: {len(globals.questions)}")
 
             # send the current question
-            q_embed, q_type = get_question(cur_index, ctx.author.id)
+            q_embed, q_type = get_question(cur_index)
             q_message = await ctx.author.send(embed=q_embed)
 
             # save the question id
-            globals.local_forms[form_id]['Formfields'][cur_index]['question_id'] = q_message.id
+            globals.questions[cur_index]['question_id'] = q_message.id
             print("question: ", q_embed.title)
             print("question id: ", q_message.id)
             print("question type: ", q_type)
 
             # check question type (we don't need to validate text or m/c)
             if q_type == "multiple choice":
-                globals.trackers[ctx.author.id]['mc_ids'].append(q_message.id)
-                tot_options = len(globals.local_forms[form_id]["Formfields"][cur_index]['options'])
-                #print("mcs: ", globals.mc_ids)
+                globals.mc_ids.append(q_message.id)
+                print("mcs: ", globals.mc_ids)
 
                 # add the option emojis to our message
-                for index in range(tot_options):
+                for index in range(globals.tot_options):
                     await q_message.add_reaction(globals.emoji_options[index])
                 
                 # wait for reaction
                 def check_reaction(reaction, user):
                     # check that the emoji is within the range of alloted options & it's from the right user
-                    return (str(reaction.emoji) in globals.emoji_options[0:tot_options]) and user==ctx.author
+                    return (str(reaction.emoji) in globals.emoji_options[0:globals.tot_options]) and user==ctx.author
                 
                 reaction, user = await client.wait_for('reaction_add', check=check_reaction)
 
@@ -206,15 +220,13 @@ async def start(ctx):
         else:
             print("🔴 confirmation detected")
             # submit response, get the confirmation embeds
-            submission_alert_user, submission_alert_creator = submit_responses(user, form_id)
+            submission_alert_user, submission_alert_creator = submit_responses(user)
 
             # send a submission confirmation to the user
             await ctx.author.send(embed=submission_alert_user)
-            
+
             # send a submission confirmation to the form creator
-            alert_channel_id = globals.local_forms[form_id]["channel_id"]
-            form_alert_channel = client.get_channel(alert_channel_id)
-            await form_alert_channel.send(embed=submission_alert_creator)
+            await globals.form_alert_channel.send(embed=submission_alert_creator)
 
 # detect message editd
 
@@ -249,31 +261,13 @@ async def on_reaction_add(reaction, user):
     # check if reaction was added to form welcome message
     if (reaction.message.id in globals.welcome_ids):
         #print("🔴 user reacted to formica")
-
-        # extract the form name
-        form_name = reaction.message.embeds[0].fields[0].value
-        print("🔴 form name: ", form_name)
-
-        # get the form id 
-        target = next((item for item in globals.local_forms if globals.local_forms[item]["FormName"].lower() == form_name.lower()), None)
-
-        # search for the user
-        user_submitted = get_user(user, target)
-        # check if form has already been submitted by the user
-        if user_submitted == True:
-            print("This user has already submitted a form")
-            await user.send("It looks like you've already submitted this form. You can manage your responses here: <insert link>")
-            return
-
-        # make the form initiation embed
-        form_init = discord.Embed(title = form_name, description = "To start, type !start", color = globals.form_color)
+        form_init = discord.Embed(title = globals.form_name, description = "To start, type !start", color = globals.form_color)
         form_init.add_field(name = "Instructions: ", value = "Respond to my questions by typing a message like you normally would.\n You can edit your response by hovering on your message and clicking 'edit'", inline = False)
 
         await user.send(embed=form_init)
 
     # check if it's an mc question; we don't need to validate mc responses
-    elif (reaction.message.id in globals.trackers[user.id]['mc_ids']):
-        
+    elif (reaction.message.id in globals.mc_ids):
         #print("🔴 user reacted to mc")
         try:
             confirmation_id = globals.trackers[before.author.id]['confirmation_id']

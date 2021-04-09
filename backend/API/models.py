@@ -12,7 +12,7 @@ class DiscordUser(models.Model):
     objects = DiscordUserOauth2Manager()
     id = models.CharField(primary_key=True, max_length=100)
     discord_tag = models.CharField(max_length=100)
-    avatar = models.CharField(max_length=100)
+    avatar = models.CharField(max_length=100, null = True)
     public_flags = models.IntegerField()
     flags = models.IntegerField()
     locale = models.CharField(max_length=100)
@@ -33,7 +33,7 @@ class DiscordUser(models.Model):
             Token.objects.create(user=instance)
 
 class FormCreate(models.Model):
-    id = models.AutoField(primary_key=True)
+    form_id = models.AutoField(primary_key=True)
     serverid = models.BigIntegerField()
     userid = models.ForeignKey(DiscordUser, on_delete=models.CASCADE)
     Formfields = models.JSONField()
@@ -45,8 +45,8 @@ class FormCreate(models.Model):
 class FormResponse(models.Model):
     id = models.AutoField(primary_key=True)
     form = models.ForeignKey(FormCreate, on_delete=models.CASCADE)
-    responseid = models.BigIntegerField()
-    response = models.JSONField()
+    user_id = models.BigIntegerField()
+    Response = models.JSONField()
 
 class LoginTable(models.Model):
     loggedIn = models.BooleanField()
