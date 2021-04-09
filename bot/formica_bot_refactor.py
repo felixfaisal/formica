@@ -25,8 +25,7 @@ from bot_validation import validate_response
 
 intents = discord.Intents().all()
 intents.reactions = True
-client = discord.Client(intents = intents)
-client = commands.Bot(command_prefix = '!')
+client = commands.Bot(command_prefix="!", intents=intents)
 
 
 @client.event
@@ -267,6 +266,7 @@ async def on_reaction_add(reaction, user):
 
     # check if it's an mc question; we don't need to validate mc responses
     elif (reaction.message.id in globals.mc_ids):
+        print("🔴 user reacted to mc")
         try:
             confirmation_id = globals.trackers[before.author.id]['confirmation_id']
             old_confirmation = await reaction.message.channel.fetch_message(globals.confirmation_id)
