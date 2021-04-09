@@ -20,5 +20,6 @@ urlpatterns = [
     path('api/bot/forms/<str:serverid>', views.botFormList, name='botFormList'),
     path('api/bot/response/<str:formName>', views.botFormResponse, name='botFormResponse'),
     path('api/user/dashboard', views.dashboardInformation, name='dashboardInformation'),
-    path('api/bot/form/response/<str:FormName>', views.botFormResponseList, name='botFormResponseList')
+    path('api/bot/form/response/<str:FormName>', views.botFormResponseList, name='botFormResponseList'),
+    path('api/user/responses', views.userResponses, name='userResponses')
 ]

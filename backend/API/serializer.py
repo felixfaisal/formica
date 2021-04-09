@@ -22,6 +22,11 @@ class FormBotResponseSerializer(serializers.ModelSerializer):
         model = FormResponse
         fields = ['Response', 'user_id']
 
+class UserResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FormResponse
+        fields = ['id','form','user_id', 'Response']
+
 class DiscordUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = DiscordUser

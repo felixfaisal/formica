@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from rest_framework.authentication import TokenAuthentication
 # Create your views here.
-from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer, UserServersSerializer, FormBotResponseSerializer, FormBotCreateSerializer
+from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer, UserServersSerializer, FormBotResponseSerializer, FormBotCreateSerializer, UserResponseSerializer
 from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable, UserServers
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -178,6 +178,13 @@ def userServers(request):
     # print(access_token.access_token)
     servers = getUserServers(access_token)
     return Response(servers)
+
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+def userResponses(request):
+    responses = FormResponse.objects.filter(user_id=request.user.id)
+    serializer = UserResponseSerializer(responses, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['GET', 'POST'])
