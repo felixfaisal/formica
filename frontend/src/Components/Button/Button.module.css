@@ -26,3 +26,17 @@
   background-size: 100%;
   transition: background 0s;
 }
+
+.disabled {
+  background-color: var(--paragraph-color);
+}
+
+.disabled:hover {
+  background: var(--paragraph-color);
+}
+
+.disabled:active {
+  background-color: var(--paragraph-color);
+  background-size: 100%;
+  transition: background 0s;
+}

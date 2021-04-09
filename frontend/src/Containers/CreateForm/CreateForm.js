@@ -7,12 +7,15 @@ import Toast from "../../Components/Toast";
 import { getUserServers } from "../../Redux/ActionCreators/user.creator";
 import { createForm } from "../../Redux/ActionCreators/forms.creator";
 
+import { getServerChannelsService } from "../../Services/users.service";
+
 import styles from "./CreateForm.module.css";
 
 import { ReactComponent as Close } from "../../Assets/Images/close.svg";
 import { ReactComponent as Add } from "../../Assets/Images/add.svg";
 
 const CreateForm = () => {
+	const { token } = useSelector((state) => state.auth);
 	const { userId, servers } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 
@@ -20,6 +23,9 @@ const CreateForm = () => {
 	const [title, setTitle] = useState();
 	const [fields, setFields] = useState([]);
 	const [server, setServer] = useState();
+	const [channels, setChannels] = useState([]);
+	const [channel, setChannel] = useState();
+	const [loadingChannels, setLoadingChannels] = useState(false);
 
 	const addField = () => {
 		setFields([...fields, { input_type: "text", question: "", options: [], question_id: 0 }]);
@@ -52,6 +58,10 @@ const CreateForm = () => {
 		getServers();
 	}, []);
 
+	useEffect(() => {
+		getChannels();
+	}, [server]);
+
 	const getServers = async () => {
 		try {
 			await dispatch(getUserServers());
@@ -61,8 +71,31 @@ const CreateForm = () => {
 		}
 	};
 
+	const getChannels = async () => {
+		try {
+			setLoadingChannels(true);
+			console.log(servers);
+			const serverId = server ? server.split(" ").pop().match(/\d+/g)[0] : servers[0].id;
+
+			console.log(token, serverId);
+			const channels = await getServerChannelsService(token, serverId);
+
+			if (Array.isArray(channels)) setChannels(channels);
+			else setChannels([]);
+
+			setLoadingChannels(false);
+		} catch (err) {
+			console.log(err);
+			Toast("Some error has occurred!", "error");
+		}
+	};
+
 	const handleSave = async () => {
 		try {
+			if (channels.length === 0) {
+				Toast("Please add bot to server!", "error");
+				return;
+			}
 			setLoading(true);
 			const modifiedFields = fields.map((field) => ({ ...field, input_type: field.input_type.toLowerCase() }));
 			const formData = {
@@ -70,6 +103,7 @@ const CreateForm = () => {
 				FormName: title,
 				Formfields: modifiedFields,
 				serverid: server ? server.split(" ").pop().match(/\d+/g)[0] : servers[0].id,
+				channelid: channel ? server.split(" ").pop().match(/\d+/g)[0] : channels[0].id,
 			};
 
 			await dispatch(createForm(formData));
@@ -157,13 +191,23 @@ const CreateForm = () => {
 			<Button title="Add Field" className={styles.button} onClick={addField} />
 			<h3 className={styles.subtitle}>Select Server</h3>
 			<select className={styles.select} value={server} onChange={({ target: { value } }) => setServer(value)}>
-				{servers
-					.filter((server) => server.permissions_new[0] === "8")
-					.map((server) => (
+				{servers.map((server) => (
+					<option>
+						{server.name} ({server.id})
+					</option>
+				))}
+			</select>
+			<h3 className={styles.subtitle}>Select Channel</h3>
+			<select className={styles.select} value={channel} onChange={({ target: { value } }) => setChannel(value)}>
+				{loadingChannels ? (
+					<option>Please Wait...</option>
+				) : (
+					channels.map((channel) => (
 						<option>
-							{server.name} ({server.id})
+							{channel.name} ({channel.id})
 						</option>
-					))}
+					))
+				)}
 			</select>
 			<Button title="Save" className={`${styles.save} ${styles.button}`} onClick={handleSave} />
 		</div>
