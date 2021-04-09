@@ -93,10 +93,10 @@ def submit_responses(user, form_id):
     print(post_request)
     
     #make submission confirmation for the user
-    submission_alert_user = discord.Embed(title = 'Form submitted', description = 'You can view and manage your responses here: <insert link>', color = globals.form_color)
+    submission_alert_user = discord.Embed(title = 'Form submitted', description = 'You can view and manage your responses here: http://formica.centralindia.cloudapp.azure.com:3000/', color = globals.form_color)
 
     # make a submission confirmation for the form creator
-    submission_alert_creator = discord.Embed(title = f'{user} has submitted a form', description = 'To manage your forms, click here: <insert link>', color = globals.form_color)
+    submission_alert_creator = discord.Embed(title = f'{user} has submitted a form', description = 'To manage your forms, click here: http://formica.centralindia.cloudapp.azure.com:3000/', color = globals.form_color)
     submission_alert_creator.add_field(name = 'Form:', value = form_name, inline = False)
 
     return submission_alert_user, submission_alert_creator

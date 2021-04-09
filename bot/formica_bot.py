@@ -262,7 +262,7 @@ async def on_reaction_add(reaction, user):
         # check if form has already been submitted by the user
         if user_submitted == True:
             print("This user has already submitted a form")
-            await user.send("It looks like you've already submitted this form. You can manage your responses here: <insert link>")
+            await user.send("It looks like you've already submitted this form. You can manage your responses here: http://formica.centralindia.cloudapp.azure.com:3000/")
             return
 
         # make the form initiation embed
