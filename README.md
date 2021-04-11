@@ -46,4 +46,4 @@ TOKENT = <BotToken>
 ```
 
 ## Contribution 
-Check out our ![Contribution Guidelines](/CONTRIBUTING.md)
+Check out our [Contribution Guidelines](/CONTRIBUTING.md)
