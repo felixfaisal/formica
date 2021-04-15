@@ -60,29 +60,3 @@ def getAccessToken(code):
     credentials = response.json()
     access_token = credentials['access_token']
     return access_token
-
-
-def exchange_code(code):
-    data = {
-        "client_id": os.getenv("CLIENT_ID"),
-        "client_secret": os.getenv("CLIENT_SECRET"),
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": "http://localhost:8000/oauth2/login/redirect/",
-        "scope": "identify"
-    }
-    headers = {
-        "Content-type": "application/x-www-form-urlencoded"
-    }
-    response = requests.post(
-        "https://discord.com/api/oauth2/token", data=data, headers=headers)
-    # print(response.json())
-    credentials = response.json()
-    print('Access token')
-    access_token = credentials['access_token']
-    print(access_token)
-    response = requests.get("https://discord.com/api/v6/users/@me", headers={
-        'Authorization': 'Bearer %s' % access_token
-    })
-    user = response.json()
-    return user
