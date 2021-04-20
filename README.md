@@ -1,5 +1,5 @@
 <p align="center">
-    <img style="margin: 0 0 0 60px" src="https://i.imgur.com/JM1SCP0.gif" alt="formica banner"/>
+    <img style="margin: 0 0 0 60px" src="/wireframe/banner_2.png" alt="formica banner"/>
 </p>
 
 <p align="center">
