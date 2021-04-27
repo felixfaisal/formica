@@ -11,12 +11,18 @@ module.exports = {
   projectName: 'docusaurus', // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: 'Formica',
+      title: 'FORMICA',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
       },
       items: [
+        {
+          type: 'doc',
+          docId: 'Local Setup',
+          position: 'left',
+          label: 'Setup',
+        },
         {
           type: 'doc',
           docId: 'Local Setup',

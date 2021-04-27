@@ -1,0 +1,26 @@
+{
+  "unversionedId": "create-a-form/set-fields",
+  "id": "create-a-form/set-fields",
+  "isDocsHomePage": false,
+  "title": "Set Fields",
+  "description": "",
+  "source": "@site/docs/create-a-form/set-fields.md",
+  "sourceDirName": "create-a-form",
+  "slug": "/create-a-form/set-fields",
+  "permalink": "/docs/create-a-form/set-fields",
+  "editUrl": "https://github.com/facebook/docusaurus/edit/master/website/docs/create-a-form/set-fields.md",
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "sidebar_position": 2
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Invite Bot",
+    "permalink": "/docs/create-a-form/invite-bot"
+  },
+  "next": {
+    "title": "Manage Docs Versions",
+    "permalink": "/docs/tutorial-extras/manage-docs-versions"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "unversionedId": "create-a-form/invite-bot",
+  "id": "create-a-form/invite-bot",
+  "isDocsHomePage": false,
+  "title": "Invite Bot",
+  "description": "Make sure you have set the right permissions for your discord bot",
+  "source": "@site/docs/create-a-form/invite-bot.md",
+  "sourceDirName": "create-a-form",
+  "slug": "/create-a-form/invite-bot",
+  "permalink": "/docs/create-a-form/invite-bot",
+  "editUrl": "https://github.com/facebook/docusaurus/edit/master/website/docs/create-a-form/invite-bot.md",
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Local Setup",
+    "permalink": "/docs/Local Setup"
+  },
+  "next": {
+    "title": "Set Fields",
+    "permalink": "/docs/create-a-form/set-fields"
+  }
+}

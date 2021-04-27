@@ -1,0 +1,56 @@
+{
+  "pluginId": "default",
+  "version": "current",
+  "label": "Next",
+  "isLast": true,
+  "docsSidebars": {
+    "tutorialSidebar": [
+      {
+        "type": "link",
+        "label": "Local Setup",
+        "href": "/docs/Local Setup"
+      },
+      {
+        "type": "category",
+        "label": "Create a Form",
+        "items": [
+          {
+            "type": "link",
+            "label": "Invite Bot",
+            "href": "/docs/create-a-form/invite-bot"
+          },
+          {
+            "type": "link",
+            "label": "Set Fields",
+            "href": "/docs/create-a-form/set-fields"
+          }
+        ],
+        "collapsed": true
+      },
+      {
+        "type": "category",
+        "label": "Tutorial - Extras",
+        "items": [
+          {
+            "type": "link",
+            "label": "Manage Docs Versions",
+            "href": "/docs/tutorial-extras/manage-docs-versions"
+          },
+          {
+            "type": "link",
+            "label": "Translate your site",
+            "href": "/docs/tutorial-extras/translate-your-site"
+          }
+        ],
+        "collapsed": true
+      }
+    ]
+  },
+  "permalinkToSidebar": {
+    "/docs/create-a-form/invite-bot": "tutorialSidebar",
+    "/docs/create-a-form/set-fields": "tutorialSidebar",
+    "/docs/Local Setup": "tutorialSidebar",
+    "/docs/tutorial-extras/manage-docs-versions": "tutorialSidebar",
+    "/docs/tutorial-extras/translate-your-site": "tutorialSidebar"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "unversionedId": "Local Setup",
+  "id": "Local Setup",
+  "isDocsHomePage": false,
+  "title": "Local Setup",
+  "description": "Frontend and Backend Setup",
+  "source": "@site/docs/Local Setup.md",
+  "sourceDirName": ".",
+  "slug": "/Local Setup",
+  "permalink": "/docs/Local Setup",
+  "editUrl": "https://github.com/facebook/docusaurus/edit/master/website/docs/Local Setup.md",
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "tutorialSidebar",
+  "next": {
+    "title": "Invite Bot",
+    "permalink": "/docs/create-a-form/invite-bot"
+  }
+}
