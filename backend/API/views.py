@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer, FormBotResponseSerializer, FormBotCreateSerializer, UserResponseSerializer
 from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable
-from .helper import getServerChannels, getUserServers, getUserInformation, getAccessToken, exchange_code
+from .helper import getServerChannels, getUserServers, getUserInformation, getAccessToken
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
