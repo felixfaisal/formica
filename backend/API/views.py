@@ -4,8 +4,9 @@ import requests
 from dotenv import load_dotenv
 
 from django.http import JsonResponse
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
 from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer, FormBotResponseSerializer, FormBotCreateSerializer, UserResponseSerializer
 from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable
