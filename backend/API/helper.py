@@ -1,5 +1,6 @@
 import os
 import environ
+import requests
 from dotenv import load_dotenv
 
 from django.shortcuts import redirect
