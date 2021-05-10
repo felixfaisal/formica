@@ -1,35 +1,26 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from rest_framework.authentication import TokenAuthentication
-# Create your views here.
-from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer, UserServersSerializer, FormBotResponseSerializer, FormBotCreateSerializer, UserResponseSerializer
-from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable, UserServers
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-import requests
+import os
 import environ
+import requests
 from dotenv import load_dotenv
+
+from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-import os
+from django.shortcuts import redirect
+
+from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer, FormBotResponseSerializer, FormBotCreateSerializer, UserResponseSerializer
+from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable
+from .helper import getServerChannels, getUserServers, getUserInformation, getAccessToken
+
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
+
 load_dotenv()
 
-
 redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=728306573696303135&permissions=68608&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth2%2Flogin%2Fredirect%2F&response_type=code&scope=identify%20guilds%20bot"
-
-
-@login_required(login_url='login/')
-@api_view(["GET"])
-@authentication_classes([TokenAuthentication])
-def index(request):
-    #token = Token.objects.get(user_id=request.user.id)
-    print(request.user)
-    # print(request.user)
-    # return Response(serializer.data)
-    return JsonResponse("Have false", safe=False)
-
 
 def discord_login(request):
     return redirect(redirect_url_discord)
@@ -45,7 +36,6 @@ def discord_login_redirect(request):
     access_token = getAccessToken(code)
     user = getUserInformation(access_token)
     servers = getUserServers(access_token)
-    # print(servers)
     discord_user = authenticate(request, user=user)
     discord_user = list(discord_user).pop()
     serverinfo = UserServers(user=discord_user, servers=servers)
@@ -69,12 +59,19 @@ def discord_login_redirect(request):
     return redirect('http://localhost:3000?user='+str(token.key))
 
 
+@login_required(login_url='login/')
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+def index(request):
+    print(request.user)
+    return JsonResponse("Have false", safe=False)
+
+
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def formlist(request):
     if request.user:
-        #forms = FormCreate.objects.filter(userid=request.user)
         forms = FormCreate.objects.all()
         serializer = FormCreateSerializer(forms, many=True)
 
@@ -92,7 +89,6 @@ def responselist(request):
     return Response(serializer.data)
 
 
-# @login_required(login_url='login/')
 @api_view(["GET"])
 def formresponse(request, FormName):
     form = FormCreate.objects.get(FormName=FormName, userid=request.user)
@@ -110,7 +106,6 @@ def formcreateresponse(request):
         form = serializer.data
         form["userid"] = request.user
         newform = FormCreate()
-        #newform.id = form['id']
         newform.userid = form['userid']
         newform.FormName = form['FormName']
         newform.Formfields = form['Formfields']
@@ -128,13 +123,10 @@ def userCreate(request):
     discord_user = authenticate(request, user=user)
     discord_user = list(discord_user).pop()
     token = Token.objects.get(user_id=discord_user)
-    # print(token.key)
     print('Access token')
     print(access_token)
     atoken = AccessTokenTable(user=discord_user, access_token=access_token)
     atoken.save()
-    #redirect_url_react = 'http://localhost:3000/dashboard?token='+token.key
-    # return redirect(redirect_url_discord)
 
 
 @api_view(['GET', 'POST'])
@@ -154,7 +146,6 @@ def userLogout(request):
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def userInformation(request):
-    # print(request.user)
     serializer = DiscordUserSerializer(data=request.user, many=False)
     serializer.is_valid()
     jsondata = {
@@ -164,18 +155,12 @@ def userInformation(request):
         "flags": request.user.flags,
     }
     return JsonResponse(jsondata, safe=False)
-    # return Response("Oops! You're not logged in")
 
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def userServers(request):
-    # access_token = AccessTokenTable.objects.get(user=request.user)
-    # servers = UserServers.objects.filter(user=request.user)
-    # serializer = UserServersSerializer(servers, many=True)
-    # return Response(serializer.data)
     access_token = AccessTokenTable.objects.get(user=request.user).access_token
-    # print(access_token.access_token)
     servers = getUserServers(access_token)
     return Response(servers)
 
@@ -207,18 +192,15 @@ def botFormList(request, serverid):
 @api_view(['GET', 'POST'])
 def botFormResponse(request):
     serializer = FormBotResponseSerializer(data=request.data, many=False)
-    # print(request.data)
     if serializer.is_valid():
         data = serializer.data
         print(serializer.data)
         newformresponse = FormResponse()
-        #form = FormCreate.objects.get(FormName=formName)
         newformresponse.form_id = data['form_id']
         newformresponse.Response = data['Response']
         newformresponse.user_id = data['user_id']
         newformresponse.save()
         print(newformresponse)
-        # serializer.save()
     return Response(serializer.data)
 
 
@@ -243,76 +225,3 @@ def dashboardInformation(request):
     }
     return JsonResponse(formJson, safe=False)
 
-
-def getServerChannels(access_token, serverid):
-    print('Reached API query function')
-    discord_url = "https://discord.com/api/v6/guilds/"+serverid+"/channels"
-    response = requests.get(discord_url, headers={
-        'Authorization': 'Bearer %s' % access_token
-    })
-    channels = response.json()
-    return channels
-
-
-def getUserServers(access_token):
-    print('Reached to API query')
-    response = requests.get("https://discord.com/api/v6/users/@me/guilds", headers={
-        'Authorization': 'Bearer %s' % access_token
-    })
-    servers = response.json()
-    return servers
-
-
-def getUserInformation(access_token):
-    response = requests.get("https://discord.com/api/v6/users/@me", headers={
-        'Authorization': 'Bearer %s' % access_token
-    })
-    user = response.json()
-    return user
-
-
-def getAccessToken(code):
-    data = {
-        "client_id": os.getenv("CLIENT_ID"),
-        "client_secret": os.getenv("CLIENT_SECRET"),
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": "http://localhost:8000/oauth2/login/redirect/",
-        "scope": "identify"
-    }
-    headers = {
-        "Content-type": "application/x-www-form-urlencoded"
-    }
-    response = requests.post(
-        "https://discord.com/api/oauth2/token", data=data, headers=headers)
-    # print(response.json())
-    credentials = response.json()
-    print('Access token')
-    access_token = credentials['access_token']
-    return access_token
-
-
-def exchange_code(code):
-    data = {
-        "client_id": os.getenv("CLIENT_ID"),
-        "client_secret": os.getenv("CLIENT_SECRET"),
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": "http://localhost:8000/oauth2/login/redirect/",
-        "scope": "identify"
-    }
-    headers = {
-        "Content-type": "application/x-www-form-urlencoded"
-    }
-    response = requests.post(
-        "https://discord.com/api/oauth2/token", data=data, headers=headers)
-    # print(response.json())
-    credentials = response.json()
-    print('Access token')
-    access_token = credentials['access_token']
-    print(access_token)
-    response = requests.get("https://discord.com/api/v6/users/@me", headers={
-        'Authorization': 'Bearer %s' % access_token
-    })
-    user = response.json()
-    return user
