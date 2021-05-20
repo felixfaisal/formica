@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 
 from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer, FormBotResponseSerializer, FormBotCreateSerializer, UserResponseSerializer
-from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable
+from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable, UserServers
 from .helper import getServerChannels, getUserServers, getUserInformation, getAccessToken
 
 from rest_framework.response import Response
