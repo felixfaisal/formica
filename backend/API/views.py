@@ -20,7 +20,7 @@ from rest_framework.authtoken.models import Token
 
 load_dotenv()
 
-redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=728306573696303135&permissions=68608&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth2%2Flogin%2Fredirect%2F&response_type=code&scope=identify%20guilds%20bot"
+redirect_url_discord = os.getenv("REDIRECT_URL_DISCORD")
 
 def discord_login(request): # oauth2/login/redirect/
     return redirect(redirect_url_discord)
