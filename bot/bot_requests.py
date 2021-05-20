@@ -8,9 +8,9 @@ import globals
 
 PARAMS = {}
 # API endpoints
-GET_FORMS_URL = "http://localhost:8000/api/bot/forms/" # questions
-GET_RESPONSES_URL = "http://localhost:8000/api/bot/form/response/" # responses we receive from database
-POST_RESPONSES_URL = "http://localhost:8000/api/bot/response/" # responses we send to database
+GET_FORMS_URL = "http://backend:8000/api/bot/forms/" # questions
+GET_RESPONSES_URL = "http://backend:8000/api/bot/form/response/" # responses we receive from database
+POST_RESPONSES_URL = "http://backend:8000/api/bot/response/" # responses we send to database
 
 # API key
 
