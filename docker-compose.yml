@@ -22,6 +22,12 @@ services:
             MYSQL_DATABASE: formica
             MYSQL_USER: newuser
             MYSQL_PASSWORD: user_password
+    bot:
+        build: ./bot
+        ports:
+            - "8080:8080"
+        depends_on:
+            - backend
       
 
     

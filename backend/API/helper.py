@@ -32,6 +32,7 @@ def getUserServers(access_token):
         'Authorization': 'Bearer %s' % access_token
     })
     servers = response.json()
+    print(servers)
     return servers
 
 
@@ -59,5 +60,6 @@ def getAccessToken(code):
         "https://discord.com/api/oauth2/token", data=data, headers=headers)
     # print(response.json())
     credentials = response.json()
+    print(credentials)
     access_token = credentials['access_token']
     return access_token

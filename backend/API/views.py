@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 
 from .serializer import FormCreateSerializer, FormResponseSerializer, DiscordUserSerializer, FormBotResponseSerializer, FormBotCreateSerializer, UserResponseSerializer
-from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable
+from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable, UserServers
 from .helper import getServerChannels, getUserServers, getUserInformation, getAccessToken
 
 from rest_framework.response import Response
@@ -20,18 +20,18 @@ from rest_framework.authtoken.models import Token
 
 load_dotenv()
 
-redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=728306573696303135&permissions=68608&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth2%2Flogin%2Fredirect%2F&response_type=code&scope=identify%20guilds%20bot"
+redirect_url_discord = os.getenv("REDIRECT_URL_DISCORD")
 
-def discord_login(request):
+def discord_login(request): # oauth2/login/redirect/
     return redirect(redirect_url_discord)
 
 
-def discord_logout(request):
+def discord_logout(request): # oauth2/logout/
     logout(request)
     return JsonResponse("Succesfully Logged out", safe=False)
 
 
-def discord_login_redirect(request):
+def discord_login_redirect(request): # oauth2/login/redirect/
     code = request.GET.get('code')
     access_token = getAccessToken(code)
     user = getUserInformation(access_token)
@@ -59,10 +59,10 @@ def discord_login_redirect(request):
     return redirect('http://localhost:3000?user='+str(token.key))
 
 
-@login_required(login_url='login/')
+@login_required(login_url='login/') 
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
-def index(request):
+def index(request): # oauth2/
     print(request.user)
     return JsonResponse("Have false", safe=False)
 
@@ -70,7 +70,7 @@ def index(request):
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def formlist(request):
+def formlist(request): # api/form/list 
     if request.user:
         forms = FormCreate.objects.all()
         serializer = FormCreateSerializer(forms, many=True)
@@ -82,7 +82,7 @@ def formlist(request):
 
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
-def responselist(request):
+def responselist(request): # api/responses/
     print(request.user)
     response = FormResponse.objects.all()
     serializer = FormResponseSerializer(response, many=True)
@@ -90,7 +90,7 @@ def responselist(request):
 
 
 @api_view(["GET"])
-def formresponse(request, FormName):
+def formresponse(request, FormName): # api/form/response/<str:FormName>
     form = FormCreate.objects.get(FormName=FormName, userid=request.user)
     response = FormResponse.objects.filter(form_id=form.form_id)
     serializer = FormResponseSerializer(response, many=True)
@@ -99,7 +99,7 @@ def formresponse(request, FormName):
 
 @api_view(["POST"])
 @authentication_classes([TokenAuthentication])
-def formcreateresponse(request):
+def formcreateresponse(request): # api/form/create/
     serializer = FormCreateSerializer(data=request.data)
 
     if serializer.is_valid():
@@ -117,7 +117,7 @@ def formcreateresponse(request):
 
 
 @api_view(['GET', 'POST'])
-def userCreate(request):
+def userCreate(request): # api/user/create/
     access_token = request.data.get('access_token')
     user = getUserInformation(access_token)
     discord_user = authenticate(request, user=user)
@@ -131,21 +131,21 @@ def userCreate(request):
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
-def userLogin(request):
+def userLogin(request): # api/user/login/
     login = LoginTable.objects.get(user=request.user)
     return JsonResponse(login.loggedIn, safe=False)
 
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
-def userLogout(request):
+def userLogout(request): # api/user/logout/
     login = LoginTable.objects.get(user=request.user)
     return JsonResponse('False', safe=False)
 
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
-def userInformation(request):
+def userInformation(request): # api/user/information
     serializer = DiscordUserSerializer(data=request.user, many=False)
     serializer.is_valid()
     jsondata = {
@@ -159,7 +159,7 @@ def userInformation(request):
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
-def userServers(request):
+def userServers(request): # api/user/server/
     access_token = AccessTokenTable.objects.get(user=request.user).access_token
     servers = getUserServers(access_token)
     return Response(servers)
@@ -167,7 +167,7 @@ def userServers(request):
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
-def userResponses(request):
+def userResponses(request): # api/user/responses
     responses = FormResponse.objects.filter(user_id=request.user.id)
     serializer = UserResponseSerializer(responses, many=True)
     return Response(serializer.data)
@@ -175,7 +175,7 @@ def userResponses(request):
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
-def serverChannels(request, ServerID):
+def serverChannels(request, ServerID): # api/user/channels/<str:ServerID>
     access_token = AccessTokenTable.objects.get(user=request.user).access_token
     print(access_token)
     channels = getServerChannels(access_token, ServerID)
@@ -183,14 +183,14 @@ def serverChannels(request, ServerID):
 
 
 @api_view(['GET', 'POST'])
-def botFormList(request, serverid):
+def botFormList(request, serverid): # api/bot/forms/<str:serverid>
     forms = FormCreate.objects.filter(serverid=serverid)
     serializer = FormBotCreateSerializer(forms, many=True)
     return Response(serializer.data)
 
 
 @api_view(['GET', 'POST'])
-def botFormResponse(request):
+def botFormResponse(request): # api/bot/response/
     serializer = FormBotResponseSerializer(data=request.data, many=False)
     if serializer.is_valid():
         data = serializer.data
@@ -204,7 +204,7 @@ def botFormResponse(request):
     return Response(serializer.data)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST']) # api/bot/form/response/<str:FormName>
 def botFormResponseList(request, FormName):
     form = FormCreate.objects.get(FormName=FormName)
     responses = FormResponse.objects.filter(form_id=form.form_id)
@@ -212,8 +212,8 @@ def botFormResponseList(request, FormName):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
-@authentication_classes([TokenAuthentication])
+@api_view(['GET']) 
+@authentication_classes([TokenAuthentication]) # api/user/dashboard
 def dashboardInformation(request):
     forms = FormCreate.objects.filter(userid=request.user).count()
     responses = FormResponse.objects.filter(user_id=request.user.id).count()
@@ -224,4 +224,3 @@ def dashboardInformation(request):
         "Shared Servers": shared_servers
     }
     return JsonResponse(formJson, safe=False)
-

@@ -28,7 +28,7 @@ export const getUserServers = () => async (dispatch, getState) => {
 
 		dispatch({
 			type: GET_USER_SERVERS,
-			payload: { servers: servers.filter((server) => server.permissions_new[0] === "8") },
+			payload: { servers: servers.filter((server) => server.permissions_new[0] === "8" || server.owner === true) },
 		});
 	} catch (err) {
 		throw err;
