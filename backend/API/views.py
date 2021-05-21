@@ -22,15 +22,16 @@ load_dotenv()
 
 redirect_url_discord = os.getenv("REDIRECT_URL_DISCORD")
 
+''' Redirects to Discord Login Page ''' 
 def discord_login(request): # oauth2/login/redirect/
     return redirect(redirect_url_discord)
 
-
+''' Route for logging out ''' 
 def discord_logout(request): # oauth2/logout/
     logout(request)
     return JsonResponse("Succesfully Logged out", safe=False)
 
-
+''' Redirect route after discord oauth, Obtains access token to interact with Discord API ''' 
 def discord_login_redirect(request): # oauth2/login/redirect/
     code = request.GET.get('code')
     access_token = getAccessToken(code)
@@ -58,6 +59,7 @@ def discord_login_redirect(request): # oauth2/login/redirect/
     #redirect_url_react = 'http://localhost:3000/dashboard?token='+token.key
     return redirect('http://localhost:3000?user='+str(token.key))
 
+''' Provides list of forms present in the database ''' 
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -70,6 +72,7 @@ def formlist(request): # api/form/list
 
     return Response("You are not logged in!")
 
+''' Provides list of responses made by the user ''' 
 @api_view(["GET"])
 def formresponse(request, FormName): # api/form/response/<str:FormName>
     form = FormCreate.objects.get(FormName=FormName, userid=request.user)
@@ -77,7 +80,7 @@ def formresponse(request, FormName): # api/form/response/<str:FormName>
     serializer = FormResponseSerializer(response, many=True)
     return Response(serializer.data)
 
-
+''' To submit a response to a form ''' 
 @api_view(["POST"])
 @authentication_classes([TokenAuthentication])
 def formcreateresponse(request): # api/form/create/
@@ -96,7 +99,7 @@ def formcreateresponse(request): # api/form/create/
 
     return Response(serializer.data)
 
-
+''' Creating user and storing in the database ''' 
 @api_view(['GET', 'POST'])
 def userCreate(request): # api/user/create/
     access_token = request.data.get('access_token')
@@ -109,21 +112,21 @@ def userCreate(request): # api/user/create/
     atoken = AccessTokenTable(user=discord_user, access_token=access_token)
     atoken.save()
 
-
+''' Custom logging in feature, It's a hacky mechanism ''' 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def userLogin(request): # api/user/login/
     login = LoginTable.objects.get(user=request.user)
     return JsonResponse(login.loggedIn, safe=False)
 
-
+''' Custom logout feature, Also a hacky mechanism ''' 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def userLogout(request): # api/user/logout/
     login = LoginTable.objects.get(user=request.user)
     return JsonResponse('False', safe=False)
 
-
+''' Fetch user information such as avatar and tag ''' 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def userInformation(request): # api/user/information
@@ -137,7 +140,7 @@ def userInformation(request): # api/user/information
     }
     return JsonResponse(jsondata, safe=False)
 
-
+''' Fetch all the servers user is a part of ''' 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def userServers(request): # api/user/server/
@@ -145,7 +148,7 @@ def userServers(request): # api/user/server/
     servers = getUserServers(access_token)
     return Response(servers)
 
-
+''' Fetch all the responses made by the user ''' 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def userResponses(request): # api/user/responses
@@ -153,7 +156,7 @@ def userResponses(request): # api/user/responses
     serializer = UserResponseSerializer(responses, many=True)
     return Response(serializer.data)
 
-
+''' Fetch all the channels present in a selected server''' 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def serverChannels(request, ServerID): # api/user/channels/<str:ServerID>
@@ -162,14 +165,14 @@ def serverChannels(request, ServerID): # api/user/channels/<str:ServerID>
     channels = getServerChannels(access_token, ServerID)
     return Response(channels)
 
-
+''' List of forms present in a given server ''' 
 @api_view(['GET', 'POST'])
 def botFormList(request, serverid): # api/bot/forms/<str:serverid>
     forms = FormCreate.objects.filter(serverid=serverid)
     serializer = FormBotCreateSerializer(forms, many=True)
     return Response(serializer.data)
 
-
+''' Submit response to a given form ''' 
 @api_view(['GET', 'POST'])
 def botFormResponse(request): # api/bot/response/
     serializer = FormBotResponseSerializer(data=request.data, many=False)
@@ -184,7 +187,7 @@ def botFormResponse(request): # api/bot/response/
         print(newformresponse)
     return Response(serializer.data)
 
-
+''' Fetch responses for a given form ''' 
 @api_view(['GET', 'POST']) # api/bot/form/response/<str:FormName>
 def botFormResponseList(request, FormName):
     form = FormCreate.objects.get(FormName=FormName)
@@ -192,7 +195,7 @@ def botFormResponseList(request, FormName):
     serializer = FormResponseSerializer(responses, many=True)
     return Response(serializer.data)
 
-
+''' Fetch dashboard information for the frontend ''' 
 @api_view(['GET']) 
 @authentication_classes([TokenAuthentication]) # api/user/dashboard
 def dashboardInformation(request):
