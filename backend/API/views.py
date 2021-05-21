@@ -58,15 +58,6 @@ def discord_login_redirect(request): # oauth2/login/redirect/
     #redirect_url_react = 'http://localhost:3000/dashboard?token='+token.key
     return redirect('http://localhost:3000?user='+str(token.key))
 
-
-@login_required(login_url='login/') 
-@api_view(["GET"])
-@authentication_classes([TokenAuthentication])
-def index(request): # oauth2/
-    print(request.user)
-    return JsonResponse("Have false", safe=False)
-
-
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -78,16 +69,6 @@ def formlist(request): # api/form/list
         return Response(serializer.data)
 
     return Response("You are not logged in!")
-
-
-@api_view(["GET"])
-@authentication_classes([TokenAuthentication])
-def responselist(request): # api/responses/
-    print(request.user)
-    response = FormResponse.objects.all()
-    serializer = FormResponseSerializer(response, many=True)
-    return Response(serializer.data)
-
 
 @api_view(["GET"])
 def formresponse(request, FormName): # api/form/response/<str:FormName>
