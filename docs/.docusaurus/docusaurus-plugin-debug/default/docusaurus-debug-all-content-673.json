@@ -10,9 +10,9 @@
           "versionEditUrlLocalized": "https://github.com/facebook/docusaurus/edit/master/website/i18n/en/docusaurus-plugin-content-docs/current",
           "isLast": true,
           "routePriority": -1,
-          "sidebarFilePath": "/home/felix/formica/documentation_formica/formica/docs/sidebars.js",
-          "contentPath": "/home/felix/formica/documentation_formica/formica/docs/docs",
-          "contentPathLocalized": "/home/felix/formica/documentation_formica/formica/docs/i18n/en/docusaurus-plugin-content-docs/current",
+          "sidebarFilePath": "/home/nhi/mlh-explorer/formica/docs/sidebars.js",
+          "contentPath": "/home/nhi/mlh-explorer/formica/docs/docs",
+          "contentPathLocalized": "/home/nhi/mlh-explorer/formica/docs/i18n/en/docusaurus-plugin-content-docs/current",
           "mainDocId": "Local Setup",
           "sidebars": {
             "tutorialSidebar": [
@@ -49,12 +49,24 @@
                   }
                 ],
                 "collapsed": true
+              },
+              {
+                "type": "category",
+                "label": "External Resources",
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "external-resources/bot-resources"
+                  }
+                ],
+                "collapsed": true
               }
             ]
           },
           "permalinkToSidebar": {
             "/docs/create-a-form/invite-bot": "tutorialSidebar",
             "/docs/create-a-form/set-fields": "tutorialSidebar",
+            "/docs/external-resources/bot-resources": "tutorialSidebar",
             "/docs/Local Setup": "tutorialSidebar",
             "/docs/tutorial-extras/manage-docs-versions": "tutorialSidebar",
             "/docs/tutorial-extras/translate-your-site": "tutorialSidebar"
@@ -110,6 +122,28 @@
               "next": {
                 "title": "Manage Docs Versions",
                 "permalink": "/docs/tutorial-extras/manage-docs-versions"
+              }
+            },
+            {
+              "unversionedId": "external-resources/bot-resources",
+              "id": "external-resources/bot-resources",
+              "isDocsHomePage": false,
+              "title": "Bot Resources",
+              "description": "For most things, the official discord.py API reference will be your best friend. To help you get started, here's some topics that will come in handy when working on the Formica bot:",
+              "source": "@site/docs/external-resources/bot-resources.md",
+              "sourceDirName": "external-resources",
+              "slug": "/external-resources/bot-resources",
+              "permalink": "/docs/external-resources/bot-resources",
+              "editUrl": "https://github.com/facebook/docusaurus/edit/master/website/docs/external-resources/bot-resources.md",
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "sidebar_position": 1
+              },
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "Translate your site",
+                "permalink": "/docs/tutorial-extras/translate-your-site"
               }
             },
             {
@@ -180,6 +214,10 @@
               "previous": {
                 "title": "Manage Docs Versions",
                 "permalink": "/docs/tutorial-extras/manage-docs-versions"
+              },
+              "next": {
+                "title": "Bot Resources",
+                "permalink": "/docs/external-resources/bot-resources"
               }
             }
           ]
@@ -199,7 +237,7 @@
             "title": "Welcome",
             "description": "Blog features are powered by the blog plugin. Simply add files to the blog directory. It supports tags as well!",
             "date": "2019-05-30T00:00:00.000Z",
-            "formattedDate": "May 30, 2019",
+            "formattedDate": "May 29, 2019",
             "tags": [
               {
                 "label": "facebook",
@@ -231,7 +269,7 @@
             "title": "Hello",
             "description": "Welcome to this blog. This blog is created with Docusaurus 2 alpha.",
             "date": "2019-05-29T00:00:00.000Z",
-            "formattedDate": "May 29, 2019",
+            "formattedDate": "May 28, 2019",
             "tags": [
               {
                 "label": "hello",
@@ -263,7 +301,7 @@
             "title": "Hola",
             "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet",
             "date": "2019-05-28T00:00:00.000Z",
-            "formattedDate": "May 28, 2019",
+            "formattedDate": "May 27, 2019",
             "tags": [
               {
                 "label": "hola",

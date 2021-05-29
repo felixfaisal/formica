@@ -21,6 +21,11 @@
               "sidebar": "tutorialSidebar"
             },
             {
+              "id": "external-resources/bot-resources",
+              "path": "/docs/external-resources/bot-resources",
+              "sidebar": "tutorialSidebar"
+            },
+            {
               "id": "Local Setup",
               "path": "/docs/Local Setup",
               "sidebar": "tutorialSidebar"
