@@ -21,6 +21,7 @@ docker-compose up
 ```
 
 ### Setup Discord Bot
+For security reasons, and to avoid disruptions with the bot, we highly advise you to create your own bot and use its token for local development. The token will be replaced with the Formica bot's token when your pull request is merged. For information on how to do this, check out the [external bot resources](external-resources/bot-resources.md)
 ```bash
 #Add Bot Secret key
 cd formica/bot
