@@ -65,7 +65,7 @@ For security reasons, and to avoid disruptions with the bot, we highly advise yo
 cd formica/bot
 touch .env 
 nano .env 
-TOKENT = <BotToken>
+TOKEN = <BotToken>
 
 #Run the bot 
 python formica_bot.py
