@@ -10,9 +10,9 @@
           "versionEditUrlLocalized": "https://github.com/facebook/docusaurus/edit/master/website/i18n/en/docusaurus-plugin-content-docs/current",
           "isLast": true,
           "routePriority": -1,
-          "sidebarFilePath": "/home/nhi/mlh-explorer/formica/docs/sidebars.js",
-          "contentPath": "/home/nhi/mlh-explorer/formica/docs/docs",
-          "contentPathLocalized": "/home/nhi/mlh-explorer/formica/docs/i18n/en/docusaurus-plugin-content-docs/current",
+          "sidebarFilePath": "/Users/nmaido/MLH Explorer/formica/docs/sidebars.js",
+          "contentPath": "/Users/nmaido/MLH Explorer/formica/docs/docs",
+          "contentPathLocalized": "/Users/nmaido/MLH Explorer/formica/docs/i18n/en/docusaurus-plugin-content-docs/current",
           "mainDocId": "Local Setup",
           "sidebars": {
             "tutorialSidebar": [
