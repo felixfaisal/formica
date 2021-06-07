@@ -108,7 +108,7 @@ export default {
       "@docusaurus/preset-classic",
       {
         "docs": {
-          "sidebarPath": "/home/felix/formica/documentation_formica/formica/docs/sidebars.js",
+          "sidebarPath": "/Users/nmaido/MLH Explorer/formica/docs/sidebars.js",
           "editUrl": "https://github.com/facebook/docusaurus/edit/master/website/"
         },
         "blog": {
@@ -116,7 +116,7 @@ export default {
           "editUrl": "https://github.com/facebook/docusaurus/edit/master/website/blog/"
         },
         "theme": {
-          "customCss": "/home/felix/formica/documentation_formica/formica/docs/src/css/custom.css"
+          "customCss": "/Users/nmaido/MLH Explorer/formica/docs/src/css/custom.css"
         }
       }
     ]

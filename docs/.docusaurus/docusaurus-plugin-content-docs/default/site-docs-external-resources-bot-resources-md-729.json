@@ -1,0 +1,22 @@
+{
+  "unversionedId": "external-resources/bot-resources",
+  "id": "external-resources/bot-resources",
+  "isDocsHomePage": false,
+  "title": "Bot Resources",
+  "description": "For most things, the official discord.py API reference will be your best friend. To help you get started, here's some topics that will come in handy when working on the Formica bot:",
+  "source": "@site/docs/external-resources/bot-resources.md",
+  "sourceDirName": "external-resources",
+  "slug": "/external-resources/bot-resources",
+  "permalink": "/docs/external-resources/bot-resources",
+  "editUrl": "https://github.com/facebook/docusaurus/edit/master/website/docs/external-resources/bot-resources.md",
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Translate your site",
+    "permalink": "/docs/tutorial-extras/translate-your-site"
+  }
+}

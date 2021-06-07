@@ -55,7 +55,9 @@ docker-compose up
 
 
 <h2 align="center" style="font-weight:bold">Discord Bot Setup</h2>
-
+<p align="center" style="margin: 20px 0 30px 0">
+For security reasons, and to avoid disruptions with the bot, we highly advise you to create your own bot and use its token for local development. The token will be replaced with the Formica bot's token when your pull request is merged. For information on how to do this, check out the external bot resources on our documentation website.
+</p>
 
 ```bash
 
@@ -63,7 +65,7 @@ docker-compose up
 cd formica/bot
 touch .env 
 nano .env 
-TOKENT = <BotToken>
+TOKEN = <BotToken>
 
 #Run the bot 
 python formica_bot.py

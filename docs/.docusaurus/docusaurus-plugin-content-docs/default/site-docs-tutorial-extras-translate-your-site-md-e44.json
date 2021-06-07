@@ -18,5 +18,9 @@
   "previous": {
     "title": "Manage Docs Versions",
     "permalink": "/docs/tutorial-extras/manage-docs-versions"
+  },
+  "next": {
+    "title": "Bot Resources",
+    "permalink": "/docs/external-resources/bot-resources"
   }
 }

@@ -43,12 +43,25 @@
           }
         ],
         "collapsed": true
+      },
+      {
+        "type": "category",
+        "label": "External Resources",
+        "items": [
+          {
+            "type": "link",
+            "label": "Bot Resources",
+            "href": "/docs/external-resources/bot-resources"
+          }
+        ],
+        "collapsed": true
       }
     ]
   },
   "permalinkToSidebar": {
     "/docs/create-a-form/invite-bot": "tutorialSidebar",
     "/docs/create-a-form/set-fields": "tutorialSidebar",
+    "/docs/external-resources/bot-resources": "tutorialSidebar",
     "/docs/Local Setup": "tutorialSidebar",
     "/docs/tutorial-extras/manage-docs-versions": "tutorialSidebar",
     "/docs/tutorial-extras/translate-your-site": "tutorialSidebar"
