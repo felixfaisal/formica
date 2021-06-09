@@ -4,7 +4,7 @@ Thanks for contributing to AoW! Make sure to Fork this repository into your acco
 
 ```jsx
 git clone https://github.com/<your-github-username>/formica
-cd attack-on-web
+cd formica
 git remote add upstream https://github.com/felixfaisal/formica.git
 npm install
 ```
