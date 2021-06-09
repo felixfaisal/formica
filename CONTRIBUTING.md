@@ -1,6 +1,6 @@
 ### Contributing to Formica
 
-Thanks for contributing to AoW! Make sure to Fork this repository into your account before making any commits. Then use the following commands to set up the project.
+Thanks for contributing to formica! Make sure to Fork this repository into your account before making any commits. Then use the following commands to set up the project.
 
 ```jsx
 git clone https://github.com/<your-github-username>/formica
