@@ -46,7 +46,7 @@ To start contributing, follow the below guidelines:
 
 🌟. Star🌟 the project to bookmark and appreciate the work.
 
-**`.**  Take a look at the existing [issues](https://github.com/felixfaisal/formica/issues) or create your own issues. Wait for the Issue to be assigned to you after which you can start working on it.
+```Take a look at the existing [issues](https://github.com/felixfaisal/formica/issues) or create your own issues. Wait for the Issue to be assigned to you after which you can start working on it. ```
 
 **1.**  Fork [this](https://github.com/felixfaisal/formica.git) repository.
 
