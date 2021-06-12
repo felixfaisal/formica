@@ -112,7 +112,7 @@ git remote -v
 **6.** Always take a pull from the upstream repository to your master branch to keep it at par with the main project(updated repository) and install the requirements to run the code.
 
 ```
-git pull upstream master
+git pull upstream main
 npm install
 ```
 
@@ -174,8 +174,22 @@ Formica is a project for Sprint 2 of  the MLH Fellowship. Here's a demo video th
     Check out our <a href="/CONTRIBUTING.md">Contributions Guidelines</a>
 </p>
 
+
 ## Code of Conduct
 <p align="center">
-<a href="https://github.com/felixfaisal/formica.git/blob/master
-CODE_OF_CONDUCT.md">
+<a href="https://github.com/felixfaisal/formica/blob/main/CODE_OF_CONDUCT.md "> 
 <h5 align="center"><b>Click to read</b></a>  
+
+## Project Admin👨‍:
+
+<p align="center">
+<img width=20% src="https://i.postimg.cc/qBmW9QyM/profile.gif">
+</p>
+<a href="https://www.linkedin.com/in/faisal-ahmed-farooq-6395a0174/">
+<h5 align="center"><b>Felix Faisal</b></a>
+
+
+## License 
+<p align="center">
+<a href="https://github.com/felixfaisal/formica/blob/main/LICENSE"></p>
+<h5 align="center"><b>MIT License</b></a>
