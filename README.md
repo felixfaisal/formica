@@ -175,9 +175,22 @@ Formica is a project for Sprint 2 of  the MLH Fellowship. Here's a demo video th
     Check out our <a href="/CONTRIBUTING.md">Contributions Guidelines</a>
 </p>
 
+## Project Admin👨‍:
+
+<p align="center">
+<img width=20% src="https://i.postimg.cc/qBmW9QyM/profile.gif">
+</p>
+
+<a href="https://www.linkedin.com/in/faisal-ahmed-farooq-6395a0174/">
+<h5 align="center"><b>Felix Faisal</b></a>
+
 ## Code of Conduct
 <p align="center">
-<a href="https://github.com/felixfaisal/formica.git/blob/master
-CODE_OF_CONDUCT.md">
+<a href="https://github.com/felixfaisal/formica/blob/main/CODE_OF_CONDUCT.md "> 
 <img width=35% src="https://cdn-media-1.freecodecamp.org/images/1*v4jyaugHQXBSf2O4D66Onw.gif"></p>
 <h5 align="center"><b>Click to read</b></a>  
+
+## License 
+<p align="center">
+<a href="https://github.com/felixfaisal/formica/blob/main/LICENSE"></p>
+<h5 align="center"><b>MIT License</b></a>
