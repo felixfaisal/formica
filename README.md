@@ -37,6 +37,40 @@ Collection of form data is often not taken seriously, you are providing informat
 <h2 align="center" style="font-weight:bold">Backend and Frontend Setup</h2>
 
 
+```bash
+
+# Add Client ID and Secret Key 
+cd formica/backend/API
+touch .env
+nano .env
+CLIENT_ID= <ClientID> 
+CLIENT_SECRET= <ClientSecret> 
+
+#Run using Docker
+cd formica
+docker-compose build 
+docker-compose up
+
+```
+
+
+<h2 align="center" style="font-weight:bold">Discord Bot Setup</h2>
+
+
+```bash
+
+#Add Bot Secret key
+cd formica/bot
+touch .env 
+nano .env 
+TOKENT = <BotToken>
+
+#Run the bot 
+python formica_bot.py
+
+```
+
+
 
 ## Contribution Guidelines 🏗
 
@@ -90,7 +124,6 @@ git checkout -b <your_branch_name>
 
 **8.** Perform your desired changes to the code base.
 
-<p align="center"><img width=35% src="https://media2.giphy.com/media/L1R1tvI9svkIWwpVYr/giphy.gif?cid=ecf05e47pzi2rpig0vc8pjusra8hiai1b91zgiywvbubu9vu&rid=giphy.gif"></p>
 
 **9.** Track your changes:heavy_check_mark: .
 
@@ -124,41 +157,6 @@ git push -u origin <your_branch_name>
 
 **16.** Voila :exclamation: You have made a PR to the website :boom: . Sit back patiently and relax while the project maintainers review your PR. Please understand, at timesthe time taken to review a PR can vary from a few hours to a few days.
 
-<p align="center"><img src="https://media.tenor.com/images/b562ddcfb131e962f9dfa01bd32a30d1/tenor.gif" width=30%></p>
-
-
-```bash
-
-# Add Client ID and Secret Key 
-cd formica/backend/API
-touch .env
-nano .env
-CLIENT_ID= <ClientID> 
-CLIENT_SECRET= <ClientSecret> 
-
-#Run using Docker
-cd formica
-docker-compose build 
-docker-compose up
-
-```
-
-
-<h2 align="center" style="font-weight:bold">Discord Bot Setup</h2>
-
-
-```bash
-
-#Add Bot Secret key
-cd formica/bot
-touch .env 
-nano .env 
-TOKENT = <BotToken>
-
-#Run the bot 
-python formica_bot.py
-
-```
 
 
 <h2 align="center" style="font-weight:bold" id="contributing">Project Demo</h2>
@@ -180,5 +178,4 @@ Formica is a project for Sprint 2 of  the MLH Fellowship. Here's a demo video th
 <p align="center">
 <a href="https://github.com/felixfaisal/formica.git/blob/master
 CODE_OF_CONDUCT.md">
-<img width=35% src="https://cdn-media-1.freecodecamp.org/images/1*v4jyaugHQXBSf2O4D66Onw.gif"></p>
 <h5 align="center"><b>Click to read</b></a>  
