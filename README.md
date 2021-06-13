@@ -183,7 +183,7 @@ Formica is a project for Sprint 2 of  the MLH Fellowship. Here's a demo video th
 <h2 align="center" style="font-weight:bold">Project Admin👨‍</h2>
 <br>
 <p align="center">
-<img width=20% src="https://github.com/github.png?size=460">
+<img width=20% src="https://avatars.githubusercontent.com/u/42486737?v=4">
 </p>
 <a href="https://www.linkedin.com/in/faisal-ahmed-farooq-6395a0174/">
 <h5 align="center"><b>Felix Faisal</b></a>
