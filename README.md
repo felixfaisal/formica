@@ -71,8 +71,7 @@ python formica_bot.py
 ```
 
 
-
-## Contribution Guidelines 🏗
+<h2 align="center" style="font-weight:bold">Contribution Guidelines 🏗</h2>
 
 Are we missing any of your favorite features, which you think you can add to it❓ We invite you to contribute to this project and improve it further
 
@@ -112,7 +111,7 @@ git remote -v
 **6.** Always take a pull from the upstream repository to your master branch to keep it at par with the main project(updated repository) and install the requirements to run the code.
 
 ```
-git pull upstream master
+git pull upstream main
 npm install
 ```
 
@@ -174,8 +173,24 @@ Formica is a project for Sprint 2 of  the MLH Fellowship. Here's a demo video th
     Check out our <a href="/CONTRIBUTING.md">Contributions Guidelines</a>
 </p>
 
-## Code of Conduct
+<br>
+<h2 align="center" style="font-weight:bold">Code of Conduct</h2><br>
 <p align="center">
-<a href="https://github.com/felixfaisal/formica.git/blob/master
-CODE_OF_CONDUCT.md">
+<a href="https://github.com/felixfaisal/formica/blob/main/CODE_OF_CONDUCT.md "> 
 <h5 align="center"><b>Click to read</b></a>  
+
+<br>
+<h2 align="center" style="font-weight:bold">Project Admin👨‍</h2>
+<br>
+<p align="center">
+<img width=20% src="https://avatars.githubusercontent.com/u/42486737?v=4">
+</p>
+<a href="https://www.linkedin.com/in/faisal-ahmed-farooq-6395a0174/">
+<h5 align="center"><b>Felix Faisal</b></a>
+
+<br>    
+<h2 align="center" style="font-weight:bold">License </h2>
+<br>
+<p align="center">
+<a href="https://github.com/felixfaisal/formica/blob/main/LICENSE"></p>
+<h5 align="center"><b>MIT License</b></a>
