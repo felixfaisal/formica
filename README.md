@@ -174,10 +174,13 @@ Formica is a project for Sprint 2 of  the MLH Fellowship. Here's a demo video th
 </p>
 
 
+<center>
+
 ## 📌 Opensource Programs
 
 ### This project is a part of following Open Source Program
 <br>
+</center>
 
 <table style="width:80%;background-color:white;border-radius:30px;">
     <tr>
