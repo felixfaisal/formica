@@ -180,16 +180,12 @@ Formica is a project for Sprint 2 of  the MLH Fellowship. Here's a demo video th
 <br>
 </center>
 
-<table style="width:80%;background-color:white;border-radius:30px;">
-    <tr>
-  <td>
+
 <center>
   <a href="https://letsgrowmore.in/soc/"><img src="https://letsgrowmore.in/wp-content/uploads/2021/05/cropped-growmore-removebg-preview.png"></img></a>
   </center>
-  </td>
-  </tr>
-</table>
-    <hr>
+  
+  <hr>
 </p>
 <br>
 <h2 align="center" style="font-weight:bold">Code of Conduct</h2><br>
