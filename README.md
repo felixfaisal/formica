@@ -171,8 +171,6 @@ Formica is a project for Sprint 2 of  the MLH Fellowship. Here's a demo video th
 <h2 align="center" style="font-weight:bold">Contribution</h2>
 <p align="center">
     Check out our <a href="/CONTRIBUTING.md">Contributions Guidelines</a>
-</p>
-
 
 <center>
 
@@ -192,6 +190,7 @@ Formica is a project for Sprint 2 of  the MLH Fellowship. Here's a demo video th
   </tr>
 </table>
     <hr>
+</p>
 <br>
 <h2 align="center" style="font-weight:bold">Code of Conduct</h2><br>
 <p align="center">
