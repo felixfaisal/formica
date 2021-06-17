@@ -173,6 +173,22 @@ Formica is a project for Sprint 2 of  the MLH Fellowship. Here's a demo video th
     Check out our <a href="/CONTRIBUTING.md">Contributions Guidelines</a>
 </p>
 
+
+## 📌 Opensource Programs
+
+### This project is a part of following Open Source Program
+<br>
+
+<table style="width:80%;background-color:white;border-radius:30px;">
+    <tr>
+  <td>
+<center>
+  <a href="https://letsgrowmore.in/soc/"><img src="https://letsgrowmore.in/wp-content/uploads/2021/05/cropped-growmore-removebg-preview.png"></img></a>
+  </center>
+  </td>
+  </tr>
+</table>
+    <hr>
 <br>
 <h2 align="center" style="font-weight:bold">Code of Conduct</h2><br>
 <p align="center">
