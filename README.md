@@ -41,7 +41,6 @@ Collection of form data is often not taken seriously, you are providing informat
 
 # Add Client ID and Secret Key 
 cd formica/backend/API
-touch .env
 nano .env
 CLIENT_ID= <ClientID> 
 CLIENT_SECRET= <ClientSecret> 
@@ -60,8 +59,7 @@ docker-compose up
 ```bash
 
 #Add Bot Secret key
-cd formica/bot
-touch .env 
+cd formica/bot 
 nano .env 
 TOKENT = <BotToken>
 
