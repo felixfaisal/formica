@@ -171,7 +171,7 @@ Formica is a project for Sprint 2 of  the MLH Fellowship. Here's a demo video th
 <h2 align="center" style="font-weight:bold">Contribution</h2>
 <p align="center">
     Check out our <a href="/CONTRIBUTING.md">Contributions Guidelines</a>
-</p>
+    </p>
 
 <br>
 <h2 align="center" style="font-weight:bold">Code of Conduct</h2><br>
@@ -194,3 +194,15 @@ Formica is a project for Sprint 2 of  the MLH Fellowship. Here's a demo video th
 <p align="center">
 <a href="https://github.com/felixfaisal/formica/blob/main/LICENSE"></p>
 <h5 align="center"><b>MIT License</b></a>
+
+<div align="center">
+
+## 📌 Opensource Programs
+
+### This project received various contributions from the following open source programs for students 
+<br>
+
+<a href="https://letsgrowmore.in/soc/">Let's Grow More Summer of Code</a>
+  
+  <hr>
+</div>
