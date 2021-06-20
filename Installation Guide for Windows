@@ -1,0 +1,25 @@
+##  💻 How to Run the Project
+
+
+**1.** Navigate to the project directory.
+
+```bash
+cd formica
+```
+
+**2.** Navigate to the Client directory.
+
+```bash
+cd client
+npm install
+npm start 
+```
+
+**3.** Navigate to the Server directory.
+
+```bash
+cd server
+npm install
+npm start 
+
+```
