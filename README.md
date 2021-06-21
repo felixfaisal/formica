@@ -1,6 +1,23 @@
 <p align="center">
     <img style="margin: 0 0 0 60px" src="/wireframe/banner_2.png" alt="formica banner"/>
 </p>
+<div align="center">
+
+<a href="https://github.com/felixfaisal/formica"><img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103"></a>
+<a href="https://github.com/felixfaisal/formica"><img src="https://img.shields.io/badge/Built%20by-developers%20%3C%2F%3E-0059b3"></a>
+<a href="https://github.com/felixfaisal/formica"><img src="https://img.shields.io/static/v1.svg?label=Contributions&message=Welcome&color=yellow"></a>
+<a href="https://github.com/felixfaisal/"><img src="https://img.shields.io/badge/Maintained%3F-yes-brightgreen.svg?v=103"></a>
+<a href="https://github.com/felixfaisal/formica"><img src="https://img.shields.io/badge/PR's%3F-Welcomed-blue.svg?v=103"></a>
+
+<a href="https://github.com/felixfaisal/formica/watchers"><img src="https://img.shields.io/github/watchers/felixfaisal/formica?style=flat"></a> 
+<a href="https://github.com/felixfaisal/formica/graphs/contributors"><img src="https://img.shields.io/github/contributors/felixfaisal/formica?color=brightgreen"></a>
+<a href="https://github.com/felixfaisal/formica/stargazers"><img src="https://img.shields.io/github/stars/felixfaisal/formica?color=0059b3"></a>
+<a href="https://github.com/felixfaisal/formica/network/members"><img src="https://img.shields.io/github/forks/felixfaisal/formica?color=yellow"></a>
+<a href="https://github.com/felixfaisal/formica/issues"><img src="https://img.shields.io/github/issues/felixfaisal/formica?color=0059b3"></a>
+<a href="https://github.com/felixfaisal/formica/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed-raw/felixfaisal/formica?color=yellow"></a>
+<a href="https://github.com/felixfaisal/formica/pulls"><img src="https://img.shields.io/github/issues-pr/felixfaisal/formica?color=brightgreen"></a>
+<a href="https://github.com/felixfaisal/formica/pulls?q=is%3Apr+is%3Aclosed"><img src="https://img.shields.io/github/issues-pr-closed-raw/felixfaisal/formica?color=0059b3"></a> 
+</div>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
