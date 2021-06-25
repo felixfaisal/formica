@@ -28,10 +28,21 @@ npm start
 ## Run Using Docker
 
 ```bash
+*  Install Docker
 * Launch Docker Image – Launches Docker with an environment variable to a GitHub repository
 * Pull –The Docker image automatically clones the GitHub repository
 * Setup – Pulls down any dependencies
 * Builds – Builds the full project
 * Run – Launches the project
+
+```
+
+
+## Configure Commands
+
+```bash
+ CLIENT_ID= <ClientID> 
+ CLIENT_SECRET= <ClientSecret> 
+ TOKEN = <BotToken>
 
 ```
