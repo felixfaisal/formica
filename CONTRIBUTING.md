@@ -1,11 +1,12 @@
 ### Contributing to Formica
 
-Thanks for contributing to AoW! Make sure to Fork this repository into your account before making any commits. Then use the following commands to set up the project.
+Thanks for contributing to formica! Make sure to Fork this repository into your account before making any commits. Then use the following commands to set up the project.
 
 ```jsx
 git clone https://github.com/<your-github-username>/formica
-cd attack-on-web
+cd formica
 git remote add upstream https://github.com/felixfaisal/formica.git
+git pull upstream main
 npm install
 ```
 
@@ -17,7 +18,7 @@ All development happens on the develop branch. The main branch contains the know
 
 ```
 git checkout staging
-git checkout -b my-branch staging
+git checkout -b <"Add relevant name for branch">
 ```
 
 ### Committing your changes and creating a PR
@@ -26,6 +27,7 @@ Now you can make your changes, and commit them. We don't have any specific conve
 
 ```jsx
 git add .
+git status
 git commit -m "My fixes"
 
 ```
@@ -40,7 +42,11 @@ git rebase upstream/staging
 Push the changes to your fork.
 
 ```jsx
-git push origin my-branch
+git push origin <"Branch-Name">
+```
+
+```jsx
+Got to github and create Pull Request
 ```
 
 This is a good time, to open a pull request in this repository with the changes you have made. Make sure you open a pull request to merge to develop branch and not the main branch directly.
