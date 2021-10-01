@@ -1,5 +1,7 @@
-from django.contrib.auth.backends import BaseBackend 
+from django.contrib.auth.backends import BaseBackend
+
 from .models import DiscordUser
+
 
 class DiscordAuthenticationBackend(BaseBackend):
     def authenticate(self, request, user):
