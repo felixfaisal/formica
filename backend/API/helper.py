@@ -1,15 +1,9 @@
 import os
-import environ
 import requests
 from dotenv import load_dotenv
 
 from django.shortcuts import redirect
 from django.http import JsonResponse
-from django.contrib.auth import authenticate, login, logout
-
-from rest_framework.authtoken.models import Token
-
-from .models import FormCreate, FormResponse, LoginTable, AccessTokenTable, UserServers
 
 load_dotenv()
 
@@ -18,7 +12,7 @@ redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=72830
 
 def getServerChannels(access_token, serverid):
     print('Reached API query function')
-    discord_url = "https://discord.com/api/v6/guilds/"+serverid+"/channels"
+    discord_url = "https://discord.com/api/v6/guilds/" + serverid + "/channels"
     response = requests.get(discord_url, headers={
         'Authorization': 'Bearer %s' % access_token
     })
