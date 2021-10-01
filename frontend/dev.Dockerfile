@@ -1,8 +1,6 @@
 FROM node:15
-
+RUN mkdir /app
 WORKDIR /app 
 
-RUN npm install 
-EXPOSE 3000 
-
-ENTRYPOINT ["npm","start"]
+COPY package.json /app/package.json
+COPY package-lock.json /app/package-lock.json

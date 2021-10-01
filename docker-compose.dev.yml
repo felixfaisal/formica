@@ -15,11 +15,14 @@ services:
         build: 
             context: ./frontend
             dockerfile: dev.Dockerfile
+        command: >
+            sh -c "npm install && npm start"
         volumes:
-            - ./app/node_modules
             - ./frontend/:/app/
         ports:
             - "3000:3000"
+        environment:
+            - NODE_ENV=development
     
     backend:
         build: 
@@ -45,7 +48,8 @@ services:
         build: 
             context: ./bot
             dockerfile: dev.Dockerfile
-
+        command: >
+            sh -c "pip install -r requirements.txt && python3 formica_bot.py"
         volumes:
             - ./bot/:/bot/
         ports:
