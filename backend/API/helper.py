@@ -2,9 +2,6 @@ import os
 import requests
 from dotenv import load_dotenv
 
-from django.shortcuts import redirect
-from django.http import JsonResponse
-
 load_dotenv()
 
 redirect_url_discord = "https://discord.com/api/oauth2/authorize?client_id=728306573696303135&permissions=68608&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth2%2Flogin%2Fredirect%2F&response_type=code&scope=identify%20guilds%20bot"

@@ -17,8 +17,7 @@ class FormBotCreateSerializer(serializers.ModelSerializer):  # api/bot/forms/<st
         fields = ['form_id', 'Formfields', 'FormName', 'serverid']
 
 
-class FormResponseSerializer(
-    serializers.ModelSerializer):  # api/responses/, api/form/response/<str:FormName>, api/bot/form/response/<str:FormName>
+class FormResponseSerializer(serializers.ModelSerializer):  # api/responses/, api/form/response/<str:FormName>, api/bot/form/response/<str:FormName> # NOQA
     class Meta:
         model = FormResponse
         fields = ['form_id', 'user_id', 'Response']
