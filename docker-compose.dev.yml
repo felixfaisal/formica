@@ -1,0 +1,53 @@
+version: "3.0"
+
+services:
+    web:
+        image: nginx
+        ports:
+            - "80:80"
+        volumes: 
+            - ./nginx/:/etc/nginx/conf.d
+        depends_on: 
+            - frontend
+            - backend
+
+    frontend:
+        build: 
+            context: ./frontend
+            dockerfile: dev.Dockerfile
+        volumes:
+            - ./frontend/:/app/
+        ports:
+            - "3000:3000"
+    
+    backend:
+        build: 
+            context: ./backend
+            dockerfile: dev.Dockerfile
+        volumes:
+            - ./backend/:/code/
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+
+    db:
+        image: mysql 
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root 
+            MYSQL_DATABASE: formica
+            MYSQL_USER: newuser
+            MYSQL_PASSWORD: user_password
+    bot:
+        build: 
+            context: ./bot
+            dockerfile: dev.Dockerfile
+
+        volumes:
+            - ./bot/:/bot/
+        ports:
+            - "8080:8080"
+        depends_on:
+            - backend
