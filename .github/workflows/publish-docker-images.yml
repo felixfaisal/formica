@@ -20,17 +20,20 @@ jobs:
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          FRONTEND_IMAGE_NAME: "formica-frontend"
+          BACKEND_IMAGE_NAME: "formica-backend"
+          BOT_IMAGE_NAME: "formica-bot"
         run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
       - name: docker publish frontend
         run: |
           docker tag formica_frontend ${{ secrets.DOCKER_USER }}/formica-frontend
-          docker push ${{ secrets.DOCKER_USER }}/formica-frontend
+          docker push ${{ secrets.DOCKER_USER }}/${{ env.FRONTEND_IMAGE_NAME }}
       - name: docker publish backend
         run: |
           docker tag formica_backend ${{ secrets.DOCKER_USER }}/formica-backend
-          docker push ${{ secrets.DOCKER_USER }}/formica-backend
+          docker push ${{ secrets.DOCKER_USER }}/${{ env.BACKEND_IMAGE_NAME }}
       - name: docker publish bot
         run: |
           docker tag formica_bot ${{ secrets.DOCKER_USER }}/formica-bot
-          docker push ${{ secrets.DOCKER_USER }}/formica-bot
+          docker push ${{ secrets.DOCKER_USER }}/${{ env.BOT_IMAGE_NAME }}
