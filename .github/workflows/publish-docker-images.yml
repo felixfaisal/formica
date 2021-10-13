@@ -28,12 +28,12 @@ jobs:
       - name: docker publish frontend
         run: |
           docker tag formica_frontend ${{ secrets.DOCKER_USER }}/formica-frontend
-          docker push ${{ secrets.DOCKER_USER }}/${{ FRONTEND_IMAGE_NAME }}
+          docker push ${{ secrets.DOCKER_USER }}/"${FRONTEND_IMAGE_NAME}"
       - name: docker publish backend
         run: |
           docker tag formica_backend ${{ secrets.DOCKER_USER }}/formica-backend
-          docker push ${{ secrets.DOCKER_USER }}/${{ BACKEND_IMAGE_NAME }}
+          docker push ${{ secrets.DOCKER_USER }}/"${BACKEND_IMAGE_NAME}"
       - name: docker publish bot
         run: |
           docker tag formica_bot ${{ secrets.DOCKER_USER }}/formica-bot
-          docker push ${{ secrets.DOCKER_USER }}/${{ BOT_IMAGE_NAME }}
+          docker push ${{ secrets.DOCKER_USER }}/"${BOT_IMAGE_NAME}"
