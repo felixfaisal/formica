@@ -1,0 +1,36 @@
+name: Docker Images Build CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the Docker images for Production
+        run: docker-compose -f docker-compose.yml build
+      - name: docker login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: docker publish frontend
+        run: |
+          docker tag formica_frontend ${{ secrets.DOCKER_USER }}/formica-frontend
+          docker push ${{ secrets.DOCKER_USER }}/formica-frontend
+      - name: docker publish backend
+        run: |
+          docker tag formica_backend ${{ secrets.DOCKER_USER }}/formica-backend
+          docker push ${{ secrets.DOCKER_USER }}/formica-backend
+      - name: docker publish bot
+        run: |
+          docker tag formica_bot ${{ secrets.DOCKER_USER }}/formica-bot
+          docker push ${{ secrets.DOCKER_USER }}/formica-bot
