@@ -20,9 +20,9 @@ jobs:
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          FRONTEND_IMAGE_NAME: "formica-frontend"
-          BACKEND_IMAGE_NAME: "formica-backend"
-          BOT_IMAGE_NAME: "formica-bot"
+          FRONTEND_IMAGE_NAME: formica-frontend
+          BACKEND_IMAGE_NAME: formica-backend
+          BOT_IMAGE_NAME: formica-bot
         run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
       - name: docker publish frontend
