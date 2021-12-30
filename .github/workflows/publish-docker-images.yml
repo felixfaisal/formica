@@ -14,8 +14,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Build the Docker images for Production
-        run: docker-compose -f docker-compose.yml build
       - name: docker login
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
